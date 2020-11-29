@@ -32,8 +32,8 @@ const routes: Routes = [
         loadChildren: () => import('./help/help.module').then( m => m.HelpPageModule)
       },
       {
-        path: 'invoices',
-        loadChildren: () => import('./invoices/invoices.module').then( m => m.InvoicesPageModule)
+        path: 'wallet',
+        loadChildren: () => import('./wallet/wallet.module').then( m => m.WalletPageModule)
       }
     ]
   },

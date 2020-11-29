@@ -1,0 +1,16 @@
+ion-toolbar {
+  height: 40vh;
+
+  ion-title{
+    font-size: 3em;
+  }
+}
+
+ion-card {
+  margin-top: -100px;
+  z-index: 99;
+}
+
+main {
+  overflow: visible;
+}

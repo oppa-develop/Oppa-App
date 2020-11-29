@@ -13,8 +13,8 @@ export class SidemenuPage implements OnInit {
     { title: 'Servicios',             icon: 'construct-outline',        url: '/sidemenu/services'},
     { title: 'Mensajes',              icon: 'chatbox-ellipses-outline', url: '/sidemenu/messages'},
     { title: 'Valoraciones',          icon: 'star-outline',             url: '/sidemenu/ratings'},
+    { title: 'Monedero',              icon: 'wallet-outline',           url: '/sidemenu/wallet'},
     { title: 'Configuración',         icon: 'settings-outline',         url: '/sidemenu/preferences'},
-    { title: 'Pagos y Recargas',      icon: 'wallet-outline',           url: '/sidemenu/invoices'},
     { title: 'Ayuda',                 icon: 'help-circle-outline',      url: '/sidemenu/help'},
   ]
 

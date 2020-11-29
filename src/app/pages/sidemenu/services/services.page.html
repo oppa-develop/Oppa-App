@@ -48,7 +48,7 @@
                   <ion-text color="dark">
                     <p class="ion-no-margin"><strong>{{ service.name | titlecase }}</strong></p>
                   </ion-text>
-                  <p class="ion-no-margin">Costo: ${{ service.price | currency:'CLP'}}</p>
+                  <p class="ion-no-margin">Costo: ${{ service.price | number }}</p>
                 </ion-col>
                 <ion-col>
                   <ion-button color="primary" class="ion-float-end">solicitar</ion-button>
@@ -67,6 +67,6 @@
 <ion-footer>
   <ion-toolbar>
     <ion-title>Crédito:</ion-title>
-    <ion-title slot="end" class="ion-padding-horizontal"> ${{ user.credit | currency:'CLP' }}</ion-title>
+    <ion-title slot="end" class="ion-padding-horizontal"> ${{ user.credit | number }}</ion-title>
   </ion-toolbar>
 </ion-footer>

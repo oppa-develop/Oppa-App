@@ -13,10 +13,10 @@ export class PaymentService {
   
   getPaymentMethods(): Observable<Card[]> {
     return of([
-      { number: faker.finance.creditCardNumber(), selected: false},
-      { number: faker.finance.creditCardNumber(), selected: true},
-      { number: faker.finance.creditCardNumber(), selected: false},
-      { number: faker.finance.creditCardNumber(), selected: false}
+      { type: 'visa', number: faker.finance.creditCardNumber(), selected: false},
+      { type: 'mastercard', number: faker.finance.creditCardNumber(), selected: true},
+      { type: 'visa', number: faker.finance.creditCardNumber(), selected: false},
+      { type: 'mastercard', number: faker.finance.creditCardNumber(), selected: false}
     ])
   }
 }

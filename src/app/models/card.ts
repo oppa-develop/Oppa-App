@@ -1,6 +1,7 @@
 export interface Card {
 
-  number: number
+  number: string
   selected: boolean
+  type: string
   
 }
