@@ -9,7 +9,10 @@
     <ion-grid>
       <ion-row>
         <ion-col class="ion-text-center">
-          <ion-title>${{ '20000' | number }}</ion-title>
+          <ion-title>
+            <ion-icon name="wallet-outline"></ion-icon>
+            <span class="text">${{ '20000' | number }}</span>
+          </ion-title>
         </ion-col>
       </ion-row>
       <ion-row>
@@ -27,32 +30,38 @@
         <ion-title color="secondary" size="large">Historial</ion-title>
       </ion-list-header>
       <ion-item>
-        <ion-icon size="large" name="wallet-outline" slot="start"></ion-icon>
+        <ion-icon *ngIf="true" size="large" name="trending-up-outline" slot="start"></ion-icon>
+        <ion-icon *ngIf="false" size="large" name="trending-down-outline" slot="start"></ion-icon>
         <ion-label slot="start">Ingreso</ion-label>
         <ion-label color="success" class="ion-no-margin-start ion-text-end">$ {{ '10000' | number }}</ion-label>
       </ion-item>
       <ion-item>
-        <ion-icon size="large" name="wallet-outline" slot="start"></ion-icon>
+        <ion-icon *ngIf="false" size="large" name="trending-up-outline" slot="start"></ion-icon>
+        <ion-icon *ngIf="true" size="large" name="trending-down-outline" slot="start"></ion-icon>
         <ion-label slot="start">Retiro</ion-label>
         <ion-label color="danger" class="ion-no-margin-start ion-text-end">$ {{ '10000' | number }}</ion-label>
       </ion-item>
       <ion-item>
-        <ion-icon size="large" name="wallet-outline" slot="start"></ion-icon>
+        <ion-icon *ngIf="true" size="large" name="trending-up-outline" slot="start"></ion-icon>
+        <ion-icon *ngIf="false" size="large" name="trending-down-outline" slot="start"></ion-icon>
         <ion-label slot="start">Ingreso</ion-label>
         <ion-label color="success" class="ion-no-margin-start ion-text-end">$ {{ '10000' | number }}</ion-label>
       </ion-item>
       <ion-item>
-        <ion-icon size="large" name="wallet-outline" slot="start"></ion-icon>
+        <ion-icon *ngIf="false" size="large" name="trending-up-outline" slot="start"></ion-icon>
+        <ion-icon *ngIf="true" size="large" name="trending-down-outline" slot="start"></ion-icon>
         <ion-label slot="start">Retiro</ion-label>
         <ion-label color="danger" class="ion-no-margin-start ion-text-end">$ {{ '10000' | number }}</ion-label>
       </ion-item>
       <ion-item>
-        <ion-icon size="large" name="wallet-outline" slot="start"></ion-icon>
+        <ion-icon *ngIf="true" size="large" name="trending-up-outline" slot="start"></ion-icon>
+        <ion-icon *ngIf="false" size="large" name="trending-down-outline" slot="start"></ion-icon>
         <ion-label slot="start">Ingreso</ion-label>
         <ion-label color="success" class="ion-no-margin-start ion-text-end">$ {{ '10000' | number }}</ion-label>
       </ion-item>
       <ion-item>
-        <ion-icon size="large" name="wallet-outline" slot="start"></ion-icon>
+        <ion-icon *ngIf="false" size="large" name="trending-up-outline" slot="start"></ion-icon>
+        <ion-icon *ngIf="true" size="large" name="trending-down-outline" slot="start"></ion-icon>
         <ion-label slot="start">Retiro</ion-label>
         <ion-label color="danger" class="ion-no-margin-start ion-text-end">$ {{ '10000' | number }}</ion-label>
       </ion-item>

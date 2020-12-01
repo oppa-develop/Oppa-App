@@ -8,6 +8,7 @@ import { ServicesPageRoutingModule } from './services-routing.module';
 
 import { ServicesPage } from './services.page';
 import { LoadingPipe } from 'src/app/pipes/loading/loading.pipe';
+import { ModalPage } from './modal/modal.page';
 
 @NgModule({
   imports: [
@@ -16,6 +17,6 @@ import { LoadingPipe } from 'src/app/pipes/loading/loading.pipe';
     IonicModule,
     ServicesPageRoutingModule
   ],
-  declarations: [ServicesPage, LoadingPipe]
+  declarations: [ServicesPage, ModalPage, LoadingPipe]
 })
 export class ServicesPageModule {}

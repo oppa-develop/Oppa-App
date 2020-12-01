@@ -1,0 +1,21 @@
+ion-card {
+  margin-top: -12vh;
+  z-index: 99;
+}
+
+ion-button.close-btn {
+  --background: transparent;
+  --ion-color-base: transparent !important;
+  --box-shadow: none;
+  position: absolute;
+  right: 10px;
+}
+
+.header-img {
+  height: 37.5vh;
+  object-fit: cover;
+}
+
+ion-input {
+  text-align: end;
+}

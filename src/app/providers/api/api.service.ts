@@ -71,7 +71,8 @@ export class ApiService {
         img: '../../../../assets/images/pexels-nick-demou-1319460.jpg',
         serverName: faker.name.findName(),
         serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
-        serverRating: faker.random.number(5)
+        serverRating: (faker.random.number(1)) ? faker.random.number(5):null,
+        state: 'En curso'
       },
       {
         id: parseInt(faker.random.uuid()),
@@ -83,7 +84,8 @@ export class ApiService {
         img: '../../../../assets/images/1789259.jpg',
         serverName: faker.name.findName(),
         serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
-        serverRating: faker.random.number(5)
+        serverRating: (faker.random.number(1)) ? faker.random.number(5):null,
+        state: 'Terminado'
       },
       {
         id: parseInt(faker.random.uuid()),
@@ -95,7 +97,8 @@ export class ApiService {
         img: '../../../../assets/images/pexels-stephanie-allen-4085445.jpg',
         serverName: faker.name.findName(),
         serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
-        serverRating: faker.random.number(5)
+        serverRating: (faker.random.number(1)) ? faker.random.number(5):null,
+        state: 'Cancelado'
       },
       {
         id: parseInt(faker.random.uuid()),
@@ -107,7 +110,8 @@ export class ApiService {
         img: '../../../../assets/images/pexels-eduardo-soares-5497951.jpg',
         serverName: faker.name.findName(),
         serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
-        serverRating: faker.random.number(5)
+        serverRating: (faker.random.number(1)) ? faker.random.number(5):null,
+        state: 'Terminado'
       },
 
     ]).pipe(delay(5000));

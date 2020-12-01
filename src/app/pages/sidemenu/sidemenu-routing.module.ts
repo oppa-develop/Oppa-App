@@ -20,8 +20,8 @@ const routes: Routes = [
         loadChildren: () => import('./messages/messages.module').then( m => m.MessagesPageModule)
       },
       {
-        path: 'ratings',
-        loadChildren: () => import('./ratings/ratings.module').then( m => m.RatingsPageModule)
+        path: 'history',
+        loadChildren: () => import('./history/history.module').then( m => m.RatingsPageModule)
       },
       {
         path: 'preferences',

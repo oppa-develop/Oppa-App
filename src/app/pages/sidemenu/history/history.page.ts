@@ -4,11 +4,11 @@ import { Service } from 'src/app/models/service';
 import { ApiService } from 'src/app/providers/api/api.service';
 
 @Component({
-  selector: 'app-ratings',
-  templateUrl: './ratings.page.html',
-  styleUrls: ['./ratings.page.scss'],
+  selector: 'app-history',
+  templateUrl: './history.page.html',
+  styleUrls: ['./history.page.scss'],
 })
-export class RatingsPage implements OnInit {
+export class HistoryPage implements OnInit {
 
   $services: Observable<Service[]> 
 

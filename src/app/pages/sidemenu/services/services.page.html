@@ -72,7 +72,7 @@
                     <p class="ion-no-margin">Costo: ${{ service.price | number }}</p>
                   </ion-col>
                   <ion-col>
-                    <ion-button color="primary" class="ion-float-end">solicitar</ion-button>
+                    <ion-button color="primary" class="ion-float-end" (click)=openModal(service)>solicitar</ion-button>
                   </ion-col>
                 </ion-row>
               </ion-grid>

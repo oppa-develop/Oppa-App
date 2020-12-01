@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Valoraciones</ion-title>
+    <ion-title>Historial de Servicios</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -26,6 +26,9 @@
                   <ion-skeleton-text animated style="height: 30px; width: 85%;"></ion-skeleton-text>
                 </ion-item>
                 <ion-item>
+                  <ion-skeleton-text animated style="height: 20px; width: 30%;"></ion-skeleton-text>
+                </ion-item>
+                <ion-item>
                   <ion-skeleton-text animated style="width: 70%; text-align: right;"></ion-skeleton-text>
                 </ion-item>
                 <ion-item>
@@ -49,6 +52,9 @@
                   <ion-skeleton-text animated style="height: 30px; width: 85%;"></ion-skeleton-text>
                 </ion-item>
                 <ion-item>
+                  <ion-skeleton-text animated style="height: 20px; width: 30%;"></ion-skeleton-text>
+                </ion-item>
+                <ion-item>
                   <ion-skeleton-text animated style="width: 70%; text-align: right;"></ion-skeleton-text>
                 </ion-item>
                 <ion-item>
@@ -69,12 +75,15 @@
             <ion-avatar>
               <ion-img [src]="service.serverImg"></ion-img>
             </ion-avatar>
+            <ion-chip class="state">
+              <ion-text color="dark">{{ service.state }}</ion-text>
+            </ion-chip>
             <br><br>
             <ion-card-header>
               <ion-list lines="none" class="ion-no-padding">
                 <ion-item>
                   <ion-title class="ion-no-padding">
-                    {{ service.serverName }}
+                    <ion-label>{{ service.serverName }}</ion-label>
                     <ion-icon color="secondary" *ngIf="service.serverRating > 0" name="star"></ion-icon>
                     <ion-icon color="secondary" *ngIf="service.serverRating > 1" name="star"></ion-icon>
                     <ion-icon color="secondary" *ngIf="service.serverRating > 2" name="star"></ion-icon>
@@ -96,7 +105,7 @@
                   <ion-icon slot="start" name="calendar-outline"></ion-icon>
                   <ion-label>{{ service.date | date:'longDate' }}</ion-label>
                 </ion-item>
-                <ion-button class="ion-padding-horizontal" expand="block" *ngIf="!service.serverRating || service.serverRating === 0" color="primary">calificar</ion-button>
+                <ion-button class="ion-padding-horizontal" expand="block" *ngIf="!service.serverRating" color="primary">calificar</ion-button>
                 <ion-button class="ion-padding-horizontal" expand="block" *ngIf="service.serverRating" color="primary">ver detalle</ion-button>
               </ion-list>
             </ion-card-header>

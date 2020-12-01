@@ -1,0 +1,66 @@
+<!-- <ion-header>
+  <ion-toolbar color="secondary">
+  </ion-toolbar>
+</ion-header> -->
+
+<ion-content class="bicolor">
+  <ion-button class="close-btn" (click)="closeModal()">
+    <ion-icon size="large" slot="icon-only" name="close"></ion-icon>
+  </ion-button>
+  <ion-img class="header-img" [src]="service.img"></ion-img>
+  <ion-card class="ion-margin-horizontal ion-padding-horizontal">
+    <ion-list lines="none">
+      <ion-list-header>
+        <h1>
+          <ion-label color="secondary"><strong>Servicio de {{ service.name | titlecase }}</strong></ion-label>
+        </h1>
+      </ion-list-header>
+      <ion-item>
+        <ion-icon name="calendar-outline" slot="start"></ion-icon>
+        <ion-label>Fecha</ion-label>
+        <ion-datetime cancelText="cancelar"
+                      placeholder="Ingrese Fecha"
+                      doneText="aceptar"
+                      displayFormat="DD-MM-YYYY"
+                      monthShortNames="ene, feb, mar, abr, may, jun, jul, ago, sep, oct, nov, dic"
+                      [min]="minDate"
+                      required></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-icon name="time-outline" slot="start"></ion-icon>
+        <ion-label>Hora</ion-label>
+        <ion-datetime displayFormat="HH:mm"
+                      placeholder="Ingrese Hora"
+                      [min]="minHour"
+                      cancelText="cancelar"
+                      doneText="aceptar"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-icon name="person-outline" slot="start"></ion-icon>
+        <ion-label>Adulto Mayor</ion-label>
+        <ion-input type="text" required></ion-input>
+      </ion-item>
+      <ion-list-header>
+        <h1>Dirección</h1>
+      </ion-list-header>
+      <ion-item>
+        <ion-label>Calle</ion-label>
+        <ion-input type="text" required></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Número</ion-label>
+        <ion-input type="text" required></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Región</ion-label>
+        <ion-input type="text" required></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Comúna</ion-label>
+        <ion-input type="text" required></ion-input>
+      </ion-item>
+      <ion-button class="ion-padding-horizontal" expand="block" color="light" (click)="closeModal()">cancelar</ion-button>
+      <ion-button class="ion-padding-horizontal" expand="block" color="primary">solicitar</ion-button>
+    </ion-list>
+  </ion-card>
+</ion-content>

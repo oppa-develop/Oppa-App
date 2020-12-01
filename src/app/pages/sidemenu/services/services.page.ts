@@ -4,7 +4,8 @@ import { Service } from 'src/app/models/service';
 import { User } from 'src/app/models/user';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { AuthService } from 'src/app/providers/auth/auth.service';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, ModalController } from '@ionic/angular';
+import { ModalPage } from './modal/modal.page';
 
 @Component({
   selector: 'app-services',
@@ -19,9 +20,20 @@ export class ServicesPage implements OnInit {
   constructor(
     private api: ApiService,
     private auth: AuthService,
-    public actionSheetController: ActionSheetController
+    public actionSheetController: ActionSheetController,
+    private modalController: ModalController
   ) {
 
+  }
+
+  async openModal(service: Service) {
+    const modal = await this.modalController.create({
+      component: ModalPage,
+      componentProps: {
+        service
+      }
+    })
+    return await modal.present()
   }
 
   ngOnInit() {
