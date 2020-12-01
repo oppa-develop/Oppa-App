@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { ServicesPageRoutingModule } from './services-routing.module';
 
 import { ServicesPage } from './services.page';
+import { LoadingPipe } from 'src/app/pipes/loading/loading.pipe';
 
 @NgModule({
   imports: [
@@ -15,6 +16,6 @@ import { ServicesPage } from './services.page';
     IonicModule,
     ServicesPageRoutingModule
   ],
-  declarations: [ServicesPage]
+  declarations: [ServicesPage, LoadingPipe]
 })
 export class ServicesPageModule {}

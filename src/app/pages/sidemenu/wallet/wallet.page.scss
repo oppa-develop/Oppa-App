@@ -1,16 +1,14 @@
-ion-toolbar {
-  height: 40vh;
+ion-content.bicolor {
+  ion-toolbar {
+    height: 30vh;
+  }
 
-  ion-title{
+  ion-title {
     font-size: 3em;
   }
-}
 
-ion-card {
-  margin-top: -100px;
-  z-index: 99;
-}
-
-main {
-  overflow: visible;
+  ion-card {
+    margin-top: -12vh;
+    z-index: 99;
+  }
 }

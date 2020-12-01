@@ -19,7 +19,7 @@ import { LoadingPipe } from './pipes/loading/loading.pipe';
 registerLocaleData(es)
 
 @NgModule({
-  declarations: [AppComponent, LoadingPipe],
+  declarations: [AppComponent],
   entryComponents: [],
   imports: [
     BrowserModule,

@@ -3,6 +3,7 @@ import { Observable, of } from 'rxjs';
 import { MessageList } from 'src/app/models/message-list';
 import { Service } from 'src/app/models/service';
 import { User } from 'src/app/models/user';
+import { delay } from "rxjs/operators"; // solo para simular retardo en conexión
 
 import * as faker from 'faker/locale/es_MX'
 import * as timeago from 'timeago.js';
@@ -11,7 +12,7 @@ import * as timeago from 'timeago.js';
   providedIn: 'root'
 })
 export class ApiService {
-
+  
   constructor() { }
 
   login(email: string, password: string): Observable<User> {
@@ -19,7 +20,7 @@ export class ApiService {
       fullname: faker.name.findName(),
       age: faker.random.number(99),
       email: faker.internet.exampleEmail(),
-      avatar: faker.image.avatar(),
+      avatar: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
       role: 'apoderado',
       credit: parseInt(faker.finance.amount()) * 10,
       accountType: 'companion'
@@ -40,22 +41,22 @@ export class ApiService {
       { id: parseInt(faker.random.uuid()), type: 'Servicio de acompañamiento', name: 'pagos', description: faker.lorem.paragraph(), price: parseInt('11990'), img: '../../../../assets/images/resize_1590967555.jpg' },
       { id: parseInt(faker.random.uuid()), type: 'Servicio a Domicilio', name: 'curaciones', description: faker.lorem.paragraph(), price: parseInt('14990'), img: '../../../../assets/images/pexels-cottonbro-5721555.jpg' },
       { id: parseInt(faker.random.uuid()), type: 'Servicio de acompañamiento', name: 'compras', description: faker.lorem.paragraph(), price: parseInt('14990'), img: '../../../../assets/images/pexels-gustavo-fring-4173326.jpg' }
-    ])
+    ]).pipe(delay(5000));
   }
 
   getMessages(): Observable<MessageList[]> {
     return of([
-      { name: faker.name.findName(), img: faker.image.avatar(), service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
-      { name: faker.name.findName(), img: faker.image.avatar(), service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
-      { name: faker.name.findName(), img: faker.image.avatar(), service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
-      { name: faker.name.findName(), img: faker.image.avatar(), service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
-      { name: faker.name.findName(), img: faker.image.avatar(), service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
-      { name: faker.name.findName(), img: faker.image.avatar(), service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
-      { name: faker.name.findName(), img: faker.image.avatar(), service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
-      { name: faker.name.findName(), img: faker.image.avatar(), service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
-      { name: faker.name.findName(), img: faker.image.avatar(), service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
-      { name: faker.name.findName(), img: faker.image.avatar(), service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) }
-    ])
+      { name: faker.name.findName(), img: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`, service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
+      { name: faker.name.findName(), img: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`, service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
+      { name: faker.name.findName(), img: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`, service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
+      { name: faker.name.findName(), img: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`, service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
+      { name: faker.name.findName(), img: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`, service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
+      { name: faker.name.findName(), img: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`, service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
+      { name: faker.name.findName(), img: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`, service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
+      { name: faker.name.findName(), img: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`, service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
+      { name: faker.name.findName(), img: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`, service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
+      { name: faker.name.findName(), img: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`, service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) }
+    ]).pipe(delay(5000));
   }
 
   getServicesHistory(): Observable<Service[]> {
@@ -69,7 +70,7 @@ export class ApiService {
         price: parseInt('9990'),
         img: '../../../../assets/images/pexels-nick-demou-1319460.jpg',
         serverName: faker.name.findName(),
-        serverImg: faker.image.avatar(),
+        serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
         serverRating: faker.random.number(5)
       },
       {
@@ -81,7 +82,7 @@ export class ApiService {
         price: parseInt('9990'),
         img: '../../../../assets/images/1789259.jpg',
         serverName: faker.name.findName(),
-        serverImg: faker.image.avatar(),
+        serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
         serverRating: faker.random.number(5)
       },
       {
@@ -93,7 +94,7 @@ export class ApiService {
         price: parseInt('14990'),
         img: '../../../../assets/images/pexels-stephanie-allen-4085445.jpg',
         serverName: faker.name.findName(),
-        serverImg: faker.image.avatar(),
+        serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
         serverRating: faker.random.number(5)
       },
       {
@@ -105,11 +106,11 @@ export class ApiService {
         price: parseInt('14990'),
         img: '../../../../assets/images/pexels-eduardo-soares-5497951.jpg',
         serverName: faker.name.findName(),
-        serverImg: faker.image.avatar(),
+        serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
         serverRating: faker.random.number(5)
       },
 
-    ])
+    ]).pipe(delay(5000));
   }
 
 }

@@ -26,8 +26,13 @@
 @import "~@ionic/angular/css/flex-utils.css";
 
 
-ion-card *:not(ion-avatar) ion-img {
+ion-card > ion-img {
   height: 20vh;
   width: 100%;
   object-fit: cover;
+}
+
+ion-avatar {
+  height: 88px;
+  width: 88px;
 }

@@ -23,42 +23,73 @@
 
 <ion-content>
   
-  <ion-grid>
+  <ion-grid *ngIf="$services | loading | async as services">
     <ion-row>
 
       <!-- skeleton card for loading -->
-      <ion-col>
-        <ion-card button hidden>
-          <ion-skeleton-text animated class="ion-no-margin" style="width: 100%; height: 20vh;"></ion-skeleton-text>
-          <ion-card-header>
-            <ion-skeleton-text animated style="width: 25%"></ion-skeleton-text>
-            <ion-skeleton-text animated style="width: 55%"></ion-skeleton-text>
-          </ion-card-header>
-        </ion-card>
-      </ion-col>
+      <ng-template [ngIf]="services.loading">
+        <ion-col size="12">
+          <ion-card>
+            <ion-skeleton-text animated class="ion-no-margin" style="width: 100%; height: 20vh;"></ion-skeleton-text>
+            <ion-card-header>
+              <ion-skeleton-text animated style="width: 25%"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width: 55%"></ion-skeleton-text>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+        <ion-col size="12">
+          <ion-card>
+            <ion-skeleton-text animated class="ion-no-margin" style="width: 100%; height: 20vh;"></ion-skeleton-text>
+            <ion-card-header>
+              <ion-skeleton-text animated style="width: 25%"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width: 55%"></ion-skeleton-text>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+        <ion-col size="12">
+          <ion-card>
+            <ion-skeleton-text animated class="ion-no-margin" style="width: 100%; height: 20vh;"></ion-skeleton-text>
+            <ion-card-header>
+              <ion-skeleton-text animated style="width: 25%"></ion-skeleton-text>
+              <ion-skeleton-text animated style="width: 55%"></ion-skeleton-text>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+      </ng-template>
 
       <!-- services on lists of cards -->
-      <ion-col *ngFor="let service of $services | async" size="12">
-        <ion-card>
-          <ion-img [src]="service.img"></ion-img>
-          <ion-card-header>
-            <ion-grid class="ion-no-padding">
-              <ion-row class="ion-no-padding">
-                <ion-col>
-                  <ion-text color="dark">
-                    <p class="ion-no-margin"><strong>{{ service.name | titlecase }}</strong></p>
-                  </ion-text>
-                  <p class="ion-no-margin">Costo: ${{ service.price | number }}</p>
-                </ion-col>
-                <ion-col>
-                  <ion-button color="primary" class="ion-float-end">solicitar</ion-button>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-          </ion-card-header>
-        </ion-card>
-      </ion-col>
+      <ng-template [ngIf]="services.value">
+        <ion-col *ngFor="let service of services.value; let i = index" size="12">
+          <ion-card>
+            <ion-img [src]="service.img"></ion-img>
+            <ion-card-header>
+              <ion-grid class="ion-no-padding">
+                <ion-row class="ion-no-padding">
+                  <ion-col>
+                    <ion-text color="dark">
+                      <p class="ion-no-margin"><strong>{{ service.name | titlecase }}</strong></p>
+                    </ion-text>
+                    <p class="ion-no-margin">Costo: ${{ service.price | number }}</p>
+                  </ion-col>
+                  <ion-col>
+                    <ion-button color="primary" class="ion-float-end">solicitar</ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+      </ng-template>
 
+      <!-- no services -->
+      <ng-template [ngIf]="services.value?.length == 0">
+        <h1>no services</h1>
+      </ng-template>
+
+      <!-- error on get services -->
+      <ng-template [ngIf]="services.error">
+        <h1>Error</h1>
+      </ng-template>
     </ion-row>
   </ion-grid>
 
