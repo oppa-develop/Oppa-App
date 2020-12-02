@@ -1,8 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
+import { Observable } from 'rxjs';
 import { Service } from 'src/app/models/service';
 import { User } from 'src/app/models/user';
 import { AuthService } from 'src/app/providers/auth/auth.service';
+import { LocationService } from 'src/app/providers/location/location.service';
 
 @Component({
   selector: 'app-modal',
@@ -14,25 +17,66 @@ export class ModalPage implements OnInit {
   user: User
   minDate: string
   minHour: string
+  $regions: Observable<Location>
+  $districts: Observable<Location>
+  scheduleServiceForm: FormGroup
+
+  ActionSheetOptionsRegions = {
+    header: 'Regiones',
+    subHeader: 'Seleccione su región'
+  };
+  ActionSheetOptionsDistricts = {
+    header: 'Comunas',
+    subHeader: 'Seleccione su comuna'
+  };
+  ActionSheetOptionsElder = {
+    header: 'Adulto Mayor'
+  };
+  ActionSheetOptionsFlexibility = {
+    header: 'Flexibilidad Horaria',
+    subHeader: 'Tiempo variable del comienzo del servicio.'
+  };
 
   constructor(
     private modalController: ModalController,
-    private auth: AuthService
+    private auth: AuthService,
+    private location: LocationService,
+    private formBuilder: FormBuilder
   ) { }
 
   @Input() public service: Service
 
   ngOnInit() {
-    console.table(this.service)
+    this.scheduleServiceForm = this.createScheduleServiceForm()
+    this.$regions = this.location.getRegions()
     let date = new Date()
     this.minDate =  date.getFullYear() + '-' + ((date.getMonth().toString().length == 2) ? date.getMonth().toString():'0' + date.getMonth().toString()) + '-' + ((date.getDay().toString().length == 2) ? date.getDay().toString():'0' + date.getDay().toString())
     this.minHour =  date.getHours() + ':' + date.getMinutes()
-    console.log('minDate', this.minDate)
-    console.log('minHour', this.minHour)
+    this.user = this.auth.userData()
+    console.log(this.user)
   }
 
-  onViewWillEnter() {
-    this.user = this.auth.userData()
+  createScheduleServiceForm() {
+    return this.formBuilder.group({
+      date: [null, Validators.required],
+      hour: [null, Validators.required],
+      flexibility: [null, Validators.required],
+      elder: [null, Validators.required],
+      street: [null, Validators.required],
+      other: [null, Validators.required],
+      region: [null, Validators.required],
+      district: [null, Validators.required],
+    })
+  }
+
+  getDistrictsByRegion() {
+    console.log('Seleccionando comunas de la región', this.scheduleServiceForm.value.region);
+    
+    this.$districts = this.location.getDistrictsByRegion(this.scheduleServiceForm.value.region)
+  }
+
+  addLocation() {
+
   }
 
   async closeModal() {

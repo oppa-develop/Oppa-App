@@ -12,18 +12,55 @@ import * as timeago from 'timeago.js';
   providedIn: 'root'
 })
 export class ApiService {
-  
+
   constructor() { }
 
   login(email: string, password: string): Observable<User> {
     return of({
-      fullname: faker.name.findName(),
+      firstname: faker.name.firstName(),
+      lastname: faker.name.lastName(),
       age: faker.random.number(99),
       email: faker.internet.exampleEmail(),
       avatar: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
       role: 'apoderado',
-      credit: parseInt(faker.finance.amount()) * 10,
-      accountType: 'companion'
+      credit: parseInt(faker.finance.amount()) * 100,
+      accountType: 'companion',
+      elders: [
+        {
+          firstname: faker.name.firstName(),
+          lastname: faker.name.lastName(),
+          age: faker.random.number(99),
+          email: faker.internet.exampleEmail(),
+          avatar: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
+          role: 'apoderado',
+          credit: parseInt(faker.finance.amount()) * 10,
+          accountType: 'elder'
+        },
+        {
+          firstname: faker.name.firstName(),
+          lastname: faker.name.lastName(),
+          age: faker.random.number(99),
+          email: faker.internet.exampleEmail(),
+          avatar: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
+          role: 'apoderado',
+          credit: parseInt(faker.finance.amount()) * 10,
+          accountType: 'elder'
+        }
+      ],
+      locations: [
+        {
+          street: 'Av. Independencia #4123',
+          other: 'Dpto. 71B',
+          district: 'Conchalí',
+          region: 'Metropolitana de Santiago'
+        },
+        {
+          street: faker.address.streetName(),
+          other: faker.address.secondaryAddress(),
+          district: faker.address.city(),
+          region: faker.address.state()
+        }
+      ]
     })
   }
 
@@ -71,7 +108,7 @@ export class ApiService {
         img: '../../../../assets/images/pexels-nick-demou-1319460.jpg',
         serverName: faker.name.findName(),
         serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
-        serverRating: (faker.random.number(1)) ? faker.random.number(5):null,
+        serverRating: (faker.random.number(1)) ? faker.random.number(5) : null,
         state: 'En curso'
       },
       {
@@ -84,7 +121,7 @@ export class ApiService {
         img: '../../../../assets/images/1789259.jpg',
         serverName: faker.name.findName(),
         serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
-        serverRating: (faker.random.number(1)) ? faker.random.number(5):null,
+        serverRating: (faker.random.number(1)) ? faker.random.number(5) : null,
         state: 'Terminado'
       },
       {
@@ -97,7 +134,7 @@ export class ApiService {
         img: '../../../../assets/images/pexels-stephanie-allen-4085445.jpg',
         serverName: faker.name.findName(),
         serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
-        serverRating: (faker.random.number(1)) ? faker.random.number(5):null,
+        serverRating: (faker.random.number(1)) ? faker.random.number(5) : null,
         state: 'Cancelado'
       },
       {
@@ -110,7 +147,7 @@ export class ApiService {
         img: '../../../../assets/images/pexels-eduardo-soares-5497951.jpg',
         serverName: faker.name.findName(),
         serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
-        serverRating: (faker.random.number(1)) ? faker.random.number(5):null,
+        serverRating: (faker.random.number(1)) ? faker.random.number(5) : null,
         state: 'Terminado'
       },
 

@@ -43,7 +43,12 @@
               <ion-item class="ion-margin-bottom">
                 <ion-icon slot="start" name="person-outline"></ion-icon>
                 <ion-label position="floating">Nombre</ion-label>
-                <ion-input [formControl]="grandparent.get('fullname')" type="text" required></ion-input>
+                <ion-input [formControl]="grandparent.get('firstname')" type="text" required></ion-input>
+              </ion-item>
+              <ion-item class="ion-margin-bottom">
+                <ion-icon slot="start" name="person-outline"></ion-icon>
+                <ion-label position="floating">Apellido</ion-label>
+                <ion-input [formControl]="grandparent.get('lastname')" type="text" required></ion-input>
               </ion-item>
               <ion-item class="ion-margin-vertical">
                 <ion-icon slot="start" name="mail-outline"></ion-icon>
@@ -76,7 +81,12 @@
           <ion-item class="ion-margin-bottom">
             <ion-icon slot="start" name="person-outline"></ion-icon>
             <ion-label position="floating">Nombre</ion-label>
-            <ion-input formControlName="fullname" type="text" required></ion-input>
+            <ion-input formControlName="firstname" type="text" required></ion-input>
+          </ion-item>
+          <ion-item class="ion-margin-bottom">
+            <ion-icon slot="start" name="person-outline"></ion-icon>
+            <ion-label position="floating">Apellido</ion-label>
+            <ion-input formControlName="lastname" type="text" required></ion-input>
           </ion-item>
           <ion-item class="ion-margin-vertical">
             <ion-icon slot="start" name="mail-outline"></ion-icon>

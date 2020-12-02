@@ -1,6 +1,7 @@
 export interface User {
 
-  fullname: string
+  firstname: string
+  lastname: string
   email: string
   age: number
   password?: string
@@ -8,5 +9,7 @@ export interface User {
   avatar: string
   credit: number
   accountType: string
+  elders: any[],
+  locations: any[]
   
 }

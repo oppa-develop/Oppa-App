@@ -1,5 +1,5 @@
 ion-card {
-  margin-top: -12vh;
+  margin-top: 25vh;
   z-index: 99;
 }
 
@@ -9,13 +9,19 @@ ion-button.close-btn {
   --box-shadow: none;
   position: absolute;
   right: 10px;
+  z-index: 99;
 }
 
 .header-img {
   height: 37.5vh;
   object-fit: cover;
+  position: fixed;
 }
 
 ion-input {
   text-align: end;
+}
+
+ion-item ion-label {
+  white-space: normal;
 }

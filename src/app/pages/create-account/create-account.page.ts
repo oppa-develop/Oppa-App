@@ -26,7 +26,8 @@ export class CreateAccountPage implements OnInit {
 
   createCreateAccountForm() {
     return this.formBuilder.group({
-      fullname: ['', Validators.required],
+      firstname: ['', Validators.required],
+      lastname: ['', Validators.required],
       birthdate: ['', Validators.required],
       phone: ['', Validators.required],
       gender: ['', Validators.required],
@@ -44,7 +45,8 @@ export class CreateAccountPage implements OnInit {
 
   addGrandparent() {
     const grandparent = this.formBuilder.group({
-      fullname : ['', Validators.required],
+      firstname: ['', Validators.required],
+      lastname: ['', Validators.required],
       birthdate: ['', Validators.required],
       gender: ['', Validators.required]
     })
