@@ -6,6 +6,7 @@ import { Service } from 'src/app/models/service';
 import { User } from 'src/app/models/user';
 import { AuthService } from 'src/app/providers/auth/auth.service';
 import { LocationService } from 'src/app/providers/location/location.service';
+import * as dayjs from 'dayjs';
 
 @Component({
   selector: 'app-modal',
@@ -15,8 +16,8 @@ import { LocationService } from 'src/app/providers/location/location.service';
 export class ModalPage implements OnInit {
 
   user: User
-  minDate: string
-  minHour: string
+  minDate: string = dayjs().format('YYYY-MM-DD')
+  minHour: string = dayjs().format('HH:mm')
   $regions: Observable<Location>
   $districts: Observable<Location>
   scheduleServiceForm: FormGroup
@@ -49,9 +50,6 @@ export class ModalPage implements OnInit {
   ngOnInit() {
     this.scheduleServiceForm = this.createScheduleServiceForm()
     this.$regions = this.location.getRegions()
-    let date = new Date()
-    this.minDate =  date.getFullYear() + '-' + ((date.getMonth().toString().length == 2) ? date.getMonth().toString():'0' + date.getMonth().toString()) + '-' + ((date.getDay().toString().length == 2) ? date.getDay().toString():'0' + date.getDay().toString())
-    this.minHour =  date.getHours() + ':' + date.getMinutes()
     this.user = this.auth.userData()
     console.log(this.user)
   }
