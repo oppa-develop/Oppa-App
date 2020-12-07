@@ -19,7 +19,7 @@ export class AppComponent {
     private screenOrientation: ScreenOrientation
   ) {
     this.initializeApp();
-    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+    this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
   }
 
   initializeApp() {
