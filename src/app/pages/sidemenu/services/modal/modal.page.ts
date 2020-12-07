@@ -68,13 +68,18 @@ export class ModalPage implements OnInit {
   }
 
   getDistrictsByRegion() {
-    console.log('Seleccionando comunas de la región', this.scheduleServiceForm.value.region);
-    
+    console.log('Seleccionando comunas de la región', this.scheduleServiceForm.value.region)
     this.$districts = this.location.getDistrictsByRegion(this.scheduleServiceForm.value.region)
   }
 
   addLocation() {
 
+  }
+
+  setMinHour() {
+    console.assert(dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD') == dayjs().format('YYYY-MM-DD'))
+    this.minHour = (dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD') == dayjs().format('YYYY-MM-DD')) ? dayjs().format('HH:mm'):dayjs('2020-01-01').format('HH:mm')
+    console.log(this.minHour);
   }
 
   async closeModal() {

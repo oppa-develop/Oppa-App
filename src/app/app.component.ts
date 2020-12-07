@@ -18,7 +18,12 @@ export class AppComponent {
     private statusBar: StatusBar,
     private screenOrientation: ScreenOrientation
   ) {
+    this.setPortrait();
     this.initializeApp();
+  }
+
+  // set orientation to portrait
+  setPortrait(){
     this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
   }
 

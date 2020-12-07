@@ -33,6 +33,7 @@
                         monthShortNames="ene, feb, mar, abr, may, jun, jul, ago, sep, oct, nov, dic"
                         [min]="minDate"
                         formControlName="date"
+                        (ionChange)="setMinHour()"
                         required></ion-datetime>
         </ion-item>
         <ion-item>
