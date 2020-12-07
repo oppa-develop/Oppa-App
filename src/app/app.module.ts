@@ -17,6 +17,7 @@ import { registerLocaleData } from '@angular/common'
 import { ApiService } from './providers/api/api.service';
 import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
 import { LocationService } from './providers/location/location.service';
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 registerLocaleData(es)
 
 @NgModule({
@@ -31,6 +32,7 @@ registerLocaleData(es)
     FormsModule
   ],
   providers: [
+    ScreenOrientation,
     StatusBar,
     SplashScreen,
     { 

@@ -16,6 +16,18 @@ export class ServicesPage implements OnInit {
 
   $services: Observable<Service[]>
   user: User
+  slideOpts = {
+    slidesPerView: 1.28,
+    centeredSlides: true,
+    centeredSlidesBounds: true,
+    coverflowEffect: {
+      rotate: 50,
+      stretch: 0,
+      depth: 100,
+      modifier: 1,
+      slideShadows: true,
+    }
+  }
 
   constructor(
     private api: ApiService,

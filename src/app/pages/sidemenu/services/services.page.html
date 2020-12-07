@@ -28,8 +28,9 @@
 
       <!-- skeleton card for loading -->
       <ng-template [ngIf]="services.loading">
-        <ion-col size="12">
-          <ion-card>
+        <ion-skeleton-text class="ion-margin-start" animated style="width: 40%; height: 2vh; margin-left: 16px;"></ion-skeleton-text>
+        <ion-col size="9" class="ion-no-padding">
+          <ion-card style="margin-left: 16px; margin-right: -4px;">
             <ion-skeleton-text animated class="ion-no-margin" style="width: 100%; height: 20vh;"></ion-skeleton-text>
             <ion-card-header>
               <ion-skeleton-text animated style="width: 25%"></ion-skeleton-text>
@@ -37,8 +38,9 @@
             </ion-card-header>
           </ion-card>
         </ion-col>
-        <ion-col size="12">
-          <ion-card>
+        <ion-skeleton-text class="ion-margin-start" animated style="width: 40%; height: 2vh; margin-left: 16px;"></ion-skeleton-text>
+        <ion-col size="9" class="ion-no-padding">
+          <ion-card style="margin-left: 16px; margin-right: -4px;">
             <ion-skeleton-text animated class="ion-no-margin" style="width: 100%; height: 20vh;"></ion-skeleton-text>
             <ion-card-header>
               <ion-skeleton-text animated style="width: 25%"></ion-skeleton-text>
@@ -46,8 +48,9 @@
             </ion-card-header>
           </ion-card>
         </ion-col>
-        <ion-col size="12">
-          <ion-card>
+        <ion-skeleton-text class="ion-margin-start" animated style="width: 40%; height: 2vh; margin-left: 16px;"></ion-skeleton-text>
+        <ion-col size="9" class="ion-no-padding">
+          <ion-card style="margin-left: 16px; margin-right: -4px;">
             <ion-skeleton-text animated class="ion-no-margin" style="width: 100%; height: 20vh;"></ion-skeleton-text>
             <ion-card-header>
               <ion-skeleton-text animated style="width: 25%"></ion-skeleton-text>
@@ -59,26 +62,75 @@
 
       <!-- services on lists of cards -->
       <ng-template [ngIf]="services.value">
-        <ion-col *ngFor="let service of services.value; let i = index" size="12">
-          <ion-card>
-            <ion-img [src]="service.img"></ion-img>
-            <ion-card-header>
-              <ion-grid class="ion-no-padding">
-                <ion-row class="ion-no-padding">
-                  <ion-col>
-                    <ion-text color="dark">
-                      <p class="ion-no-margin"><strong>{{ service.name | titlecase }}</strong></p>
-                    </ion-text>
-                    <p class="ion-no-margin">Costo: ${{ service.price | number }}</p>
-                  </ion-col>
-                  <ion-col>
-                    <ion-button color="primary" class="ion-float-end" (click)=openModal(service)>solicitar</ion-button>
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </ion-card-header>
-          </ion-card>
-        </ion-col>
+        <h4 class="ion-margin-start">Servicios Frecuentes</h4>
+        <ion-slides [options]="slideOpts">
+          <ion-slide *ngFor="let service of services.value">
+            <ion-card>
+              <ion-img [src]="service.img"></ion-img>
+              <ion-card-header>
+                <ion-grid class="ion-no-padding">
+                  <ion-row class="ion-no-padding">
+                    <ion-col class="ion-text-justify">
+                      <ion-text color="dark">
+                        <p class="ion-no-margin"><strong>{{ service.name | titlecase }}</strong></p>
+                      </ion-text>
+                      <p class="ion-no-margin">Costo: ${{ service.price | number }}</p>
+                    </ion-col>
+                    <ion-col>
+                      <ion-button color="primary" class="ion-no-margin ion-float-end" (click)=openModal(service)>solicitar</ion-button>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </ion-card-header>
+            </ion-card>
+          </ion-slide>
+        </ion-slides>
+        <h4 class="ion-margin-start">Servicios a domicilio</h4>
+        <ion-slides [options]="slideOpts">
+          <ion-slide *ngFor="let service of services.value">
+            <ion-card>
+              <ion-img [src]="service.img"></ion-img>
+              <ion-card-header>
+                <ion-grid class="ion-no-padding">
+                  <ion-row class="ion-no-padding">
+                    <ion-col class="ion-text-justify">
+                      <ion-text color="dark">
+                        <p class="ion-no-margin"><strong>{{ service.name | titlecase }}</strong></p>
+                      </ion-text>
+                      <p class="ion-no-margin">Costo: ${{ service.price | number }}</p>
+                    </ion-col>
+                    <ion-col>
+                      <ion-button color="primary" class="ion-no-margin ion-float-end" (click)=openModal(service)>solicitar</ion-button>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </ion-card-header>
+            </ion-card>
+          </ion-slide>
+        </ion-slides>
+        <h4 class="ion-margin-start">Servicios de acompañamiento</h4>
+        <ion-slides [options]="slideOpts">
+          <ion-slide *ngFor="let service of services.value">
+            <ion-card>
+              <ion-img [src]="service.img"></ion-img>
+              <ion-card-header>
+                <ion-grid class="ion-no-padding">
+                  <ion-row class="ion-no-padding">
+                    <ion-col class="ion-text-justify">
+                      <ion-text color="dark">
+                        <p class="ion-no-margin"><strong>{{ service.name | titlecase }}</strong></p>
+                      </ion-text>
+                      <p class="ion-no-margin">Costo: ${{ service.price | number }}</p>
+                    </ion-col>
+                    <ion-col>
+                      <ion-button color="primary" class="ion-no-margin ion-float-end" (click)=openModal(service)>solicitar</ion-button>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </ion-card-header>
+            </ion-card>
+          </ion-slide>
+        </ion-slides>
       </ng-template>
 
       <!-- no services -->
