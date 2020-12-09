@@ -21,12 +21,12 @@ export class AppComponent {
     this.setPortrait();
     this.initializeApp();
   }
-
+  
   // set orientation to portrait
   setPortrait(){
     this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
   }
-
+  
   initializeApp() {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();

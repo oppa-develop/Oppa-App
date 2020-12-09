@@ -13,12 +13,13 @@ import { FormsModule } from '@angular/forms';
 
 // cambiando LOCALE_ID a español
 import es from '@angular/common/locales/es'
-import { registerLocaleData } from '@angular/common'
+registerLocaleData(es)
+
+import { DatePipe, registerLocaleData } from '@angular/common'
 import { ApiService } from './providers/api/api.service';
 import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
 import { LocationService } from './providers/location/location.service';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
-registerLocaleData(es)
 
 @NgModule({
   declarations: [AppComponent],
@@ -35,6 +36,7 @@ registerLocaleData(es)
     ScreenOrientation,
     StatusBar,
     SplashScreen,
+    DatePipe,
     { 
       provide: RouteReuseStrategy,
       useClass: IonicRouteStrategy,

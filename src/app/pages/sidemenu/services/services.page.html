@@ -73,7 +73,7 @@
         </ion-slides>
         <h4 class="ion-margin-start">Servicios a domicilio</h4>
         <ion-slides [options]="slideOpts">
-          <ion-slide *ngFor="let service of services.value">
+          <ion-slide [hidden]="service.type !== 'Servicio a Domicilio'" *ngFor="let service of services.value">
             <ion-card>
               <ion-img [src]="service.img"></ion-img>
               <ion-card-header>
@@ -96,7 +96,7 @@
         </ion-slides>
         <h4 class="ion-margin-start">Servicios de acompañamiento</h4>
         <ion-slides [options]="slideOpts">
-          <ion-slide *ngFor="let service of services.value">
+          <ion-slide [hidden]="service.type !== 'Servicio de acompañamiento'" *ngFor="let service of services.value">
             <ion-card>
               <ion-img [src]="service.img"></ion-img>
               <ion-card-header>
