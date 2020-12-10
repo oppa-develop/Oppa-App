@@ -1,15 +1,10 @@
-<!-- <ion-header>
-  <ion-toolbar color="secondary">
-  </ion-toolbar>
-</ion-header> -->
-
 <ion-content class="bicolor">
   <ion-button class="close-btn" (click)="closeModal()">
     <ion-icon size="large" slot="icon-only" name="close"></ion-icon>
   </ion-button>
   <ion-img class="header-img" [src]="service.img"></ion-img>
   <ion-card class="ion-margin-horizontal ion-padding-horizontal">
-    <form [formGroup]="scheduleServiceForm" ngNativeValidate>
+    <form [formGroup]="scheduleServiceForm" (ngSubmit)="scheduleService()" ngNativeValidate>
       <ion-list lines="none">
         <ion-list-header class="ion-no-padding">
           <ion-grid class="ion-no-padding">
@@ -33,8 +28,7 @@
                         monthShortNames="ene, feb, mar, abr, may, jun, jul, ago, sep, oct, nov, dic"
                         [min]="minDate"
                         formControlName="date"
-                        (ionChange)="setMinHour()"
-                        required></ion-datetime>
+                        (ionChange)="setMinHour()"></ion-datetime>
         </ion-item>
         <ion-item>
           <ion-icon name="time-outline" slot="start"></ion-icon>
@@ -49,13 +43,11 @@
         <ion-item>
           <ion-icon name="timer-outline" slot="start"></ion-icon>
           <ion-label>Flexibilidad Horaria</ion-label>
-          <ion-select required
-                      interface="action-sheet"
+          <ion-select interface="action-sheet"
                       [interfaceOptions]="ActionSheetOptionsFlexibility"
                       formControlName="flexibility"
                       placeholder="Seleccionar"
-                      cancelText="Cancelar"
-                      (ionChange)="getDistrictsByRegion()">
+                      cancelText="Cancelar">
             <ion-select-option>No</ion-select-option>
             <ion-select-option>± 30 min.</ion-select-option>
             <ion-select-option>± 1 hr.</ion-select-option>
@@ -64,22 +56,20 @@
         <ion-item>
           <ion-icon name="person-outline" slot="start"></ion-icon>
           <ion-label>Adulto Mayor</ion-label>
-          <ion-select required
-                      interface="action-sheet"
+          <ion-select interface="action-sheet"
                       [interfaceOptions]="ActionSheetOptionsElder"
                       placeholder="Seleccionar"
                       formControlName="elder"
-                      cancelText="Cancelar"
-                      (ionChange)="getDistrictsByRegion()">
+                      cancelText="Cancelar">
             <ion-select-option *ngFor="let elder of user?.elders">{{ elder.firstname + ' ' + elder.lastname }}</ion-select-option>
           </ion-select>
         </ion-item>
         <ion-list-header>
           <h3>Dirección</h3>
         </ion-list-header>
-        <ion-radio-group>
+        <ion-radio-group formControlName="address">
           <ion-item *ngFor="let location of user.locations" class="ion-text-wrap">
-            <ion-radio slot="start" [value]="location.street + ', ' + location.other  + ', ' + location.district + ', ' + location.region + '.'"></ion-radio>
+            <ion-radio slot="start" [value]="location.street + '|' + location.other  + '|' + location.district + '|' + location.region"></ion-radio>
             <ion-label>{{ location.street + ', ' + location.district + ', ' + location.region + '.' }}</ion-label>
           </ion-item>
         </ion-radio-group>
@@ -95,8 +85,7 @@
           </ion-item>
           <ion-item>
             <ion-label>Región</ion-label>
-            <ion-select required
-                        interface="action-sheet"
+            <ion-select interface="action-sheet"
                         [interfaceOptions]="ActionSheetOptionsRegions"
                         placeholder="Seleccionar"
                         formControlName="region"
@@ -107,8 +96,7 @@
           </ion-item>
           <ion-item>
             <ion-label>Comúna</ion-label>
-            <ion-select required
-                        [disabled]="(scheduleServiceForm.value.region === null)"
+            <ion-select [disabled]="(scheduleServiceForm.value.region === null)"
                         interface="action-sheet"
                         [interfaceOptions]="ActionSheetOptionsDistricts"
                         placeholder="Seleccionar"
@@ -128,15 +116,11 @@
           </ion-item>
           <ion-item class="ion-text-wrap">
             <ion-radio slot="start" value="credit-card"></ion-radio>
-            <ion-label>Tajeta de Crédito (webpay)</ion-label>
-          </ion-item>
-          <ion-item class="ion-text-wrap">
-            <ion-radio slot="start" value="debit-card"></ion-radio>
-            <ion-label>Tajeta de Débito (webpay)</ion-label>
+            <ion-label>Tajeta de Crédito/Débito (webpay)</ion-label>
           </ion-item>
         </ion-radio-group>
         <ion-button class="ion-padding-horizontal" expand="block" color="light" (click)="closeModal()">cancelar</ion-button>
-        <ion-button class="ion-padding-horizontal" expand="block" color="primary">solicitar</ion-button>
+        <ion-button class="ion-padding-horizontal" expand="block" color="primary" type="submit">solicitar</ion-button>
       </ion-list>
     </form>
   </ion-card>

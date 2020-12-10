@@ -6,7 +6,11 @@ import { Service } from 'src/app/models/service';
 import { User } from 'src/app/models/user';
 import { AuthService } from 'src/app/providers/auth/auth.service';
 import { LocationService } from 'src/app/providers/location/location.service';
+import { LoadingController } from '@ionic/angular';
 import * as dayjs from 'dayjs';
+import { AlertController } from '@ionic/angular';
+import { ApiService } from 'src/app/providers/api/api.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-modal',
@@ -42,7 +46,11 @@ export class ModalPage implements OnInit {
     private modalController: ModalController,
     private auth: AuthService,
     private location: LocationService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private loadingController: LoadingController,
+    private api: ApiService,
+    private alertController: AlertController,
+    private dateFormat: DatePipe
   ) { }
 
   @Input() public service: Service
@@ -51,7 +59,6 @@ export class ModalPage implements OnInit {
     this.scheduleServiceForm = this.createScheduleServiceForm()
     this.$regions = this.location.getRegions()
     this.user = this.auth.userData()
-    console.log(this.user)
   }
 
   createScheduleServiceForm() {
@@ -60,10 +67,11 @@ export class ModalPage implements OnInit {
       hour: [null, Validators.required],
       flexibility: [null, Validators.required],
       elder: [null, Validators.required],
-      street: [null, Validators.required],
+      address: [null, Validators.required],
+      /* street: [null, Validators.required],
       other: [null, Validators.required],
       region: [null, Validators.required],
-      district: [null, Validators.required],
+      district: [null, Validators.required] */
     })
   }
 
@@ -77,11 +85,57 @@ export class ModalPage implements OnInit {
   }
 
   setMinHour() {
-    this.minHour = (dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD') == dayjs().format('YYYY-MM-DD')) ? dayjs().format('HH:mm'):dayjs('2020-01-01').format('HH:mm')
+    this.minHour = (dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD') == dayjs().format('YYYY-MM-DD')) ? dayjs().format('HH:mm') : dayjs('2020-01-01').format('HH:mm')
   }
 
   async closeModal() {
     await this.modalController.dismiss()
+  }
+
+  async scheduleService() {
+    console.log(this.scheduleServiceForm.valid)
+    if (this.scheduleServiceForm.valid) {
+      const loading = await this.loadingController.create({
+        message: 'Solicitando servicio...'
+      });
+      await loading.present();
+
+      this.api.scheduleService(this.scheduleServiceForm.value).toPromise()
+        .then((data: any) => {
+          console.log('then', data)
+          loading.dismiss()
+          this.presentAlert(data)
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    } else {
+      
+    }
+  }
+
+  async presentAlert(provider) {
+    const alert = await this.alertController.create({
+      header: 'Agendar Servicio',
+      message: `Tu servicio será agendado con ${provider.serverName} para el próximo ${this.dateFormat.transform(dayjs(this.scheduleServiceForm.value.date).format('DD-MM-YYYY'), 'fullDate')} a las ${dayjs(this.scheduleServiceForm.value.hour).format('HH:mm')} horas.`,
+      buttons: [{
+        text: 'Cancelar',
+        role: 'cancel',
+        handler: () => {
+          console.log('Agendar servicio cancelado');
+        }
+      }, {
+        text: 'Agendar',
+        handler: () => {
+          console.log('Agendando servicio');
+          alert.onDidDismiss().then(() => {
+            this.closeModal()
+          })
+        }
+      }]
+    });
+
+    await alert.present();
   }
 
 }

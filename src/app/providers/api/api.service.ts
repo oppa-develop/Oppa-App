@@ -49,9 +49,9 @@ export class ApiService {
       ],
       locations: [
         {
-          street: 'Av. Independencia #4123',
-          other: 'Dpto. 71B',
-          district: 'Conchalí',
+          street: 'Av. Recoleta #2121',
+          other: 'Dpto. 605B',
+          district: 'Recoleta',
           region: 'Metropolitana de Santiago'
         },
         {
