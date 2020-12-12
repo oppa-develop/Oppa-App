@@ -34,6 +34,10 @@ const routes: Routes = [
       {
         path: 'wallet',
         loadChildren: () => import('./wallet/wallet.module').then( m => m.WalletPageModule)
+      },
+      {
+        path: 'account',
+        loadChildren: () => import('./account/account.module').then( m => m.AccountPageModule)
       }
     ]
   },
@@ -42,6 +46,7 @@ const routes: Routes = [
     redirectTo: '/sidemenu/services',
     pathMatch: 'full'
   }
+
 ];
 
 @NgModule({

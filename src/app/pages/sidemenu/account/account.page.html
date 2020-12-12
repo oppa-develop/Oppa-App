@@ -1,0 +1,68 @@
+<ion-content class="bicolor">
+  <ion-header>
+    <ion-toolbar color="secondary">
+      <ion-menu-button slot="start"></ion-menu-button>
+    </ion-toolbar>
+  </ion-header>
+  <ion-toolbar color="secondary">
+    <ion-grid>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-avatar>
+            <ion-img [src]="user.avatar"></ion-img>
+          </ion-avatar>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <br>
+  </ion-toolbar>
+  <form [formGroup]="userDataForm" ngNativeValidate>
+    <ion-card class="ion-margin-horizontal ion-padding-horizontal">
+      <ion-list lines="none">
+        <ion-list-header class="ion-text-center ion-no-padding">
+          <ion-title color="secondary">Datos de Usuario</ion-title>
+        </ion-list-header>
+        <ion-item class="ion-margin-vertical">
+          <ion-icon slot="start" name="person-outline"></ion-icon>
+          <ion-label position="floating">Nombre</ion-label>
+          <ion-input formControlName="firstname" type="text" required></ion-input>
+        </ion-item>
+        <ion-item class="ion-margin-vertical">
+          <ion-icon slot="start" name="person-outline"></ion-icon>
+          <ion-label position="floating">Apellido</ion-label>
+          <ion-input formControlName="lastname" type="text" required></ion-input>
+        </ion-item>
+        <ion-item class="ion-margin-vertical">
+          <ion-icon slot="start" name="mail-outline"></ion-icon>
+          <ion-label position="floating">Email</ion-label>
+          <ion-input formControlName="email" type="email" required></ion-input>
+        </ion-item>
+        <ion-item class="ion-margin-vertical">
+          <ion-icon slot="start" name="calendar-outline"></ion-icon>
+          <ion-label position="floating">Fecha de Nacimiento</ion-label>
+          <ion-input formControlName="birthdate" type="text" required></ion-input>
+        </ion-item>
+      </ion-list>
+      <ion-button expand="block" color="primary" class="ion-margin-bottom">Actualizar Datos</ion-button>
+    </ion-card>
+  </form>
+  <form>
+    <ion-card class="ion-margin-horizontal ion-padding-horizontal">
+      <ion-list lines="none">
+        <ion-list-header class="ion-text-center">
+          <h2><ion-label color="secondary">Usuarios Apadrinados</ion-label></h2>
+        </ion-list-header>
+        <ion-item *ngFor="let elder of user.elders">
+          <ion-avatar slot="start">
+            <ion-img [src]="elder.avatar"></ion-img>
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ elder.firstname + ' ' + elder.lastname }}</h2>
+            <h2> <ion-icon name="wallet-outline"></ion-icon> ${{ elder.credit | number }} </h2>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+      <ion-button expand="block" color="primary" class="ion-margin-bottom">Agregar Usuario</ion-button>
+    </ion-card>
+  </form>
+</ion-content>

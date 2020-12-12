@@ -4,18 +4,18 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { SidemenuPageRoutingModule } from './sidemenu-routing.module';
+import { AccountPageRoutingModule } from './account-routing.module';
 
-import { SidemenuPage } from './sidemenu.page';
+import { AccountPage } from './account.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    SidemenuPageRoutingModule,
+    AccountPageRoutingModule,
     ReactiveFormsModule
   ],
-  declarations: [SidemenuPage]
+  declarations: [AccountPage]
 })
-export class SidemenuPageModule {}
+export class AccountPageModule {}
