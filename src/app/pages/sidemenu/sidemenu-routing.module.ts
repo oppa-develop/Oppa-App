@@ -24,10 +24,6 @@ const routes: Routes = [
         loadChildren: () => import('./history/history.module').then( m => m.RatingsPageModule)
       },
       {
-        path: 'preferences',
-        loadChildren: () => import('./preferences/preferences.module').then( m => m.PreferencesPageModule)
-      },
-      {
         path: 'help',
         loadChildren: () => import('./help/help.module').then( m => m.HelpPageModule)
       },
