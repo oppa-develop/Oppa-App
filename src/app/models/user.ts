@@ -3,13 +3,13 @@ export interface User {
   firstname: string
   lastname: string
   email?: string
-  birthdate: number
+  birthdate: Date
   password?: string
   role: string
   avatar: string
   credit: number
   accountType: string
   elders: any[],
-  locations: any[]
+  location?: any
   
 }
