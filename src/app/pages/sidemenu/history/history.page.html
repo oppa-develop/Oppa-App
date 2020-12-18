@@ -1,0 +1,125 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Historial de Servicios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row *ngIf="$services | loading | async as services">
+      
+      <!-- skeleton loading -->
+      <ng-template [ngIf]="services.loading">
+        <ion-col size="12">
+          <ion-card>
+            <ion-skeleton-text animated style="height: 30vh;"></ion-skeleton-text>
+            <ion-avatar>
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-avatar>
+            <br><br>
+            <ion-card-header>
+              <ion-list lines="none" class="ion-no-padding">
+                <ion-item>
+                  <ion-skeleton-text animated style="height: 30px; width: 85%;"></ion-skeleton-text>
+                </ion-item>
+                <ion-item>
+                  <ion-skeleton-text animated style="height: 20px; width: 30%;"></ion-skeleton-text>
+                </ion-item>
+                <ion-item>
+                  <ion-skeleton-text animated style="width: 70%; text-align: right;"></ion-skeleton-text>
+                </ion-item>
+                <ion-item>
+                  <ion-skeleton-text animated style="width: 60%; text-align: right;"></ion-skeleton-text>
+                </ion-item>
+                <ion-skeleton-text animated style="height: 40px; margin: 0 15px; width: 91%;"></ion-skeleton-text>
+              </ion-list>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+        <ion-col size="12">
+          <ion-card>
+            <ion-skeleton-text animated style="height: 30vh;"></ion-skeleton-text>
+            <ion-avatar>
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-avatar>
+            <br><br>
+            <ion-card-header>
+              <ion-list lines="none" class="ion-no-padding">
+                <ion-item>
+                  <ion-skeleton-text animated style="height: 30px; width: 85%;"></ion-skeleton-text>
+                </ion-item>
+                <ion-item>
+                  <ion-skeleton-text animated style="height: 20px; width: 30%;"></ion-skeleton-text>
+                </ion-item>
+                <ion-item>
+                  <ion-skeleton-text animated style="width: 70%; text-align: right;"></ion-skeleton-text>
+                </ion-item>
+                <ion-item>
+                  <ion-skeleton-text animated style="width: 60%; text-align: right;"></ion-skeleton-text>
+                </ion-item>
+                <ion-skeleton-text animated style="height: 40px; margin: 0 15px; width: 91%;"></ion-skeleton-text>
+              </ion-list>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+      </ng-template>
+
+      <!-- list of cards -->
+      <ng-template [ngIf]="services.value">
+        <ion-col *ngFor="let service of services.value" size="12">
+          <ion-card>
+            <ion-img [src]="service.img"></ion-img>
+            <ion-avatar>
+              <ion-img [src]="service.serverImg"></ion-img>
+            </ion-avatar>
+            <ion-chip class="state">
+              <ion-text color="dark">{{ service.state }}</ion-text>
+            </ion-chip>
+            <br><br>
+            <ion-card-header>
+              <ion-list lines="none" class="ion-no-padding">
+                <ion-item>
+                  <ion-title class="ion-no-padding">
+                    <ion-label>{{ service.serverName }}</ion-label>
+                    <div *ngIf="service.state === 'Terminado' && service.serverRating > 0">
+                      <ion-icon *ngIf="service.serverRating > 0 && service.state" color="secondary" name="star"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating > 1 && service.state" color="secondary" name="star"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating > 2 && service.state" color="secondary" name="star"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating > 3 && service.state" color="secondary" name="star"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating > 4 && service.state" color="secondary" name="star"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating < 5 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating < 4 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating < 3 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating < 2 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating < 1 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
+                    </div>
+                  </ion-title>
+                </ion-item>
+                <ion-item>
+                  <ion-icon slot="start" name="storefront-outline"></ion-icon>
+                  <ion-label *ngIf="service.type === 'Servicio de acompañamiento'">Acompañamiento a {{ service.name | lowercase }}</ion-label>
+                  <ion-label *ngIf="service.type === 'Servicio a Domicilio'">{{ service.name | titlecase }} a domicilio</ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon slot="start" name="calendar-outline"></ion-icon>
+                  <ion-label>{{ service.date | date:'longDate' }}</ion-label>
+                </ion-item>
+                <ion-button *ngIf="service.state === 'Terminado' && service.serverRating < 1" class="ion-padding-horizontal" expand="block" color="primary" (click)="rank(service)">calificar</ion-button>
+                <ion-button *ngIf="(service.state === 'Terminado' && service.serverRating !== 0) || service.state !== 'Terminado'" class="ion-padding-horizontal" expand="block" color="primary" (click)="openModal(service)">ver detalle</ion-button>
+              </ion-list>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+      </ng-template>
+
+      <!-- error -->
+      <ng-template [ngIf]="services.error">
+        <h1>error</h1>
+      </ng-template>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

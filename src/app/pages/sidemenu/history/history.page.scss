@@ -1,0 +1,18 @@
+ion-card > ion-img {
+  object-fit: cover;
+  height: 30vh;
+}
+
+ion-avatar {
+  position: absolute;
+  top: 170px;
+  left: 30px;
+  width: 90px;
+  height: 90px;
+}
+
+.state {
+  position: absolute;
+  right: 30px;
+  top: 31.7vh;
+}

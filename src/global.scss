@@ -24,3 +24,15 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+
+
+ion-card > ion-img {
+  height: 20vh;
+  width: 100%;
+  object-fit: cover;
+}
+
+ion-avatar {
+  height: 88px;
+  width: 88px;
+}
