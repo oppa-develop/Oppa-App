@@ -11,12 +11,17 @@
         <ion-col class="ion-text-center">
           <ion-title>
             <ion-icon name="wallet-outline"></ion-icon>
-            <span class="text">${{ '20000' | number }}</span>
+            <span class="text">${{ userSelected.credit | number }}</span>
           </ion-title>
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col class="ion-text-center">
+        <ion-col class="ion-text-center ion-no-padding ion-padding-horizontal">
+          <ion-button (click)="changeUserSelected()" shape="round" size="small" color="light"><ion-text color="dark">{{ userSelected.firstname + ' ' + userSelected.lastname }} <ion-icon name="caret-down-outline"></ion-icon></ion-text></ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="ion-text-center ion-no-padding ion-padding-horizontal">
           <ion-button shape="round" size="small" color="success"><ion-text color="dark">Abonar</ion-text></ion-button>
         </ion-col>
       </ion-row>
