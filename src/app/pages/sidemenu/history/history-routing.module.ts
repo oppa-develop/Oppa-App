@@ -7,7 +7,12 @@ const routes: Routes = [
   {
     path: '',
     component: HistoryPage
+  },
+  {
+    path: 'update-modal',
+    loadChildren: () => import('./update-modal/update-modal.module').then( m => m.UpdateModalPageModule)
   }
+
 ];
 
 @NgModule({

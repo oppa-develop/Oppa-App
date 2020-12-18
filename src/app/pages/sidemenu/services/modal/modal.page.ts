@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { Service } from 'src/app/models/service';
 import { User } from 'src/app/models/user';
@@ -11,6 +11,7 @@ import * as dayjs from 'dayjs';
 import { AlertController } from '@ionic/angular';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { DatePipe } from '@angular/common';
+import { PaymentService } from 'src/app/providers/payment/payment.service';
 
 @Component({
   selector: 'app-modal',
@@ -25,6 +26,7 @@ export class ModalPage implements OnInit {
   $regions: Observable<Location>
   $districts: Observable<Location>
   scheduleServiceForm: FormGroup
+  elderSelected: User
 
   ActionSheetOptionsRegions = {
     header: 'Regiones',
@@ -50,10 +52,20 @@ export class ModalPage implements OnInit {
     private loadingController: LoadingController,
     private api: ApiService,
     private alertController: AlertController,
-    private dateFormat: DatePipe
+    private dateFormat: DatePipe,
+    private toastCtrl: ToastController
   ) { }
 
   @Input() public service: Service
+
+  async presentToast(message: string, color: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2000,
+      color
+    });
+    toast.present();
+  }
 
   ngOnInit() {
     this.scheduleServiceForm = this.createScheduleServiceForm()
@@ -66,13 +78,14 @@ export class ModalPage implements OnInit {
       date: [null, Validators.required],
       hour: [null, Validators.required],
       flexibility: [null, Validators.required],
-      elder: [null, Validators.required],
-      address: [null, Validators.required],
-      /* street: [null, Validators.required],
-      other: [null, Validators.required],
-      region: [null, Validators.required],
-      district: [null, Validators.required] */
+      receptor: [null, Validators.required],
+      address: [null, Validators.required]
     })
+  }
+
+  selectReceptor() {
+    console.log(this.scheduleServiceForm.value.receptor);
+    
   }
 
   getDistrictsByRegion() {
@@ -110,14 +123,14 @@ export class ModalPage implements OnInit {
           console.log(err);
         })
     } else {
-      
+      this.presentToast('Formulario incompleto.', 'danger')
     }
   }
 
   async presentAlert(provider) {
     const alert = await this.alertController.create({
       header: 'Agendar Servicio',
-      message: `Tu servicio será agendado con ${provider.serverName} para el próximo ${this.dateFormat.transform(dayjs(this.scheduleServiceForm.value.date).format('DD-MM-YYYY'), 'fullDate')} a las ${dayjs(this.scheduleServiceForm.value.hour).format('HH:mm')} horas.`,
+      message: `Tu servicio será agendado con ${provider.serverName} para el próximo ${this.dateFormat.transform(dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD'), 'fullDate')} a las ${dayjs(this.scheduleServiceForm.value.hour).format('HH:mm')} horas.`,
       buttons: [{
         text: 'Cancelar',
         role: 'cancel',
@@ -129,6 +142,7 @@ export class ModalPage implements OnInit {
         handler: () => {
           console.log('Agendando servicio');
           alert.onDidDismiss().then(() => {
+            this.presentToast('Servicio agendado', null)
             this.closeModal()
           })
         }

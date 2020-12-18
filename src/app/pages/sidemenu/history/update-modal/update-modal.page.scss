@@ -1,0 +1,27 @@
+ion-card {
+  margin-top: 25vh;
+  z-index: 99;
+}
+
+ion-button.close-btn {
+  --background: transparent;
+  --ion-color-base: transparent !important;
+  --box-shadow: none;
+  position: absolute;
+  right: 10px;
+  z-index: 99;
+}
+
+.header-img {
+  height: 37.5vh;
+  object-fit: cover;
+  position: fixed;
+}
+
+ion-input {
+  text-align: end;
+}
+
+ion-item ion-label {
+  white-space: normal;
+}

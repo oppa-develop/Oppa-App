@@ -17,9 +17,10 @@ registerLocaleData(es)
 
 import { DatePipe, registerLocaleData } from '@angular/common'
 import { ApiService } from './providers/api/api.service';
-import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
+import { HttpClientJsonpModule, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LocationService } from './providers/location/location.service';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [AppComponent],
@@ -37,6 +38,11 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
     StatusBar,
     SplashScreen,
     DatePipe,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi:true,
+    },
     { 
       provide: RouteReuseStrategy,
       useClass: IonicRouteStrategy,

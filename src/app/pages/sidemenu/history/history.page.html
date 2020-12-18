@@ -84,16 +84,18 @@
                 <ion-item>
                   <ion-title class="ion-no-padding">
                     <ion-label>{{ service.serverName }}</ion-label>
-                    <ion-icon color="secondary" *ngIf="service.serverRating > 0" name="star"></ion-icon>
-                    <ion-icon color="secondary" *ngIf="service.serverRating > 1" name="star"></ion-icon>
-                    <ion-icon color="secondary" *ngIf="service.serverRating > 2" name="star"></ion-icon>
-                    <ion-icon color="secondary" *ngIf="service.serverRating > 3" name="star"></ion-icon>
-                    <ion-icon color="secondary" *ngIf="service.serverRating > 4" name="star"></ion-icon>
-                    <ion-icon *ngIf="service.serverRating < 5 || service.serverRating == undefined" name="star-outline"></ion-icon>
-                    <ion-icon *ngIf="service.serverRating < 4 || service.serverRating == undefined" name="star-outline"></ion-icon>
-                    <ion-icon *ngIf="service.serverRating < 3 || service.serverRating == undefined" name="star-outline"></ion-icon>
-                    <ion-icon *ngIf="service.serverRating < 2 || service.serverRating == undefined" name="star-outline"></ion-icon>
-                    <ion-icon *ngIf="service.serverRating < 1 || service.serverRating == undefined" name="star-outline"></ion-icon>
+                    <div *ngIf="service.state === 'Terminado' && service.serverRating > 0">
+                      <ion-icon *ngIf="service.serverRating > 0 && service.state" color="secondary" name="star"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating > 1 && service.state" color="secondary" name="star"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating > 2 && service.state" color="secondary" name="star"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating > 3 && service.state" color="secondary" name="star"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating > 4 && service.state" color="secondary" name="star"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating < 5 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating < 4 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating < 3 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating < 2 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
+                      <ion-icon *ngIf="service.serverRating < 1 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
+                    </div>
                   </ion-title>
                 </ion-item>
                 <ion-item>
@@ -105,8 +107,8 @@
                   <ion-icon slot="start" name="calendar-outline"></ion-icon>
                   <ion-label>{{ service.date | date:'longDate' }}</ion-label>
                 </ion-item>
-                <ion-button class="ion-padding-horizontal" expand="block" *ngIf="!service.serverRating" color="primary">calificar</ion-button>
-                <ion-button class="ion-padding-horizontal" expand="block" *ngIf="service.serverRating" color="primary">ver detalle</ion-button>
+                <ion-button *ngIf="service.state === 'Terminado' && service.serverRating < 1" class="ion-padding-horizontal" expand="block" color="primary" (click)="rank(service)">calificar</ion-button>
+                <ion-button *ngIf="(service.state === 'Terminado' && service.serverRating !== 0) || service.state !== 'Terminado'" class="ion-padding-horizontal" expand="block" color="primary" (click)="openModal(service)">ver detalle</ion-button>
               </ion-list>
             </ion-card-header>
           </ion-card>

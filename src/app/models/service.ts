@@ -10,5 +10,7 @@ export interface Service {
   serverName?: string
   serverRating?: number 
   serverImg?: string
+  date?: string
+  state?: string
 
 }

@@ -10,6 +10,7 @@ export interface User {
   credit: number
   accountType: string
   elders: any[],
-  location?: any
+  location?: any,
+  token?: string
   
 }
