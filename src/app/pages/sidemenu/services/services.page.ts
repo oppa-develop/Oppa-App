@@ -6,6 +6,7 @@ import { ApiService } from 'src/app/providers/api/api.service';
 import { AuthService } from 'src/app/providers/auth/auth.service';
 import { ActionSheetController, ModalController } from '@ionic/angular';
 import { ModalPage } from './modal/modal.page';
+import { SeeAllPage } from './see-all/see-all.page';
 
 @Component({
   selector: 'app-services',

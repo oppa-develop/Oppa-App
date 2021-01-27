@@ -7,9 +7,14 @@ const routes: Routes = [
   {
     path: '',
     component: ServicesPage
-  },  {
+  },
+  {
     path: 'modal',
     loadChildren: () => import('./modal/modal.module').then( m => m.ModalPageModule)
+  },
+  {
+    path: 'see-all/:serviceType',
+    loadChildren: () => import('./see-all/see-all.module').then( m => m.SeeAllPageModule)
   }
 
 ];
