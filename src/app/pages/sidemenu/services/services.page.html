@@ -13,57 +13,36 @@
     <ion-row>
 
       <!-- skeleton card for loading -->
-      <ng-template [ngIf]="services.loading">
-        <ion-skeleton-text class="ion-margin-start" animated style="width: 40%; height: 2vh; margin-left: 16px;"></ion-skeleton-text>
-        <ion-col size="9" class="ion-no-padding">
-          <ion-card style="margin-left: 16px; margin-right: -4px;">
-            <ion-skeleton-text animated class="ion-no-margin" style="width: 100%; height: 20vh;"></ion-skeleton-text>
-            <ion-card-header>
-              <ion-skeleton-text animated style="width: 25%"></ion-skeleton-text>
-              <ion-skeleton-text animated style="width: 55%"></ion-skeleton-text>
-            </ion-card-header>
-          </ion-card>
+      <ng-template [ngIf]="services.loading" *ngFor="let i of [1,2,3]">
+        <ion-col size="12">
+          <ion-skeleton-text class="ion-margin-start ion-margin-top" animated style="width: 40%; height: 2vh; margin-left: 16px;"></ion-skeleton-text>
         </ion-col>
-        <ion-skeleton-text class="ion-margin-start" animated style="width: 40%; height: 2vh; margin-left: 16px;">
-        </ion-skeleton-text>
-        <ion-col size="9" class="ion-no-padding">
-          <ion-card style="margin-left: 16px; margin-right: -4px;">
-            <ion-skeleton-text animated class="ion-no-margin" style="width: 100%; height: 20vh;"></ion-skeleton-text>
-            <ion-card-header>
-              <ion-skeleton-text animated style="width: 25%"></ion-skeleton-text>
-              <ion-skeleton-text animated style="width: 55%"></ion-skeleton-text>
-            </ion-card-header>
-          </ion-card>
-        </ion-col>
-        <ion-skeleton-text class="ion-margin-start" animated style="width: 40%; height: 2vh; margin-left: 16px;">
-        </ion-skeleton-text>
-        <ion-col size="9" class="ion-no-padding">
-          <ion-card style="margin-left: 16px; margin-right: -4px;">
-            <ion-skeleton-text animated class="ion-no-margin" style="width: 100%; height: 20vh;"></ion-skeleton-text>
-            <ion-card-header>
-              <ion-skeleton-text animated style="width: 25%"></ion-skeleton-text>
-              <ion-skeleton-text animated style="width: 55%"></ion-skeleton-text>
-            </ion-card-header>
-          </ion-card>
-        </ion-col>
+        <ion-slides [options]="slideOpts">
+          <ion-slide *ngFor="let i of [1,2]">
+            <ion-card>
+              <ion-skeleton-text animated class="ion-no-margin" style="width: 400px; height: 20vh;"></ion-skeleton-text>
+              <ion-card-header>
+                <ion-skeleton-text animated style="width: 25%"></ion-skeleton-text>
+                <ion-skeleton-text animated style="width: 55%"></ion-skeleton-text>
+                <ion-skeleton-text class="ion-margin-top" animated style="width: 100%; height: 5vh;"></ion-skeleton-text>
+              </ion-card-header>
+            </ion-card>
+          </ion-slide>
+        </ion-slides>
       </ng-template>
 
       <!-- services on lists of cards -->
       <ng-template [ngIf]="services.value">
-        <ion-grid>
-          <ion-row>
-            <ion-col size="9">
-              <ion-text>
-                <h4 class="ion-no-margin ion-margin-start ion-margin-top"><strong>Servicios Frecuentes</strong></h4>
-              </ion-text>
-            </ion-col>
-            <ion-col>
-              <ion-chip class="ion-no-margin ion-float-right" routerLink="see-all/Servicios Frecuentes">
-                <ion-label color="secondary">Ver todos</ion-label>
-              </ion-chip>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
+        <ion-col size="9">
+          <ion-text>
+            <h4 class="ion-no-margin ion-margin-start ion-margin-top"><strong>Servicios Frecuentes</strong></h4>
+          </ion-text>
+        </ion-col>
+        <ion-col>
+          <ion-chip class="ion-no-margin ion-float-right" routerLink="see-all/Servicios Frecuentes">
+            <ion-label color="secondary">Ver todos</ion-label>
+          </ion-chip>
+        </ion-col>
         <ion-slides [options]="slideOpts">
           <ion-slide *ngFor="let service of services.value">
             <ion-card>
@@ -87,20 +66,16 @@
             </ion-card>
           </ion-slide>
         </ion-slides>
-        <ion-grid>
-          <ion-row>
-            <ion-col size="9">
-              <ion-text>
-                <h4 class="ion-no-margin ion-margin-start ion-margin-top"><strong>Servicios a domicilio</strong></h4>
-              </ion-text>
-            </ion-col>
-            <ion-col>
-              <ion-chip class="ion-no-margin ion-float-right" routerLink="see-all/Servicios a domicilio">
-                <ion-label color="secondary">Ver todos</ion-label>
-              </ion-chip>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
+        <ion-col size="9">
+          <ion-text>
+            <h4 class="ion-no-margin ion-margin-start ion-margin-top"><strong>Servicios a domicilio</strong></h4>
+          </ion-text>
+        </ion-col>
+        <ion-col>
+          <ion-chip class="ion-no-margin ion-float-right" routerLink="see-all/Servicios a domicilio">
+            <ion-label color="secondary">Ver todos</ion-label>
+          </ion-chip>
+        </ion-col>
         <ion-slides [options]="slideOpts">
           <ion-slide [hidden]="service.type !== 'Servicio a Domicilio'" *ngFor="let service of services.value">
             <ion-card>
@@ -124,20 +99,16 @@
             </ion-card>
           </ion-slide>
         </ion-slides>
-        <ion-grid>
-          <ion-row>
-            <ion-col size="9">
-              <ion-text>
-                <h4 class="ion-no-margin ion-margin-start ion-margin-top"><strong>Servicios de acompañamiento</strong></h4>
-              </ion-text>
-            </ion-col>
-            <ion-col>
-              <ion-chip class="ion-no-margin ion-float-right" routerLink="see-all/Servicios de acompañamiento">
-                <ion-label color="secondary">Ver todos</ion-label>
-              </ion-chip>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
+        <ion-col size="9">
+          <ion-text>
+            <h4 class="ion-no-margin ion-margin-start ion-margin-top"><strong>Servicios de acompañamiento</strong></h4>
+          </ion-text>
+        </ion-col>
+        <ion-col>
+          <ion-chip class="ion-no-margin ion-float-right" routerLink="see-all/Servicios de acompañamiento">
+            <ion-label color="secondary">Ver todos</ion-label>
+          </ion-chip>
+        </ion-col>
         <ion-slides [options]="slideOpts">
           <ion-slide [hidden]="service.type !== 'Servicio de acompañamiento'" *ngFor="let service of services.value">
             <ion-card>
