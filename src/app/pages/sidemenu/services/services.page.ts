@@ -33,7 +33,6 @@ export class ServicesPage implements OnInit {
   constructor(
     private api: ApiService,
     private auth: AuthService,
-    public actionSheetController: ActionSheetController,
     private modalController: ModalController
   ) {
 
@@ -57,82 +56,5 @@ export class ServicesPage implements OnInit {
   ionViewWillEnter() {
     this.user = this.auth.userData()
   }
-
-  async presentActionSheetOrderBy() {
-    const actionSheet = await this.actionSheetController.create({
-      header: 'Ordenar por',
-      buttons: [
-        {
-          text: 'Nombre',
-          icon: 'swap-vertical-outline',
-          handler: () => {
-            console.log('Delete clicked');
-          }
-        }, {
-          text: 'Precio menor a mayor',
-          icon: 'cash-outline',
-          handler: () => {
-            console.log('Share clicked');
-          }
-        }, {
-          text: 'Precio mayor a menor',
-          icon: 'cash-outline',
-          handler: () => {
-            console.log('Play clicked');
-          }
-        }, {
-          text: 'Cancelar',
-          icon: 'close',
-          role: 'cancel',
-          handler: () => {
-            console.log('Cancel clicked');
-          }
-        }
-      ]
-    });
-    await actionSheet.present();
-  }
-
-  async presentActionSheetPriceRange() {
-    const actionSheet = await this.actionSheetController.create({
-      header: 'Ordenar por',
-      buttons: [
-        {
-          text: '$0 - $10.000',
-          icon: 'cash-outline',
-          handler: () => {
-            console.log('Delete clicked');
-          }
-        }, {
-          text: '$10.000 - $20.000',
-          icon: 'cash-outline',
-          handler: () => {
-            console.log('Share clicked');
-          }
-        }, {
-          text: '$20.000 - $30.000',
-          icon: 'cash-outline',
-          handler: () => {
-            console.log('Play clicked');
-          }
-        }, {
-          text: '$30.000 - ++',
-          icon: 'cash-outline',
-          handler: () => {
-            console.log('Play clicked');
-          }
-        }, {
-          text: 'Cancelar',
-          icon: 'close',
-          role: 'cancel',
-          handler: () => {
-            console.log('Cancel clicked');
-          }
-        }
-      ]
-    });
-    await actionSheet.present();
-  }
-
 
 }

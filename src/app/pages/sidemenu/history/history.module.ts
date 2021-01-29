@@ -7,15 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { RatingsPageRoutingModule } from './history-routing.module';
 
 import { HistoryPage } from './history.page';
-import { LoadingPipe } from 'src/app/pipes/loading/loading.pipe';
+import { GlobalModule } from 'src/app/global.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    RatingsPageRoutingModule
+    RatingsPageRoutingModule,
+    GlobalModule
   ],
-  declarations: [HistoryPage, LoadingPipe]
+  declarations: [HistoryPage]
 })
 export class RatingsPageModule {}

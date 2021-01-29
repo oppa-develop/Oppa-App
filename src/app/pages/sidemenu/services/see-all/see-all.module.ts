@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { SeeAllPageRoutingModule } from './see-all-routing.module';
 
 import { SeeAllPage } from './see-all.page';
+import { GlobalModule } from 'src/app/global.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    SeeAllPageRoutingModule
+    SeeAllPageRoutingModule,
+    GlobalModule
   ],
   declarations: [SeeAllPage]
 })

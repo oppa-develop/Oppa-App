@@ -7,15 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { MessagesPageRoutingModule } from './messages-routing.module';
 
 import { MessagesPage } from './messages.page';
-import { LoadingPipe } from 'src/app/pipes/loading/loading.pipe';
+import { GlobalModule } from 'src/app/global.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    MessagesPageRoutingModule
+    MessagesPageRoutingModule,
+    GlobalModule
   ],
-  declarations: [MessagesPage, LoadingPipe]
+  declarations: [MessagesPage]
 })
 export class MessagesPageModule {}

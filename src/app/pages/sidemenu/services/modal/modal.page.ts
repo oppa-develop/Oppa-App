@@ -11,7 +11,6 @@ import * as dayjs from 'dayjs';
 import { AlertController } from '@ionic/angular';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { DatePipe } from '@angular/common';
-import { PaymentService } from 'src/app/providers/payment/payment.service';
 
 @Component({
   selector: 'app-modal',

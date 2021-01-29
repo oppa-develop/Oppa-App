@@ -7,6 +7,61 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf="$services | loading | async as services">
 
+  <!-- skeleton loading for next services -->
+  <ng-template [ngIf]="services.loading">
+    <ion-list>
+      <ion-item *ngFor="let instance of [1,2,3,4,5,6,7,8]" class="ion-margin-top">
+        <ion-grid class="ion-no-padding">
+          <ion-row>
+            <ion-col size="2">
+              <ion-skeleton-text animated class="ion-no-margin" style="width: 90%; height: 8vh; margin-bottom: 10px"></ion-skeleton-text>
+            </ion-col>
+            <ion-col class="ion-padding-start">
+              <ion-col size="12">
+                <ion-skeleton-text animated class="ion-no-margin" style="width: 50%; height: 15px;"></ion-skeleton-text>                
+              </ion-col>
+              <ion-col size="12">
+                <ion-skeleton-text animated class="ion-no-margin" style="width: 90%; margin-top: 3vh;"></ion-skeleton-text>
+              </ion-col>
+            </ion-col>
+            <ion-col size="2">
+              <ion-skeleton-text animated class="ion-no-margin" style="width: 100%;"></ion-skeleton-text>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-item>
+    </ion-list>
+  </ng-template>
+
+  <!-- list of next services -->
+  <ng-template [ngIf]="services.value">
+    <ion-item *ngFor="let service of services.value">
+      <ion-card class="ion-no-margin ion-margin-vertical">
+        <ion-img [src]="service.img"></ion-img>
+        <ion-card-header>
+          <ion-grid class="ion-no-padding">
+            <ion-row class="ion-no-padding">
+              <ion-col size="12" class="ion-text-justify">
+                <ion-text color="dark">
+                  <p class="ion-no-margin"><strong>{{ service.name | titlecase }}</strong></p>
+                </ion-text>
+                <p class="ion-no-margin">Costo: ${{ service.price | number }}</p>
+              </ion-col>
+              <ion-col size="12">
+                <ion-button expand="block" color="primary" class="ion-no-margin ion-margin-top"
+                  (click)="openModal(service)">solicitar</ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-header>
+      </ion-card>
+    </ion-item>
+  </ng-template>
+
+  <!-- error on get services -->
+  <ng-template [ngIf]="services.error">
+    <app-error></app-error>
+  </ng-template>
 </ion-content>

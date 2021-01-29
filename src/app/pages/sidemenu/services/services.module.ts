@@ -7,8 +7,8 @@ import { IonicModule } from '@ionic/angular';
 import { ServicesPageRoutingModule } from './services-routing.module';
 
 import { ServicesPage } from './services.page';
-import { LoadingPipe } from 'src/app/pipes/loading/loading.pipe';
 import { ModalPage } from './modal/modal.page';
+import { GlobalModule } from 'src/app/global.module';
 
 @NgModule({
   imports: [
@@ -16,8 +16,9 @@ import { ModalPage } from './modal/modal.page';
     FormsModule,
     IonicModule,
     ServicesPageRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    GlobalModule
   ],
-  declarations: [ServicesPage, ModalPage, LoadingPipe]
+  declarations: [ServicesPage, ModalPage]
 })
 export class ServicesPageModule {}
