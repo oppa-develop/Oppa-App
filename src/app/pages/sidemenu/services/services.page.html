@@ -13,7 +13,7 @@
     <ion-row>
 
       <!-- skeleton card for loading -->
-      <!-- <ng-template [ngIf]="services.loading">
+      <ng-template [ngIf]="services.loading">
         <ion-skeleton-text class="ion-margin-start" animated style="width: 40%; height: 2vh; margin-left: 16px;"></ion-skeleton-text>
         <ion-col size="9" class="ion-no-padding">
           <ion-card style="margin-left: 16px; margin-right: -4px;">
@@ -46,10 +46,10 @@
             </ion-card-header>
           </ion-card>
         </ion-col>
-      </ng-template> -->
+      </ng-template>
 
       <!-- services on lists of cards -->
-      <!-- <ng-template [ngIf]="services.value">
+      <ng-template [ngIf]="services.value">
         <ion-grid>
           <ion-row>
             <ion-col size="9">
@@ -161,15 +161,15 @@
             </ion-card>
           </ion-slide>
         </ion-slides>
-      </ng-template> -->
+      </ng-template>
 
       <!-- no services -->
-      <!-- <ng-template [ngIf]="services.value?.length == 0">
+      <ng-template [ngIf]="services.value?.length == 0">
         <h1>no services</h1>
-      </ng-template> -->
+      </ng-template>
 
       <!-- error on get services -->
-      <ng-template [ngIf]="services.error || true">
+      <ng-template [ngIf]="services.error">
         <app-error></app-error>
       </ng-template>
     </ion-row>
