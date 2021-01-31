@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: SeeAllPage
+  },
+  {
+    path: 'filter-modal',
+    loadChildren: () => import('./filter-modal/filter-modal.module').then( m => m.FilterModalPageModule)
   }
 ];
 

@@ -5,6 +5,7 @@ import { Observable, Subscription } from 'rxjs';
 import { Service } from 'src/app/models/service';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { ModalPage } from '../modal/modal.page';
+import { FilterModalPage } from './filter-modal/filter-modal.page';
 
 @Component({
   selector: 'app-see-all',
@@ -42,6 +43,30 @@ export class SeeAllPage implements OnInit {
         service
       }
     })
+    return await modal.present()
+  }
+
+  async openFilterModal(mode: string) {
+    let modalType: string
+    switch(mode) {
+      case 'orderBy':
+        modalType = 'action-sheet-modal-medium'
+        break
+      case 'priceRange':
+        modalType = 'action-sheet-modal-small'
+        break
+      default:
+        modalType = 'action-sheet-modal'
+        break
+    }
+    const modal = await this.modalController.create({
+      component: FilterModalPage,
+      componentProps: {
+        mode
+      },
+      cssClass: modalType
+    })
+
     return await modal.present()
   }
 

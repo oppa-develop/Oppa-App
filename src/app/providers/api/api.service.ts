@@ -13,6 +13,8 @@ import * as timeago from 'timeago.js';
 })
 export class ApiService {
 
+  delay: number = 2000
+
   constructor() { }
 
   rankService(data): Observable<any> { // serviceId, rankNumber
@@ -92,7 +94,7 @@ export class ApiService {
       { id: parseInt(faker.random.uuid()), type: 'Servicio de acompañamiento', name: 'pagos', description: faker.lorem.paragraph(), price: parseInt('11990'), img: '../../../../assets/images/resize_1590967555.jpg' },
       { id: parseInt(faker.random.uuid()), type: 'Servicio a Domicilio', name: 'curaciones', description: faker.lorem.paragraph(), price: parseInt('14990'), img: '../../../../assets/images/pexels-cottonbro-5721555.jpg' },
       { id: parseInt(faker.random.uuid()), type: 'Servicio de acompañamiento', name: 'compras', description: faker.lorem.paragraph(), price: parseInt('14990'), img: '../../../../assets/images/pexels-gustavo-fring-4173326.jpg' }
-    ]).pipe(delay(5000));
+    ]).pipe(delay(this.delay));
   }
 
   getMessages(): Observable<MessageList[]> {
@@ -107,7 +109,7 @@ export class ApiService {
       { name: faker.name.findName(), img: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`, service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
       { name: faker.name.findName(), img: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`, service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) },
       { name: faker.name.findName(), img: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`, service: faker.name.jobTitle(), lastMsg: faker.lorem.sentence(), lastMsgAgo: timeago.format(faker.date.recent()) }
-    ]).pipe(delay(5000));
+    ]).pipe(delay(this.delay));
   }
 
   getServicesHistory(): Observable<Service[]> {
@@ -164,7 +166,7 @@ export class ApiService {
         serverRating: (faker.random.number(1)) ? faker.random.number(5) : 0,
         state: 'Terminado'
       },
-    ]).pipe(delay(5000));
+    ]).pipe(delay(this.delay));
   }
 
   scheduleService(data) {
@@ -180,7 +182,7 @@ export class ApiService {
       serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
       serverRating: (faker.random.number(1)) ? faker.random.number(5) : 0,
       state: 'Terminado'
-    }).pipe(delay(2000));
+    }).pipe(delay(this.delay));
   }
 
 }

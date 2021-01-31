@@ -44,3 +44,27 @@ ion-card {
 ion-footer {
   z-index: 99;
 }
+
+.action-sheet-modal .modal-wrapper {
+  height: 62%;
+  bottom: 0;
+  position: absolute;
+  display: block;
+  border-radius: 20px 20px 0 0;
+}
+
+.action-sheet-modal-medium .modal-wrapper {
+  height: 38% !important;
+  bottom: 0;
+  position: absolute;
+  display: block;
+  border-radius: 20px 20px 0 0;
+}
+
+.action-sheet-modal-small .modal-wrapper {
+  height: 29% !important;
+  bottom: 0;
+  position: absolute;
+  display: block;
+  border-radius: 20px 20px 0 0;
+}
