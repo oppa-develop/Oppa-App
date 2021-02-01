@@ -2,16 +2,28 @@ ion-content.bicolor {
   ion-toolbar {
     height: 33vh;
 
-    
+
   }
 
   ion-title {
     font-size: 3em;
-
   }
 
   ion-card {
     margin-top: -16vh;
     z-index: 99;
   }
+}
+
+ion-header {
+
+  ion-button {
+
+    ion-icon {
+      position: relative;
+      right: -70px;
+    }
+
+  }
+
 }

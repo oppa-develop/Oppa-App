@@ -56,10 +56,8 @@
   <form>
     <ion-card class="ion-margin-horizontal ion-padding-horizontal">
       <ion-list lines="none">
-        <ion-list-header class="ion-text-center">
-          <h2>
-            <ion-label color="secondary">Usuarios Apadrinados</ion-label>
-          </h2>
+        <ion-list-header class="ion-text-center ion-no-padding">
+            <ion-title color="secondary">Usuarios Apadrinados</ion-title>
         </ion-list-header>
         <ion-item *ngFor="let elder of user.elders">
           <ion-avatar slot="start">
