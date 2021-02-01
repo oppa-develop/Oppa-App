@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActionSheetController } from '@ionic/angular';
+import { Observable } from 'rxjs';
 import { User } from 'src/app/models/user';
+import { ApiService } from 'src/app/providers/api/api.service';
 import { AuthService } from 'src/app/providers/auth/auth.service';
 
 @Component({
@@ -12,15 +14,18 @@ export class WalletPage implements OnInit {
 
   user: User
   userSelected: User
+  $wallet: Observable<any[]>
 
   constructor(
     private auth: AuthService,
-    private actionSheetController: ActionSheetController
+    private actionSheetController: ActionSheetController,
+    private api: ApiService
   ) { }
 
   ngOnInit() {
     this.user = this.auth.userData()
     this.userSelected = this.user
+    this.$wallet = this.api.getWalletHistory()
   }
 
   async changeUserSelected() {

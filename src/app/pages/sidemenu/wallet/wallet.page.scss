@@ -1,8 +1,6 @@
 ion-content.bicolor {
   ion-toolbar {
     height: 33vh;
-
-
   }
 
   ion-title {
@@ -12,6 +10,10 @@ ion-content.bicolor {
   ion-card {
     margin-top: -16vh;
     z-index: 99;
+  }
+
+  ion-item {
+    margin-bottom: 10px;
   }
 }
 

@@ -185,5 +185,50 @@ export class ApiService {
     }).pipe(delay(this.delay));
   }
 
+  getWalletHistory(): Observable<any[]> {
+    return of([
+      {
+        type: 'ingreso',
+        amount: faker.finance.amount(),
+        date: faker.date.past()
+      },
+      {
+        type: 'pago',
+        amount: faker.finance.amount(),
+        date: faker.date.past()
+      },
+      {
+        type: 'ingreso',
+        amount: faker.finance.amount(),
+        date: faker.date.past()
+      },
+      {
+        type: 'pago',
+        amount: faker.finance.amount(),
+        date: faker.date.past()
+      },
+      {
+        type: 'ingreso',
+        amount: faker.finance.amount(),
+        date: faker.date.past()
+      },
+      {
+        type: 'pago',
+        amount: faker.finance.amount(),
+        date: faker.date.past()
+      },
+      {
+        type: 'ingreso',
+        amount: faker.finance.amount(),
+        date: faker.date.past()
+      },
+      {
+        type: 'pago',
+        amount: faker.finance.amount(),
+        date: faker.date.past()
+      },
+    ])
+  }
+
 }
 
