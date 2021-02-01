@@ -15,6 +15,14 @@ ion-content.bicolor {
   ion-item {
     margin-bottom: 10px;
   }
+
+  ion-col {
+    strong {
+      ion-label {
+        padding-bottom: 5px;
+      }
+    }
+  }
 }
 
 ion-header {
