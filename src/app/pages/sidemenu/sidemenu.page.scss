@@ -2,3 +2,7 @@
   // border-left: 8px solid var(--ion-color-primary);
   --ion-item-background: var(--ion-color-primary);
 }
+
+.active-item ion-icon {
+  --ionicon-stroke-width: 40px;
+}
