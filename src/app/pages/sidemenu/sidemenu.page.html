@@ -23,7 +23,7 @@
       </ion-header>
   
       <ion-content>
-        <ion-list>
+        <ion-list class="ion-no-padding" lines="none">
           <ion-menu-toggle auto-hide="false" *ngFor="let page of pages">
             <ion-item [routerLink]="page.url" routerDirection="root" routerLinkActive="active-item">
               <ion-icon slot="start" [name]="page.icon"></ion-icon>
