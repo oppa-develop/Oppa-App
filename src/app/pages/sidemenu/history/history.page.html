@@ -7,119 +7,124 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-grid>
-    <ion-row *ngIf="$services | loading | async as services">
-      
-      <!-- skeleton loading -->
-      <ng-template [ngIf]="services.loading">
-        <ion-col size="12">
-          <ion-card>
-            <ion-skeleton-text animated style="height: 30vh;"></ion-skeleton-text>
-            <ion-avatar>
-              <ion-skeleton-text animated></ion-skeleton-text>
-            </ion-avatar>
-            <br><br>
-            <ion-card-header>
-              <ion-list lines="none" class="ion-no-padding">
+<ion-content *ngIf="$services | loading | async as services">
+  
+  <!-- skeleton loading -->
+  <ng-template [ngIf]="services.loading">
+    <ion-card *ngFor="let i of [1,2]">
+      <ion-skeleton-text animated style="height: 25vh;"></ion-skeleton-text>
+      <ion-avatar>
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-avatar>
+      <ion-card-header class="ion-no-padding">
+        <ion-list lines="none" class="ion-no-padding">
+          <ion-item>
+            <ion-skeleton-text animated style="height: 25px; width: 65%;"></ion-skeleton-text>
+          </ion-item>
+        </ion-list>
+      </ion-card-header>
+      <ion-card-content class="ion-no-padding">
+        <ion-grid class="ion-no-padding">
+          <ion-row class="ion-no-padding">
+            <ion-col>
+              <ion-list lines="none">
                 <ion-item>
-                  <ion-skeleton-text animated style="height: 30px; width: 85%;"></ion-skeleton-text>
+                  <ion-skeleton-text animated style="height: 10px; width: 70%;"></ion-skeleton-text>
                 </ion-item>
                 <ion-item>
-                  <ion-skeleton-text animated style="height: 20px; width: 30%;"></ion-skeleton-text>
+                  <ion-skeleton-text animated style="height: 10px; width: 60%;"></ion-skeleton-text>
                 </ion-item>
-                <ion-item>
-                  <ion-skeleton-text animated style="width: 70%; text-align: right;"></ion-skeleton-text>
-                </ion-item>
-                <ion-item>
-                  <ion-skeleton-text animated style="width: 60%; text-align: right;"></ion-skeleton-text>
-                </ion-item>
-                <ion-skeleton-text animated style="height: 40px; margin: 0 15px; width: 91%;"></ion-skeleton-text>
               </ion-list>
-            </ion-card-header>
-          </ion-card>
-        </ion-col>
-        <ion-col size="12">
-          <ion-card>
-            <ion-skeleton-text animated style="height: 30vh;"></ion-skeleton-text>
-            <ion-avatar>
-              <ion-skeleton-text animated></ion-skeleton-text>
-            </ion-avatar>
-            <br><br>
-            <ion-card-header>
-              <ion-list lines="none" class="ion-no-padding">
+            </ion-col>
+            <ion-col size="4">
+              <ion-list lines="none">
                 <ion-item>
-                  <ion-skeleton-text animated style="height: 30px; width: 85%;"></ion-skeleton-text>
+                  <ion-skeleton-text animated style="height: 10px; width: 80%;"></ion-skeleton-text>
                 </ion-item>
                 <ion-item>
-                  <ion-skeleton-text animated style="height: 20px; width: 30%;"></ion-skeleton-text>
+                  <ion-skeleton-text animated style="height: 10px; width: 70%;"></ion-skeleton-text>
                 </ion-item>
-                <ion-item>
-                  <ion-skeleton-text animated style="width: 70%; text-align: right;"></ion-skeleton-text>
-                </ion-item>
-                <ion-item>
-                  <ion-skeleton-text animated style="width: 60%; text-align: right;"></ion-skeleton-text>
-                </ion-item>
-                <ion-skeleton-text animated style="height: 40px; margin: 0 15px; width: 91%;"></ion-skeleton-text>
               </ion-list>
-            </ion-card-header>
-          </ion-card>
-        </ion-col>
-      </ng-template>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <ion-skeleton-text class="ion-margin-horizontal ion-margin-bottom" animated style="height: 30px; width: 92%;"></ion-skeleton-text>
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
 
-      <!-- list of cards -->
-      <ng-template [ngIf]="services.value">
-        <ion-col *ngFor="let service of services.value" size="12">
-          <ion-card>
-            <ion-img [src]="service.img"></ion-img>
-            <ion-avatar>
-              <ion-img [src]="service.serverImg"></ion-img>
-            </ion-avatar>
-            <ion-chip class="state">
-              <ion-text color="dark">{{ service.state }}</ion-text>
-            </ion-chip>
-            <br><br>
-            <ion-card-header>
-              <ion-list lines="none" class="ion-no-padding">
-                <ion-item>
-                  <ion-title class="ion-no-padding">
-                    <ion-label>{{ service.serverName }}</ion-label>
-                    <div *ngIf="service.state === 'Terminado' && service.serverRating > 0">
-                      <ion-icon *ngIf="service.serverRating > 0 && service.state" color="secondary" name="star"></ion-icon>
-                      <ion-icon *ngIf="service.serverRating > 1 && service.state" color="secondary" name="star"></ion-icon>
-                      <ion-icon *ngIf="service.serverRating > 2 && service.state" color="secondary" name="star"></ion-icon>
-                      <ion-icon *ngIf="service.serverRating > 3 && service.state" color="secondary" name="star"></ion-icon>
-                      <ion-icon *ngIf="service.serverRating > 4 && service.state" color="secondary" name="star"></ion-icon>
-                      <ion-icon *ngIf="service.serverRating < 5 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
-                      <ion-icon *ngIf="service.serverRating < 4 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
-                      <ion-icon *ngIf="service.serverRating < 3 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
-                      <ion-icon *ngIf="service.serverRating < 2 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
-                      <ion-icon *ngIf="service.serverRating < 1 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
-                    </div>
-                  </ion-title>
+  <!-- list of cards -->
+  <ng-template [ngIf]="services.value">
+    <ion-card *ngFor="let service of services.value">
+      <ion-img [src]="service.img"></ion-img>
+      <ion-avatar>
+        <ion-img [src]="service.serverImg"></ion-img>
+      </ion-avatar>
+      <ion-card-header class="ion-no-padding ion-padding-horizontal">
+        <ion-grid class="ion-no-padding">
+          <ion-row class="ion-no-padding ion-padding-top">
+            <ion-col class="ion-no-padding">
+              <ion-title class="ion-no-padding" color="dark"><strong>{{ service.name | titlecase }}</strong></ion-title>
+              <div *ngIf="service.state === 'Terminado' && service.serverRating > 0">
+                <ion-icon class="star" *ngIf="service.serverRating > 0 && service.state" color="primary" name="star"></ion-icon>
+                <ion-icon class="star" *ngIf="service.serverRating > 1 && service.state" color="primary" name="star"></ion-icon>
+                <ion-icon class="star" *ngIf="service.serverRating > 2 && service.state" color="primary" name="star"></ion-icon>
+                <ion-icon class="star" *ngIf="service.serverRating > 3 && service.state" color="primary" name="star"></ion-icon>
+                <ion-icon class="star" *ngIf="service.serverRating > 4 && service.state" color="primary" name="star"></ion-icon>
+                <ion-icon class="star" *ngIf="service.serverRating < 5 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
+                <ion-icon class="star" *ngIf="service.serverRating < 4 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
+                <ion-icon class="star" *ngIf="service.serverRating < 3 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
+                <ion-icon class="star" *ngIf="service.serverRating < 2 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
+                <ion-icon class="star" *ngIf="service.serverRating < 1 && service.state || service.serverRating == undefined" name="star-outline"></ion-icon>
+              </div>
+            </ion-col>
+            <ion-col>
+              <ion-chip class="ion-no-margin ion-float-end">
+                <ion-text color="dark">{{ service.state }}</ion-text>
+              </ion-chip>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid class="ion-no-padding">
+          <ion-row class="ion-no-padding">
+            <ion-col>
+              <ion-list lines="none">
+                <ion-item class="ion-no-padding">
+                  <ion-icon class="ion-no-margin" name="storefront-outline" slot="start"></ion-icon>
+                  <p *ngIf="service.type === 'Servicio de acompañamiento'">Servicio de acompañamiento</p>
+                  <p *ngIf="service.type === 'Servicio a Domicilio'">Servicio a domicilio</p>
                 </ion-item>
-                <ion-item>
-                  <ion-icon slot="start" name="storefront-outline"></ion-icon>
-                  <ion-label *ngIf="service.type === 'Servicio de acompañamiento'">Acompañamiento a {{ service.name | lowercase }}</ion-label>
-                  <ion-label *ngIf="service.type === 'Servicio a Domicilio'">{{ service.name | titlecase }} a domicilio</ion-label>
+                <ion-item class="ion-no-padding">
+                  <ion-icon class="ion-no-margin" name="person-outline" slot="start"></ion-icon>
+                  <p>{{ service.serverName | titlecase }}</p>
                 </ion-item>
-                <ion-item>
-                  <ion-icon slot="start" name="calendar-outline"></ion-icon>
-                  <ion-label>{{ service.date | date:'longDate' }}</ion-label>
-                </ion-item>
-                <ion-button *ngIf="service.state === 'Terminado' && service.serverRating < 1" class="ion-padding-horizontal" expand="block" color="primary" (click)="rank(service)">calificar</ion-button>
-                <ion-button *ngIf="(service.state === 'Terminado' && service.serverRating !== 0) || service.state !== 'Terminado'" class="ion-padding-horizontal" expand="block" color="primary" (click)="openModal(service)">ver detalle</ion-button>
               </ion-list>
-            </ion-card-header>
-          </ion-card>
-        </ion-col>
-      </ng-template>
+            </ion-col>
+            <ion-col size="4">
+              <ion-list lines="none">
+                <ion-item class="ion-no-padding">
+                  <ion-icon class="ion-no-margin" src="../../../../assets/icons/dollar-solid.svg" slot="start"></ion-icon>
+                  <p>{{ service.price | number }}</p>
+                </ion-item>
+                <ion-item class="ion-no-padding">
+                  <ion-icon class="ion-no-margin" name="calendar-outline" slot="start"></ion-icon>
+                  <p>{{ service.date | date: 'shortDate' }}</p>
+                </ion-item>
+              </ion-list>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <ion-button class="ion-no-margin" *ngIf="service.state === 'Terminado' && service.serverRating < 1" expand="block" color="primary" (click)="rank(service)">calificar</ion-button>
+        <ion-button class="ion-no-margin" *ngIf="(service.state === 'Terminado' && service.serverRating !== 0) || service.state !== 'Terminado'" expand="block" color="primary" (click)="openModal(service)">ver detalle</ion-button>
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
 
-      <!-- error -->
-      <ng-template [ngIf]="services.error">
-        <app-error></app-error>
-      </ng-template>
-    </ion-row>
-  </ion-grid>
+  <!-- error -->
+  <ng-template [ngIf]="services.error">
+    <app-error></app-error>
+  </ng-template>
 
 </ion-content>
