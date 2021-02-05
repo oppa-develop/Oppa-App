@@ -22,6 +22,8 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     this.loginForm = this.createLoginForm()
+    console.log(this.loginForm.value.password.length);
+    
     if (localStorage.getItem('darkMode') === 'on') {
       document.body.setAttribute('data-theme', 'dark');
       this.darkMode = true
