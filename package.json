@@ -33,6 +33,7 @@
     "es6-promise-plugin": "^4.2.2",
     "faker": "^5.1.0",
     "rxjs": "~6.5.5",
+    "socket.io-client": "^3.1.1",
     "timeago.js": "^4.0.2",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.3"

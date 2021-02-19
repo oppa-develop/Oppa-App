@@ -19,6 +19,7 @@ import { DatePipe, registerLocaleData } from '@angular/common'
 import { ApiService } from './providers/api/api.service';
 import { HttpClientJsonpModule, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LocationService } from './providers/location/location.service';
+import { WebSocketService } from './providers/web-socket/web-socket.service';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
@@ -52,7 +53,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
       useValue: "es-ES"
     },
     ApiService,
-    LocationService
+    LocationService,
+    WebSocketService
   ],
   bootstrap: [AppComponent]
 })
