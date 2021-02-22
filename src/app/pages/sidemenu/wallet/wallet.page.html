@@ -31,47 +31,68 @@
       </ion-row>
     </ion-grid>
   </ion-toolbar>
-  <ion-card class="ion-margin-horizontal ion-padding-horizontal">
+  <ion-card class="ion-margin-horizontal ion-padding-horizontal" *ngIf="$wallet | loading | async as wallet">
     <ion-list lines="none">
       <ion-list-header class="ion-text-center ion-no-padding ion-margin-bottom">
         <ion-title color="primary">Monedero</ion-title>
       </ion-list-header>
-      <ion-item *ngFor="let historical of $wallet | async">
-        <ion-icon *ngIf="historical.type == 'ingreso'" size="large" name="trending-up-outline" slot="start"></ion-icon>
-        <ion-icon *ngIf="historical.type == 'pago'" size="large" name="trending-down-outline" slot="start"></ion-icon>
-        <ion-grid class="ion-no-padding">
-          <ion-row class="ion-no-padding">
-            <ion-col>
-              <ion-row>
-                <ion-col>
-                  <strong><ion-label>{{ historical.type | titlecase }}</ion-label></strong>
-                </ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col size="2">
-                  <ion-icon name="calendar-outline"></ion-icon>
-                </ion-col>
-                <ion-col>
-                  <ion-label>{{ historical.date | date:'mediumDate' }}</ion-label>
-                </ion-col>
-              </ion-row>
-              <ion-row>
-                <ion-col size="2">
-                  <ion-icon name="time-outline"></ion-icon>
-                </ion-col>
-                <ion-col>
-                  <ion-label>{{ historical.date | date:'mediumTime' }}</ion-label>
-                </ion-col>
-              </ion-row>
-            </ion-col>
-            <ion-col size="4">
-              <ion-label *ngIf="historical.type == 'ingreso'" color="success" class="ion-no-margin-start ion-text-end ion-padding-top">$ {{ '10000' | number }}</ion-label>
-              <ion-label *ngIf="historical.type == 'pago'" color="danger" class="ion-no-margin-start ion-text-end ion-padding-top">$ {{ '10000' | number }}</ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
+
+      <!-- skeleton loading -->
+      <ng-template [ngIf]="wallet.loading">
+
+      </ng-template>
+
+      <!-- walletMovements list -->
+      <ng-template [ngIf]="wallet.value">
+        <ion-item *ngFor="let historical of wallet.value.walletMovements">
+          <ion-icon *ngIf="historical.type == 'ingreso'" size="large" name="trending-up-outline" slot="start"></ion-icon>
+          <ion-icon *ngIf="historical.type == 'pago'" size="large" name="trending-down-outline" slot="start"></ion-icon>
+          <ion-grid class="ion-no-padding">
+            <ion-row class="ion-no-padding">
+              <ion-col>
+                <ion-row>
+                  <ion-col>
+                    <strong><ion-label>{{ historical.type | titlecase }}</ion-label></strong>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="2">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                  </ion-col>
+                  <ion-col>
+                    <ion-label>{{ historical.created_at | date:'mediumDate' }}</ion-label>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="2">
+                    <ion-icon name="time-outline"></ion-icon>
+                  </ion-col>
+                  <ion-col>
+                    <ion-label>{{ historical.created_at | date:'mediumTime' }}</ion-label>
+                  </ion-col>
+                </ion-row>
+              </ion-col>
+              <ion-col size="4">
+                <ion-label *ngIf="historical.type == 'ingreso'" color="success" class="ion-no-margin-start ion-text-end ion-padding-top">$ {{ '10000' | number }}</ion-label>
+                <ion-label *ngIf="historical.type == 'pago'" color="danger" class="ion-no-margin-start ion-text-end ion-padding-top">$ {{ '10000' | number }}</ion-label>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+      </ng-template>
+
+      <!-- no walletMovements -->
+      <ng-template [ngIf]="wallet.value?.length == 0">
+
+      </ng-template>
+
     </ion-list>
+
+    <!-- error on get walletMovements -->
+    <ng-template [ngIf]="wallet.error">
+      <app-error></app-error>
+    </ng-template>
+
   </ion-card>
 </ion-content>
 

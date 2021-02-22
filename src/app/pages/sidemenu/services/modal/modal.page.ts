@@ -11,6 +11,7 @@ import * as dayjs from 'dayjs';
 import { AlertController } from '@ionic/angular';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { DatePipe } from '@angular/common';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-modal',
@@ -26,6 +27,7 @@ export class ModalPage implements OnInit {
   $districts: Observable<Location>
   scheduleServiceForm: FormGroup
   elderSelected: User
+  apiUrl: string = environment.HOST + '/'
 
   ActionSheetOptionsRegions = {
     header: 'Regiones',
@@ -36,7 +38,7 @@ export class ModalPage implements OnInit {
     subHeader: 'Seleccione su comuna'
   };
   ActionSheetOptionsElder = {
-    header: 'Adulto Mayor'
+    header: 'Servicio para:'
   };
   ActionSheetOptionsFlexibility = {
     header: 'Flexibilidad Horaria',
@@ -76,7 +78,6 @@ export class ModalPage implements OnInit {
     return this.formBuilder.group({
       date: [null, Validators.required],
       hour: [null, Validators.required],
-      flexibility: [null, Validators.required],
       receptor: [null, Validators.required],
       address: [null, Validators.required]
     })

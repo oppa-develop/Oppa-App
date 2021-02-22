@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { User } from 'src/app/models/user';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { AuthService } from 'src/app/providers/auth/auth.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-account',
@@ -15,6 +16,7 @@ export class AccountPage implements OnInit {
   user: User
   userDataForm: FormGroup
   isEditing: boolean = false
+  apiUrl: string = environment.HOST + '/'
 
   constructor(
     private api: ApiService,
@@ -33,6 +35,7 @@ export class AccountPage implements OnInit {
     return this.formBuilder.group({
       firstname: [this.user.firstname, Validators.required],
       lastname: [this.user.lastname, Validators.required],
+      gender: [this.user.gender, Validators.required],
       email: [this.user.email, [Validators.required, Validators.email]],
       birthdate: [this.dateFormat.transform(this.user.birthdate, 'dd-MM-yyyy'), Validators.required],
     })

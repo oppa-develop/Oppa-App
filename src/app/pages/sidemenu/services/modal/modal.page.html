@@ -2,7 +2,7 @@
   <ion-button class="close-btn" (click)="closeModal()">
     <ion-icon size="large" slot="icon-only" name="close"></ion-icon>
   </ion-button>
-  <ion-img class="header-img" [src]="service.img"></ion-img>
+  <ion-img class="header-img" [src]="apiUrl + service.img_url"></ion-img>
   <ion-card class="ion-margin-horizontal ion-padding-horizontal">
     <form [formGroup]="scheduleServiceForm" (ngSubmit)="scheduleService()" ngNativeValidate>
       <ion-list lines="none">
@@ -10,10 +10,13 @@
           <ion-grid class="ion-no-padding">
             <ion-row class="ion-no-padding">
               <ion-col class="ion-text-center ion-no-padding" size="12">
-                <h1 class="ion-no-margin ion-margin-top"><ion-label color="primary"><strong>{{ service.name | titlecase }}</strong></ion-label></h1>
+                <h1 class="ion-no-margin ion-margin-top"><ion-label color="primary"><strong>{{ service.title | titlecase }}</strong></ion-label></h1>
               </ion-col>
               <ion-col class="ion-text-center ion-no-padding" size="12">
                 <h3 class="ion-no-margin"><ion-text>${{ service.price | number }}</ion-text></h3>
+              </ion-col>
+              <ion-col size="12">
+                <h6 class="ion-no-margin ion-margin-horizontal ion-margin-bottom"><ion-text>{{ service.description }}</ion-text></h6>
               </ion-col>
             </ion-row>
           </ion-grid>
@@ -41,19 +44,6 @@
                         doneText="aceptar"></ion-datetime>
         </ion-item>
         <ion-item>
-          <ion-icon name="timer-outline" slot="start"></ion-icon>
-          <ion-label>Flexibilidad Horaria</ion-label>
-          <ion-select interface="action-sheet"
-                      [interfaceOptions]="ActionSheetOptionsFlexibility"
-                      formControlName="flexibility"
-                      placeholder="Seleccionar"
-                      cancelText="Cancelar">
-            <ion-select-option>No</ion-select-option>
-            <ion-select-option>± 30 min.</ion-select-option>
-            <ion-select-option>± 1 hr.</ion-select-option>
-          </ion-select>
-        </ion-item>
-        <ion-item>
           <ion-icon name="person-outline" slot="start"></ion-icon>
           <ion-label>Servicio para</ion-label>
           <ion-select interface="action-sheet"
@@ -70,9 +60,9 @@
           <h3>Dirección</h3>
         </ion-list-header>
         <ion-radio-group *ngIf="scheduleServiceForm.value.receptor" formControlName="address">
-          <ion-item class="ion-text-wrap">
-            <ion-radio checked="true" slot="start" [value]="scheduleServiceForm.value.receptor.location"></ion-radio>
-            <ion-label>{{ scheduleServiceForm.value.receptor.location.street + ', ' + scheduleServiceForm.value.receptor.location.other + ', ' + scheduleServiceForm.value.receptor.location.district + ', región ' + scheduleServiceForm.value.receptor.location.region + '.' }}</ion-label>
+          <ion-item class="ion-text-wrap" *ngFor="let address of scheduleServiceForm.value.receptor.addresses">
+            <ion-radio checked="true" slot="start" [value]="scheduleServiceForm.value.receptor.address"></ion-radio>
+            <ion-label>{{ address.street + ', ' + address.other + ', ' + address.district + ', región ' + address.region + '.' }}</ion-label>
           </ion-item>
         </ion-radio-group>
         <ion-button *ngIf="scheduleServiceForm.value.receptor" class="ion-padding-horizontal" expand="block" color="secondary" (click)="addLocation()">Editar Dirección</ion-button>

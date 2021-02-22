@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ serviceType }}</ion-title>
+    <ion-title>{{ superCategoryTitle }}</ion-title>
   </ion-toolbar>
   <ion-toolbar>
     <ion-chip (click)="openFilterModal('all')"><ion-icon class="ion-no-margin" color="dark" name="options-outline"></ion-icon></ion-chip>
@@ -28,13 +28,13 @@
 
   <!-- list of next services -->
   <ng-template [ngIf]="services.value">
-    <ion-card *ngFor="let service of services.value">
-      <ion-img [src]="service.img"></ion-img>
+    <ion-card *ngFor="let service of services.value.services">
+      <ion-img [src]="apiUrl + service.img_url"></ion-img>
       <ion-card-header>
         <ion-grid class="ion-no-padding">
           <ion-row class="ion-no-padding">
             <ion-col size="12" class="ion-text-justify">
-              <ion-title color="dark" class="ion-no-padding"><strong>{{ service.name | titlecase }}</strong></ion-title>
+              <ion-title color="dark" class="ion-no-padding"><strong>{{ service.title | titlecase }}</strong></ion-title>
               <p class="ion-no-margin">Costo: ${{ service.price | number }}</p>
             </ion-col>
             <ion-col size="12">

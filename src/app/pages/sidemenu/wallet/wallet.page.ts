@@ -25,7 +25,7 @@ export class WalletPage implements OnInit {
   ngOnInit() {
     this.user = this.auth.userData()
     this.userSelected = this.user
-    this.$wallet = this.api.getWalletHistory()
+    this.$wallet = this.api.getWalletHistory(this.user.user_id)
   }
 
   async changeUserSelected() {

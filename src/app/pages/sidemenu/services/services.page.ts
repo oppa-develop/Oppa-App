@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/providers/auth/auth.service';
 import { ActionSheetController, ModalController } from '@ionic/angular';
 import { ModalPage } from './modal/modal.page';
 import { SeeAllPage } from './see-all/see-all.page';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-services',
@@ -16,7 +17,9 @@ import { SeeAllPage } from './see-all/see-all.page';
 export class ServicesPage implements OnInit {
 
   $services: Observable<Service[]>
+  $superCategoriesServices: Observable<any[]>;
   user: User
+  apiUrl: string = environment.HOST + '/'
   slideOpts = {
     slidesPerView: 1.5,
     centeredSlides: true,
@@ -50,7 +53,8 @@ export class ServicesPage implements OnInit {
 
   ngOnInit() {
     this.user = this.auth.userData()
-    this.$services = this.api.getServices()
+    // this.$services = this.api.getServices()
+    this.$superCategoriesServices = this.api.getSuperCategoriesServices()
   }
 
   ionViewWillEnter() {

@@ -4,6 +4,7 @@ import { ActionSheetController, ModalController } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
 import { Service } from 'src/app/models/service';
 import { ApiService } from 'src/app/providers/api/api.service';
+import { environment } from 'src/environments/environment';
 import { ModalPage } from '../modal/modal.page';
 import { FilterModalPage } from './filter-modal/filter-modal.page';
 
@@ -14,9 +15,10 @@ import { FilterModalPage } from './filter-modal/filter-modal.page';
 })
 export class SeeAllPage implements OnInit {
 
-  serviceType: string
+  superCategoryTitle: string
   $services: Observable<Service[]>
   private params: Subscription = new Subscription();
+  apiUrl: string = environment.HOST + '/'
 
   constructor(
     private route: ActivatedRoute,
@@ -26,10 +28,10 @@ export class SeeAllPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.$services = this.api.getServices()
     this.params = this.route.paramMap.subscribe(params => {
-      this.serviceType = params.get('serviceType')
+      this.superCategoryTitle = params.get('superCategoryTitle')
     });
+    this.$services = this.api.getServicesBySuperCategoryTitle(this.superCategoryTitle)
   }
 
   ionViewWillLeave() {

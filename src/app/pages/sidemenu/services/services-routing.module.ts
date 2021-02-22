@@ -13,7 +13,7 @@ const routes: Routes = [
     loadChildren: () => import('./modal/modal.module').then( m => m.ModalPageModule)
   },
   {
-    path: ':serviceType',
+    path: ':superCategoryTitle',
     loadChildren: () => import('./see-all/see-all.module').then( m => m.SeeAllPageModule)
   }
 

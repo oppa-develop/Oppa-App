@@ -16,7 +16,7 @@
             </ion-fab-button>
           </ion-fab>
           <ion-avatar>
-            <ion-img [src]="user.avatar"></ion-img>
+            <ion-img [src]="apiUrl + user.img_url"></ion-img>
           </ion-avatar>
         </ion-col>
       </ion-row>
@@ -38,6 +38,17 @@
           <ion-icon slot="start" name="person-outline"></ion-icon>
           <ion-label position="floating">Apellido</ion-label>
           <ion-input formControlName="lastname" type="text" required></ion-input>
+        </ion-item>
+        <ion-item class="ion-margin-vertical">
+          <ion-label>Género</ion-label>
+          <ion-icon slot="start" *ngIf="user.gender == 'otro'" name="male-female-outline"></ion-icon>
+          <ion-icon slot="start" *ngIf="user.gender == 'hombre'" name="male-outline"></ion-icon>
+          <ion-icon slot="start" *ngIf="user.gender == 'mujer'" name="female-outline"></ion-icon>
+          <ion-select formControlName="gender" placeholder="Seleccionar" class="ion-no-padding" cancelText="cancelar" okText="aceptar">
+            <ion-select-option value="mujer">Mujer</ion-select-option>
+            <ion-select-option value="hombre">Hombre</ion-select-option>
+            <ion-select-option value="otro">Otro</ion-select-option>
+          </ion-select>
         </ion-item>
         <ion-item class="ion-margin-vertical">
           <ion-icon slot="start" name="mail-outline"></ion-icon>

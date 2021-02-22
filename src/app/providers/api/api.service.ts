@@ -7,6 +7,8 @@ import { delay } from "rxjs/operators"; // solo para simular retardo en conexió
 
 import * as faker from 'faker/locale/es_MX'
 import * as timeago from 'timeago.js';
+import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +16,11 @@ import * as timeago from 'timeago.js';
 export class ApiService {
 
   delay: number = 1000
+  private apiUrl: string = environment.HOST + '/api'
 
-  constructor() { }
+  constructor(
+    private http: HttpClient
+  ) { }
 
   rankService(data): Observable<any> { // serviceId, rankNumber
     return of([{
@@ -25,7 +30,9 @@ export class ApiService {
   }
 
   login(email: string, password: string): Observable<User> {
-    return of({
+    return this.http.post<User>(this.apiUrl + '/auth/login-client', { email, password });
+    return 
+    /* return of({
       admin_id: faker.random.number(),
       client_id: faker.random.number(),
       provider_id: faker.random.number(),
@@ -82,7 +89,15 @@ export class ApiService {
           }
         }
       ]
-    })
+    }) */
+  }
+
+  getSuperCategoriesServices(): Observable<any[]> {
+    return this.http.get<Service[]>(`${this.apiUrl}/services/super-categories`);
+  }
+
+  getServicesBySuperCategoryTitle(superCategoryTitle: string): Observable<any[]> {
+    return this.http.get<Service[]>(`${this.apiUrl}/services/super-category/${superCategoryTitle}`);
   }
 
   getServices(): Observable<Service[]> {
@@ -190,8 +205,9 @@ export class ApiService {
     }).pipe(delay(this.delay));
   }
 
-  getWalletHistory(): Observable<any[]> {
-    return of([
+  getWalletHistory(user_id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/wallets/${user_id}`);
+    /* return of([
       {
         type: 'ingreso',
         amount: faker.finance.amount(),
@@ -232,7 +248,7 @@ export class ApiService {
         amount: faker.finance.amount(),
         date: faker.date.past()
       },
-    ])
+    ]) */
   }
 
 }
