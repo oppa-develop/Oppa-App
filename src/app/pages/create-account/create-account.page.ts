@@ -33,8 +33,6 @@ export class CreateAccountPage implements OnInit {
       rut: ['18.463.527-k', Validators.required],
       phone: ['+569499382', Validators.required],
       email: ['t.client2@example.com', [Validators.email, Validators.required]],
-      checkPassword: ['', Validators.required],
-      rut: [''],
       img_file: [''],
       password: ['asd', Validators.required],
       checkPassword: ['asd', Validators.required],
