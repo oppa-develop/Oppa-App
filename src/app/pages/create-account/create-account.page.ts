@@ -26,16 +26,18 @@ export class CreateAccountPage implements OnInit {
 
   createCreateAccountForm() {
     return this.formBuilder.group({
-      firstname: ['', Validators.required],
-      lastname: ['', Validators.required],
-      birthdate: ['', Validators.required],
-      phone: ['', Validators.required],
-      gender: ['', Validators.required],
-      email: ['', [Validators.email, Validators.required]],
-      password: ['', Validators.required],
+      firstname: ['test 2', Validators.required],
+      lastname: ['client', Validators.required],
+      birthdate: ['1993/03/27', Validators.required],
+      gender: ['hombre', Validators.required],
+      rut: ['18.463.527-k', Validators.required],
+      phone: ['+569499382', Validators.required],
+      email: ['t.client2@example.com', [Validators.email, Validators.required]],
       checkPassword: ['', Validators.required],
       rut: [''],
       img_file: [''],
+      password: ['asd', Validators.required],
+      checkPassword: ['asd', Validators.required],
       elders: this.formBuilder.array([])
     })
   }
@@ -46,13 +48,13 @@ export class CreateAccountPage implements OnInit {
 
   addElder() {
     const elder = this.formBuilder.group({
-      firstname: ['', Validators.required],
-      lastname: ['', Validators.required],
-      birthdate: ['', Validators.required],
-      gender: ['', Validators.required],
-      rut: ['', Validators.required],
-      phone: ['', Validators.required],
-      email: ['', [Validators.email, Validators.required]],
+      firstname: ['test 2', Validators.required],
+      lastname: ['client', Validators.required],
+      birthdate: ['1993/03/27', Validators.required],
+      gender: ['hombre', Validators.required],
+      rut: ['18.463.527-k', Validators.required],
+      phone: ['+569499382', Validators.required],
+      email: ['t.client2@example.com', [Validators.email, Validators.required]],
       img_file: ['']
     })
 
