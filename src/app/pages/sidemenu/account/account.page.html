@@ -72,15 +72,15 @@
         </ion-list-header>
         <ion-item *ngFor="let elder of user.elders">
           <ion-avatar slot="start">
-            <ion-img [src]="elder.avatar"></ion-img>
+            <ion-img [src]="apiUrl + elder.img_url"></ion-img>
           </ion-avatar>
           <ion-label>
             <h2>{{ elder.firstname + ' ' + elder.lastname }}</h2>
-            <h2 class="ion-text-wrap">
-              <ion-icon name="location-outline"></ion-icon> ${{ elder.location.street + ', ' + elder.location.other + ', ' + elder.location.district + ', ' + elder.location.region + '.' }}
+            <h2 *ngFor="let address of elder.addresses" class="ion-text-wrap">
+              <ion-icon name="location-outline"></ion-icon> ${{ address.street + ', ' + address.other + ', ' + address.district + ', ' + address.region + '.' }}
             </h2>
             <h2>
-              <ion-icon name="wallet-outline"></ion-icon> ${{ elder.credit | number }}
+              <ion-icon name="wallet-outline"></ion-icon> ${{ (elder.credit | number) || 0 }}
             </h2>
           </ion-label>
           <ion-icon name="create-outline" slot="end"></ion-icon>

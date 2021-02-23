@@ -155,6 +155,6 @@
 <ion-footer>
   <ion-toolbar>
     <ion-title>Crédito:</ion-title>
-    <ion-title slot="end" class="ion-padding-horizontal"> ${{ user.credit | number }}</ion-title>
+    <ion-title slot="end" class="ion-padding-horizontal"> ${{ (user.credit | number) || 0 }}</ion-title>
   </ion-toolbar>
 </ion-footer>

@@ -25,7 +25,7 @@
         </ion-col>
         <ion-col class="ion-text-left">
           <ion-title class="ion-no-padding">
-            <span class="text">${{ userSelected.credit | number }}</span>
+            <span class="text">${{ (userSelected.credit | number) || 0 }}</span>
           </ion-title>
         </ion-col>
       </ion-row>

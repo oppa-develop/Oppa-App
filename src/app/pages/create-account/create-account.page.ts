@@ -34,28 +34,33 @@ export class CreateAccountPage implements OnInit {
       email: ['', [Validators.email, Validators.required]],
       password: ['', Validators.required],
       checkPassword: ['', Validators.required],
-      accountType: [''],
-      grandparents: this.formBuilder.array([])
+      rut: [''],
+      img_file: [''],
+      elders: this.formBuilder.array([])
     })
   }
 
-  get grandparents(): FormArray {
-    return this.createAccountForm.get('grandparents') as FormArray
+  get elders(): FormArray {
+    return this.createAccountForm.get('elders') as FormArray
   }
 
-  addGrandparent() {
-    const grandparent = this.formBuilder.group({
+  addElder() {
+    const elder = this.formBuilder.group({
       firstname: ['', Validators.required],
       lastname: ['', Validators.required],
       birthdate: ['', Validators.required],
-      gender: ['', Validators.required]
+      gender: ['', Validators.required],
+      rut: ['', Validators.required],
+      phone: ['', Validators.required],
+      email: ['', [Validators.email, Validators.required]],
+      img_file: ['']
     })
 
-    this.grandparents.push(grandparent)
+    this.elders.push(elder)
   }
 
-  removeGrandparent(index: number) {
-    this.grandparents.removeAt(index)
+  removeElder(index: number) {
+    this.elders.removeAt(index)
   }
 
   // confirm new password validator
@@ -68,12 +73,12 @@ export class CreateAccountPage implements OnInit {
       this.passConfirmationWrong = true;
     }
   }
-  
+
   // getting the form control elements
   get password(): AbstractControl {
     return this.createAccountForm.controls['password'];
   }
-  
+
   get confirm_password(): AbstractControl {
     return this.createAccountForm.controls['checkPassword'];
   }

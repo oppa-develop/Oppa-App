@@ -1,3 +1,23 @@
 .pass-not-match {
   color: #b71c1c;
 }
+
+ion-avatar {
+  height: 120px;
+  width: 120px;
+  margin-top: -1.2vh;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+}
+
+ion-fab-button {
+  margin-top: 70px;
+  height: 50px;
+  margin-left: 20px;
+  width: 50px;
+}
+
+ion-fab-button ion-icon {
+  font-size: 30px;
+}

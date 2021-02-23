@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { CreateAccountPageRoutingModule } from './create-account-routing.module';
 
 import { CreateAccountPage } from './create-account.page';
+import { GlobalModule } from 'src/app/global.module';
 
 @NgModule({
   imports: [
@@ -14,7 +15,8 @@ import { CreateAccountPage } from './create-account.page';
     FormsModule,
     IonicModule,
     CreateAccountPageRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    GlobalModule
   ],
   declarations: [CreateAccountPage]
 })
