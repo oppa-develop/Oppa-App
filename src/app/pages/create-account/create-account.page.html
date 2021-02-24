@@ -14,7 +14,7 @@
     <form [formGroup]="createAccountForm" (ngSubmit)="createAccount()" ngNativeValidate>
       <ion-row>
         <ion-col>
-          <ion-radio-group>
+          <!-- <ion-radio-group>
             <ion-list-header class="ion-no-padding">
               <ion-label>
                 <h2>¿Quién necesita cuidado?</h2>
@@ -92,15 +92,14 @@
             <ion-label>
               <h2>Datos personales</h2>
             </ion-label>
-          </ion-list-header>
+          </ion-list-header> -->
           <ion-item class="ion-margin-bottom">
             <ion-grid class="ion-margin">
               <ion-row>
                 <ion-col class="ion-text-center">
                   <ion-avatar>
-                    <!-- <ion-img [src]="'https://ui-avatars.com/api/?name=' + createAccountForm.value.firstname + '+' + createAccountForm.value.lastname + '&background=1c4a9b&color=fff&size=128'"></ion-img> -->
-                    <!-- <ion-img [src]="createAccountForm.value.img_file"></ion-img> -->
-                    <ion-img [src]="img_base64"></ion-img>
+                    <ion-img *ngIf="!user_img" src="../../../assets/images/default_avatar.png"></ion-img>
+                    <ion-img *ngIf="user_img" [src]="'data:image/jpeg;base64,' + user_img"></ion-img>
                   </ion-avatar>
                   <ion-fab-button>
                     <ion-fab (click)="selectImage()">
@@ -149,6 +148,11 @@
             <ion-label position="floating">Rut</ion-label>
             <ion-input formControlName="rut" maxlength="12" [value]="createAccountForm.get('rut').value | rutParse" type="text" required></ion-input>
           </ion-item>
+          <ion-item class="ion-margin-bottom">
+            <ion-icon slot="start" name="mail-outline"></ion-icon>
+            <ion-label position="floating">Email</ion-label>
+            <ion-input formControlName="email" type="email" required></ion-input>
+          </ion-item>
           <ion-item class="ion-margin-vertical">
             <ion-icon slot="start" name="lock-open-outline"></ion-icon>
             <ion-label position="floating">Contraseña</ion-label>
@@ -162,11 +166,11 @@
           <span *ngIf="confirm_password.hasError('mismatch')" class="pass-not-match red-text"><strong>Las contraseñas deben coincidir.</strong></span>
           <ion-item class="ion-margin-vertical">
             <ion-label class="ion-text-wrap"> Acepto la <strong>política de privacidad</strong>, términos de uso y consiento el tratamiento de mis datos</ion-label>
-            <ion-checkbox slot="start" required></ion-checkbox>
+            <ion-checkbox formControlName="checkedTerms" slot="start" required></ion-checkbox>
           </ion-item>
           <ion-item class="ion-margin-vertical">
             <ion-label class="ion-text-wrap"> Acepto recibir descuentos, promociones, noticias y comunicaciones comerciales</ion-label>
-            <ion-checkbox slot="start"></ion-checkbox>
+            <ion-checkbox formControlName="checkedContact" slot="start" required></ion-checkbox>
           </ion-item>
           <ion-button type="submit" class="ion-margin-vertical" expand="block">Crear Cuenta</ion-button>
         </ion-col>

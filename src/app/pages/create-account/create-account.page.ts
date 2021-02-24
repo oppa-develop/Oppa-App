@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Camera, CameraOptions } from '@ionic-native/Camera/ngx';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, LoadingController, ToastController } from '@ionic/angular';
+import { ApiService } from 'src/app/providers/api/api.service';
+import { AuthService } from 'src/app/providers/auth/auth.service';
 
 @Component({
   selector: 'app-create-account',
@@ -15,7 +17,7 @@ export class CreateAccountPage implements OnInit {
   public accountType = 'elder'
 
   img_base64 = "";
-  isLoading = false;
+  user_img: string;
 
   imagePickerOptions = {
     maximumImagesCount: 1,
@@ -26,15 +28,14 @@ export class CreateAccountPage implements OnInit {
     private formBuilder: FormBuilder,
     private camera: Camera,
     public actionSheetController: ActionSheetController,
-    // private file: File
+    private api: ApiService,
+    private loadingController: LoadingController,
+    private toastCtrl: ToastController,
+    private auth: AuthService
   ) { }
 
   ngOnInit() {
     this.createAccountForm = this.createCreateAccountForm()
-  }
-
-  createAccount() {
-    console.log(this.createAccountForm.value);
   }
 
   createCreateAccountForm() {
@@ -46,14 +47,17 @@ export class CreateAccountPage implements OnInit {
       rut: ['18.463.527-k', Validators.required],
       phone: ['+569499382', Validators.required],
       email: ['t.client2@example.com', [Validators.email, Validators.required]],
-      img_file: [''],
       password: ['asd', Validators.required],
       checkPassword: ['asd', Validators.required],
-      elders: this.formBuilder.array([])
+      image_ext: ['png'],
+      image: [''],
+      checkedTerms: [false, Validators.required],
+      checkedContact: [false, Validators.required],
+      // elders: this.formBuilder.array([])
     })
   }
 
-  get elders(): FormArray {
+  /* get elders(): FormArray {
     return this.createAccountForm.get('elders') as FormArray
   }
 
@@ -66,7 +70,7 @@ export class CreateAccountPage implements OnInit {
       rut: ['18.463.527-k', Validators.required],
       phone: ['+569499382', Validators.required],
       email: ['t.client2@example.com', [Validators.email, Validators.required]],
-      img_file: ['']
+      img_base64: ['']
     })
 
     this.elders.push(elder)
@@ -74,7 +78,7 @@ export class CreateAccountPage implements OnInit {
 
   removeElder(index: number) {
     this.elders.removeAt(index)
-  }
+  } */
 
   // confirm new password validator
   onPasswordChange() {
@@ -107,9 +111,19 @@ export class CreateAccountPage implements OnInit {
     }
     this.camera.getPicture(options).then((imageData) => {
       // imageData is either a base64 encoded string or a file URI
-      this.img_base64 = 'data:image/jpeg;base64,' + imageData;
-      // this.createAccountForm.value.img_file = this.img_base64;
-      this.createAccountForm.value.img_file = this.base64toBlob(imageData, 'image/jpeg');
+      this.createAccountForm.value.image = imageData;
+      this.user_img = imageData;
+      switch(imageData.charAt(0)) {
+        case '/':
+          this.createAccountForm.value.image_ext = 'jpg'
+        break
+        case 'i':
+          this.createAccountForm.value.image_ext = 'png'
+        break
+        case 'R':
+          this.createAccountForm.value.image_ext = 'gif'
+        break
+      }
     })
     .catch(err => {
       console.log(err);
@@ -118,21 +132,21 @@ export class CreateAccountPage implements OnInit {
 
   async selectImage() {
     const actionSheet = await this.actionSheetController.create({
-      header: "Select Image source",
+      header: "Seleccionar imagen desde",
       buttons: [{
-        text: 'Load from Library',
+        text: 'Memoria',
         handler: () => {
           this.pickImage(this.camera.PictureSourceType.PHOTOLIBRARY);
         }
       },
       {
-        text: 'Use Camera',
+        text: 'Tomar foto',
         handler: () => {
           this.pickImage(this.camera.PictureSourceType.CAMERA);
         }
       },
       {
-        text: 'Cancel',
+        text: 'Cancelar',
         role: 'cancel'
       }
       ]
@@ -140,25 +154,40 @@ export class CreateAccountPage implements OnInit {
     await actionSheet.present();
   }
 
-  base64toBlob(base64Data: string, contentType: string) {
-    contentType = contentType || '';
-    let sliceSize = 1024;
-    let byteCharacters = atob(base64Data);
-    let bytesLength = byteCharacters.length;
-    let slicesCount = Math.ceil(bytesLength / sliceSize);
-    let byteArrays = new Array(slicesCount);
-
-    for (let sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
-        let begin = sliceIndex * sliceSize;
-        let end = Math.min(begin + sliceSize, bytesLength);
-
-        let bytes = new Array(end - begin);
-        for (let offset = begin, i = 0; offset < end; ++i, ++offset) {
-            bytes[i] = byteCharacters[offset].charCodeAt(0);
-        }
-        byteArrays[sliceIndex] = new Uint8Array(bytes);
+  async createAccount() {
+    if(!this.createAccountForm.value.checkedTerms && this.createAccountForm.value.checkedContact) {
+      this.presentToast('Debe aceptar los "Términos y Condiciones"', 'danger')
+    }else if(!this.createAccountForm.value.checkedContact && this.createAccountForm.value.checkedTerms) {
+      this.presentToast('Debe aceptar las "comunicaciones comerciales"', 'danger')
+    }else if(!this.createAccountForm.value.checkedContact && !this.createAccountForm.value.checkedTerms) {
+      this.presentToast('Debe aceptar los "Términos y Condiciones" y las "comunicaciones comerciales"', 'danger')
     }
-    return new Blob(byteArrays, { type: contentType });
-}
+    if(this.createAccountForm.value.checkedTerms && this.createAccountForm.value.checkedContact){
+      const loading = await this.loadingController.create({
+        message: 'Creando usuario...'
+      });
+      await loading.present()
+      this.api.createAccount(this.createAccountForm.value).toPromise()
+        .then(userData => {
+          loading.dismiss()
+          this.auth.login({
+            email: userData.email,
+            password: this.createAccountForm.value.password
+          })
+        })
+        .catch(err => {
+          loading.dismiss()
+          console.log(err);
+        });
+    }
+  }
 
+  async presentToast(message: string, color: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2000,
+      color
+    });
+    toast.present();
+  }
 }

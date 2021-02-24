@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { NavController, ToastController } from '@ionic/angular';
+import { LoadingController, NavController, ToastController } from '@ionic/angular';
 import { User } from 'src/app/models/user';
 import { ApiService } from '../api/api.service';
 
@@ -16,10 +16,15 @@ export class AuthService {
     public ngZone: NgZone, // NgZone service to remove outside scope warning
     public router: Router, // para enviar al usuario a otra vista
     private navController: NavController,
-    public toastCtrl: ToastController
+    public toastCtrl: ToastController,
+    private loadingController: LoadingController
   ) { }
 
-  login(userCredentials){
+  async login(userCredentials){
+    const loading = await this.loadingController.create({
+      message: 'Ingresando...'
+    });
+    await loading.present()
     this.api.login(userCredentials.email, userCredentials.password)
       .subscribe(
         (userData: any) => {
@@ -27,8 +32,10 @@ export class AuthService {
           localStorage.setItem('user', JSON.stringify(userData.user));
           this.ngZone.run(() => {
             this.router.navigate(['/sidemenu/services']);
+            loading.dismiss()
           });
         }, err => {
+          loading.dismiss()
           let errMessage
           switch(err.error.message) {
             case 'User is not a client':

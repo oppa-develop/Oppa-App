@@ -1,6 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LoadingController } from '@ionic/angular';
 import * as faker from 'faker/locale/es_MX'
 import { AuthService } from 'src/app/providers/auth/auth.service';
 import { environment } from 'src/environments/environment';
@@ -17,7 +16,6 @@ export class LoginPage implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private loadingController: LoadingController,
     private auth: AuthService
   ) { }
 
@@ -56,13 +54,8 @@ export class LoginPage implements OnInit {
 
   }
 
-  async login() {
-    const loading = await this.loadingController.create({
-      message: 'Ingresando...'
-    });
-    await loading.present()
+  login() {
     this.auth.login(this.loginForm.value)
-    loading.dismiss()
   }
 
   createLoginForm() {
