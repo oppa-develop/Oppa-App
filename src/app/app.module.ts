@@ -22,6 +22,8 @@ import { LocationService } from './providers/location/location.service';
 import { WebSocketService } from './providers/web-socket/web-socket.service';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+// import { File } from '@ionic-native/file/ngx';
+import { Camera } from '@ionic-native/Camera/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -39,6 +41,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     StatusBar,
     SplashScreen,
     DatePipe,
+    Camera,
+    // File,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

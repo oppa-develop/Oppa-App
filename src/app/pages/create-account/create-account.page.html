@@ -99,10 +99,11 @@
                 <ion-col class="ion-text-center">
                   <ion-avatar>
                     <!-- <ion-img [src]="'https://ui-avatars.com/api/?name=' + createAccountForm.value.firstname + '+' + createAccountForm.value.lastname + '&background=1c4a9b&color=fff&size=128'"></ion-img> -->
-                    <ion-img [src]="createAccountForm.value.img_file"></ion-img>
+                    <!-- <ion-img [src]="createAccountForm.value.img_file"></ion-img> -->
+                    <ion-img [src]="img_base64"></ion-img>
                   </ion-avatar>
                   <ion-fab-button>
-                    <ion-fab (click)="selectImg()">
+                    <ion-fab (click)="selectImage()">
                       <ion-icon name="camera-outline"></ion-icon>
                     </ion-fab>
                   </ion-fab-button>

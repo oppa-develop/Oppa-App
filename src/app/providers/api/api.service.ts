@@ -16,7 +16,7 @@ import { HttpClient } from '@angular/common/http';
 export class ApiService {
 
   delay: number = 1000
-  private apiUrl: string = environment.HOST + '/api'
+  private apiUrl: string = environment.HOST
 
   constructor(
     private http: HttpClient
