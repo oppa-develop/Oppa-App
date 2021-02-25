@@ -11,12 +11,12 @@ import { environment } from 'src/environments/environment';
 export class SidemenuPage implements OnInit {
 
   pages = [
-    { title: 'Servicios',               icon: 'construct-outline',        url: '/sidemenu/services'},
-    { title: 'Mis Datos',               icon: 'person-outline',           url: '/sidemenu/account'},
-    { title: 'Mensajes',                icon: 'chatbox-ellipses-outline', url: '/sidemenu/messages'},
-    { title: 'Monedero',                icon: 'wallet-outline',           url: '/sidemenu/wallet'},
-    { title: 'Mis de Servicios',        icon: 'document-text-outline',    url: '/sidemenu/history'},
-    { title: 'Ayuda',                   icon: 'help-circle-outline',      url: '/sidemenu/help'},
+    { title: 'Servicios',     icon: 'construct-outline',        url: '/sidemenu/services'},
+    { title: 'Mis Datos',     icon: 'person-outline',           url: '/sidemenu/account'},
+    { title: 'Mensajes',      icon: 'chatbox-ellipses-outline', url: '/sidemenu/messages'},
+    { title: 'Monedero',      icon: 'wallet-outline',           url: '/sidemenu/wallet'},
+    { title: 'Mis Servicios', icon: 'document-text-outline',    url: '/sidemenu/history'},
+    { title: 'Ayuda',         icon: 'help-circle-outline',      url: '/sidemenu/help'},
   ]
 
   selectedPath = ''
@@ -26,10 +26,12 @@ export class SidemenuPage implements OnInit {
   apiUrl: string = environment.HOST + '/'
 
   constructor(
-    private auth: AuthService,
+    private auth: AuthService
   ) { }
   
   ngOnInit() {
+    this.user = this.auth.userData()
+    this.auth.login(this.user.email)
     this.user = this.auth.userData()
     if (localStorage.getItem('darkMode') === 'on') {
       document.body.setAttribute('data-theme', 'dark');

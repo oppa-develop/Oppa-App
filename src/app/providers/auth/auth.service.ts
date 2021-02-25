@@ -20,34 +20,35 @@ export class AuthService {
     private loadingController: LoadingController
   ) { }
 
-  async login(userCredentials) {
+  async login(email, password?) {
     const loading = await this.loadingController.create({
       message: 'Ingresando...'
     });
     await loading.present()
-    this.api.login(userCredentials.email, userCredentials.password)
-      .subscribe(
-        (userData: any) => {
-          console.table(userData)
-          localStorage.setItem('user', JSON.stringify(userData.user));
-          this.ngZone.run(() => {
-            this.router.navigate(['/sidemenu/services']);
-            loading.dismiss()
-          });
-        }, err => {
+    this.api.login(email, password).toPromise()
+      .then((userData: any) => {
+        localStorage.setItem('user', JSON.stringify(userData.user));
+        this.ngZone.run(() => {
+          this.router.navigate(['/sidemenu/services']);
           loading.dismiss()
-          let errMessage
-          switch (err.error.message) {
-            case 'User is not a client':
-              errMessage = 'Usuario no registrado.'
-              break
-            default:
-              errMessage = 'Email y/o contraseña incorrectas.'
-              break
-          }
-          this.presentToast(errMessage, 'danger');
+        }, err => {
+          console.log(err);
+          loading.dismiss()
+        });
+      })
+      .catch(err => {
+        loading.dismiss()
+        let errMessage: string;
+        switch (err.error.message) {
+          case 'User is not a client':
+            errMessage = 'Usuario no registrado.'
+            break
+          default:
+            errMessage = 'Email y/o contraseña incorrectas.'
+            break
         }
-      );
+        this.presentToast(errMessage, 'danger');
+      })
   }
 
   logout() {

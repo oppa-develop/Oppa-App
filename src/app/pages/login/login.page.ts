@@ -55,7 +55,7 @@ export class LoginPage implements OnInit {
   }
 
   login() {
-    this.auth.login(this.loginForm.value)
+    this.auth.login(this.loginForm.value.email, this.loginForm.value.password)
   }
 
   createLoginForm() {
