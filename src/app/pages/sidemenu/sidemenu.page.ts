@@ -12,10 +12,10 @@ export class SidemenuPage implements OnInit {
 
   pages = [
     { title: 'Servicios',               icon: 'construct-outline',        url: '/sidemenu/services'},
-    { title: 'Cuenta',                  icon: 'person-outline',           url: '/sidemenu/account'},
+    { title: 'Mis Datos',               icon: 'person-outline',           url: '/sidemenu/account'},
     { title: 'Mensajes',                icon: 'chatbox-ellipses-outline', url: '/sidemenu/messages'},
     { title: 'Monedero',                icon: 'wallet-outline',           url: '/sidemenu/wallet'},
-    { title: 'Historial de Servicios',  icon: 'document-text-outline',    url: '/sidemenu/history'},
+    { title: 'Mis de Servicios',        icon: 'document-text-outline',    url: '/sidemenu/history'},
     { title: 'Ayuda',                   icon: 'help-circle-outline',      url: '/sidemenu/help'},
   ]
 
