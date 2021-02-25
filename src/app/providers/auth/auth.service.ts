@@ -20,7 +20,7 @@ export class AuthService {
     private loadingController: LoadingController
   ) { }
 
-  async login(userCredentials){
+  async login(userCredentials) {
     const loading = await this.loadingController.create({
       message: 'Ingresando...'
     });
@@ -37,20 +37,20 @@ export class AuthService {
         }, err => {
           loading.dismiss()
           let errMessage
-          switch(err.error.message) {
+          switch (err.error.message) {
             case 'User is not a client':
               errMessage = 'Usuario no registrado.'
-            break
+              break
             default:
               errMessage = 'Email y/o contraseña incorrectas.'
-            break
+              break
           }
           this.presentToast(errMessage, 'danger');
         }
       );
   }
 
-  logout(){
+  logout() {
     localStorage.removeItem('user');
     this.ngZone.run(() => {
       this.navController.navigateRoot(['login'])
@@ -66,28 +66,14 @@ export class AuthService {
     }
   }
 
-  userData(){
+  userData() {
     return JSON.parse(localStorage.getItem('user'));
   }
-  
+
   // user_id, name, lastName, email
 
-  setUserName(name: string){
-    let userData = this.userData();
-    userData.name = name;
-    localStorage.setItem('user', JSON.stringify(userData));
-  }
-
-  setUserLastName(lastName: string){
-    let userData = this.userData();
-    userData.lastName = lastName;
-    localStorage.setItem('user', JSON.stringify(userData));
-  }
-
-  setUserEmail(email: string){
-    let userData = this.userData();
-    userData.email = email;
-    localStorage.setItem('user', JSON.stringify(userData));
+  setUserData(user: User) {
+    localStorage.setItem('user', JSON.stringify(user));
   }
 
   async presentToast(message: string, color: string) {

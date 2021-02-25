@@ -12,6 +12,7 @@ import { AlertController } from '@ionic/angular';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { DatePipe } from '@angular/common';
 import { environment } from 'src/environments/environment';
+import { WebSocketService } from 'src/app/providers/web-socket/web-socket.service';
 
 @Component({
   selector: 'app-modal',
@@ -54,7 +55,8 @@ export class ModalPage implements OnInit {
     private api: ApiService,
     private alertController: AlertController,
     private dateFormat: DatePipe,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private ws: WebSocketService
   ) { }
 
   @Input() public service: Service
@@ -70,8 +72,18 @@ export class ModalPage implements OnInit {
 
   ngOnInit() {
     this.scheduleServiceForm = this.createScheduleServiceForm()
+    console.log('service', this.service);
     this.$regions = this.location.getRegions()
     this.user = this.auth.userData()
+  }
+
+  ionViewDidEnter() {
+    
+    console.log('ionViewDidEnter');
+
+    // We connect to the server
+    this.ws.connect()
+
   }
 
   createScheduleServiceForm() {
@@ -79,7 +91,8 @@ export class ModalPage implements OnInit {
       date: [null, Validators.required],
       hour: [null, Validators.required],
       receptor: [null, Validators.required],
-      address: [null, Validators.required]
+      address: [null, Validators.required],
+      service_id: [this.service.service_id]
     })
   }
 
@@ -106,14 +119,13 @@ export class ModalPage implements OnInit {
   }
 
   async scheduleService() {
-    console.log(this.scheduleServiceForm.valid)
     if (this.scheduleServiceForm.valid) {
       const loading = await this.loadingController.create({
         message: 'Solicitando servicio...'
       });
       await loading.present();
 
-      this.api.scheduleService(this.scheduleServiceForm.value).toPromise()
+      /* this.api.scheduleService(this.scheduleServiceForm.value).toPromise()
         .then((data: any) => {
           console.log('then', data)
           loading.dismiss()
@@ -121,16 +133,38 @@ export class ModalPage implements OnInit {
         })
         .catch(err => {
           console.log(err);
+        }) */
+        this.ws.connect();
+        this.ws.emit('requestService', this.scheduleServiceForm.value);
+        this.ws.listen('requestService').subscribe((service: any) => {
+          if (service.error) {
+            loading.dismiss()
+            // alert(service.error)
+            let error: string = service.error;
+            switch(service.error) {
+              case 'No service found':
+                error = 'Servicio no disponible en la fecha y hora seleccionada';
+              break
+            }
+            this.presentToast(error, 'danger')
+            this.ws.close()
+          } else {
+            // alert(service.services_service_id || service);
+            loading.dismiss()
+            this.presentAlert(service)
+            console.log(service)
+            this.ws.close()
+          }
         })
     } else {
       this.presentToast('Formulario incompleto.', 'danger')
     }
   }
 
-  async presentAlert(provider) {
+  async presentAlert(service) {
     const alert = await this.alertController.create({
       header: 'Agendar Servicio',
-      message: `Tu servicio será agendado con ${provider.serverName} para el próximo ${this.dateFormat.transform(dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD'), 'fullDate')} a las ${dayjs(this.scheduleServiceForm.value.hour).format('HH:mm')} horas.`,
+      message: `Tu servicio será agendado con ${service.firstname} ${service.lastname} para el próximo ${this.dateFormat.transform(dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD'), 'fullDate')} a las ${dayjs(this.scheduleServiceForm.value.hour).format('HH:mm')} horas.`,
       buttons: [{
         text: 'Cancelar',
         role: 'cancel',

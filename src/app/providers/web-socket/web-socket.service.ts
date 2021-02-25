@@ -26,7 +26,8 @@ export class WebSocketService {
     this.socket = io(this.uri, {
       query: {
         firstname: this.user.firstname,
-        lastname: this.user.lastname
+        lastname: this.user.lastname,
+        user_id: this.user.user_id.toString()
       }
     });
   }

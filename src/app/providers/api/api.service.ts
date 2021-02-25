@@ -101,7 +101,7 @@ export class ApiService {
     return this.http.get<Service[]>(`${this.apiUrl}/services/super-category/${superCategoryTitle}`);
   }
 
-  getServices(): Observable<Service[]> {
+  getServices(): Observable<any[]> {
     return of([
       { id: parseInt(faker.random.uuid()), type: 'Servicio a Domicilio', name: 'peluquería', description: faker.lorem.paragraph(), price: parseInt('9990'), img: '../../../../assets/images/pexels-nick-demou-1319460.jpg' },
       { id: parseInt(faker.random.uuid()), type: 'Servicio de acompañamiento', name: 'realizar trámite', description: faker.lorem.paragraph(), price: parseInt('9990'), img: '../../../../assets/images/1789259.jpg' },
@@ -133,8 +133,9 @@ export class ApiService {
     ]).pipe(delay(this.delay));
   }
 
-  getServicesHistory(): Observable<Service[]> {
-    return of([
+  getServicesHistory(user_id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/services/history/user/${user_id}`);
+    /* return of([
       {
         id: parseInt(faker.random.uuid()),
         date: faker.date.past().toISOString(),
@@ -187,7 +188,7 @@ export class ApiService {
         serverRating: (faker.random.number(1)) ? faker.random.number(5) : 0,
         state: 'Terminado'
       },
-    ]).pipe(delay(this.delay));
+    ]).pipe(delay(this.delay)); */
   }
 
   scheduleService(data) {
