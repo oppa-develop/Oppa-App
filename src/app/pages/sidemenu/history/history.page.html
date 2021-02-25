@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Historial de Servicios</ion-title>
+    <ion-title>Mis Servicios</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -53,9 +53,9 @@
     </ion-card>
   </ng-template>
 
-  <!-- list of cards -->
+  <!-- list of services -->
   <ng-template [ngIf]="services.value">
-    <ion-card *ngFor="let service of services.value">
+    <ion-card *ngFor="let service of services.value.services">
       <ion-img [src]="service.img"></ion-img>
       <ion-avatar>
         <ion-img [src]="service.serverImg"></ion-img>
@@ -120,6 +120,11 @@
         <ion-button class="ion-no-margin" *ngIf="(service.state === 'Terminado' && service.serverRating !== 0) || service.state !== 'Terminado'" expand="block" color="primary" (click)="openModal(service)">ver detalle</ion-button>
       </ion-card-content>
     </ion-card>
+  </ng-template>
+
+  <!-- empty state -->
+  <ng-template [ngIf]="services.value?.services.length == 0">
+    <h1>El historial de servicios está vacío</h1>
   </ng-template>
 
   <!-- error -->

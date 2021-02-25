@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { Service } from 'src/app/models/service';
+import { User } from 'src/app/models/user';
 import { ApiService } from 'src/app/providers/api/api.service';
+import { AuthService } from 'src/app/providers/auth/auth.service';
 import { UpdateModalPage } from './update-modal/update-modal.page';
 
 @Component({
@@ -13,15 +15,18 @@ import { UpdateModalPage } from './update-modal/update-modal.page';
 export class HistoryPage implements OnInit {
 
   $services: Observable<Service[]>
+  user: User
 
   constructor(
     private api: ApiService,
     private modalController: ModalController,
     private alertController: AlertController,
+    private auth: AuthService
   ) { }
 
   ngOnInit() {
-    this.$services = this.api.getServicesHistory()
+    this.user = this.auth.userData();
+    this.$services = this.api.getServicesHistory(this.user.user_id)
   }
 
   async rank(service: Service) {
@@ -84,7 +89,7 @@ export class HistoryPage implements OnInit {
   rankService(serviceId: number, stars: number) {
     this.api.rankService({ serviceId, stars }).toPromise()
       .then((data: any) => {
-        this.$services = this.api.getServicesHistory()
+        this.$services = this.api.getServicesHistory(this.user.user_id)
       })
       .catch(err => {
         console.log(err)
