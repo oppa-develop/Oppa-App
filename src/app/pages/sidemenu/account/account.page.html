@@ -16,7 +16,8 @@
             </ion-fab-button>
           </ion-fab>
           <ion-avatar>
-            <ion-img [src]="apiUrl + user.img_url"></ion-img>
+            <ion-img *ngIf="user.img_url" [src]="apiUrl + user.img_url"></ion-img>
+            <ion-img *ngIf="!user.img_url" src="../../../../assets/images/default_avatar.png"></ion-img>
           </ion-avatar>
         </ion-col>
       </ion-row>
@@ -49,6 +50,11 @@
             <ion-select-option value="hombre">Hombre</ion-select-option>
             <ion-select-option value="otro">Otro</ion-select-option>
           </ion-select>
+        </ion-item>
+        <ion-item class="ion-margin-vertical">
+          <ion-icon slot="start" name="call-outline"></ion-icon>
+          <ion-label position="floating">Teléfono</ion-label>
+          <ion-input formControlName="phone" type="tel" required></ion-input>
         </ion-item>
         <ion-item class="ion-margin-vertical">
           <ion-icon slot="start" name="mail-outline"></ion-icon>
