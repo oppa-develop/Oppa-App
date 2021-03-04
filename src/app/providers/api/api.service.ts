@@ -32,65 +32,10 @@ export class ApiService {
 
   login(email: string, password: string): Observable<User> {
     return this.http.post<User>(this.apiUrl + '/auth/login-client', { email, password });
-    return 
-    /* return of({
-      admin_id: faker.random.number(),
-      client_id: faker.random.number(),
-      provider_id: faker.random.number(),
-      user_id: faker.random.number(),
-      firstname: faker.name.firstName(),
-      lastname: faker.name.lastName(),
-      email: faker.internet.exampleEmail(),
-      birthdate: faker.date.past(20),
-      avatar: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
-      img_url: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
-      role: 'apoderado',
-      credit: parseInt(faker.finance.amount()) * 100,
-      accountType: 'companion',
-      token: faker.random.alphaNumeric(18),
-      location: {
-        street: 'Av. Recoleta #2121',
-        other: 'Dpto. 605B',
-        district: 'Recoleta',
-        region: 'Metropolitana de Santiago'
-      },
-      elders: [
-        {
-          firstname: faker.name.firstName(),
-          lastname: faker.name.lastName(),
-          age: faker.random.number(99),
-          email: faker.internet.exampleEmail(),
-          birthdate: faker.date.past(20),
-          avatar: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
-          role: 'apoderado',
-          credit: parseInt(faker.finance.amount()) * 10,
-          accountType: 'elder',
-          location: {
-            street: 'Av. Recoleta #2121',
-            other: 'Dpto. 605B',
-            district: 'Recoleta',
-            region: 'Metropolitana de Santiago'
-          }
-        },
-        {
-          firstname: faker.name.firstName(),
-          lastname: faker.name.lastName(),
-          age: faker.random.number(99),
-          email: faker.internet.exampleEmail(),
-          birthdate: faker.date.past(20),
-          avatar: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
-          role: 'apoderado',
-          credit: parseInt(faker.finance.amount()) * 10,
-          accountType: 'elder',
-          location: {
-            street: 'Av. Recoleta #2121',
-            other: 'Dpto. 605B',
-            district: 'Recoleta',
-            region: 'Metropolitana de Santiago'
-          }
-        }
-      ]
-    }) */
+  }
+
+  getCredit(user_id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/users/${user_id}/credit`)
   }
 
   getSuperCategoriesServices(): Observable<any[]> {

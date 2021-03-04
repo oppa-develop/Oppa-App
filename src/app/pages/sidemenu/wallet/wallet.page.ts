@@ -25,6 +25,14 @@ export class WalletPage implements OnInit {
   ngOnInit() {
     this.user = this.auth.userData()
     this.userSelected = this.user
+    this.api.getCredit(this.user.user_id).toPromise()
+      .then((res: any) => {
+        this.user.credit = res.credit
+        this.auth.setUserData(this.user)
+      })
+      .catch(err => {
+        console.log(err);
+      })
     this.$wallet = this.api.getWalletHistory(this.user.user_id)
   }
 
@@ -34,13 +42,15 @@ export class WalletPage implements OnInit {
       text: this.user.firstname + ' ' + this.user.lastname,
       handler: () => {
         this.userSelected = this.user
+        this.$wallet = this.api.getWalletHistory(this.user.user_id)
       }
     })
     this.user.elders.forEach(elder => {
       buttons.push({
-        text: this.user.firstname + ' ' + elder.lastname,
+        text: elder.firstname + ' ' + elder.lastname,
         handler: () => {
           this.userSelected = elder
+          this.$wallet = this.api.getWalletHistory(elder.user_id)
         }
       })
     })

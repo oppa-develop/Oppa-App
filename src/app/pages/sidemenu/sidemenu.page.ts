@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from 'src/app/models/user';
+import { ApiService } from 'src/app/providers/api/api.service';
 import { AuthService } from 'src/app/providers/auth/auth.service';
 import { environment } from 'src/environments/environment';
 
@@ -26,13 +27,17 @@ export class SidemenuPage implements OnInit {
   apiUrl: string = environment.HOST + '/'
 
   constructor(
-    private auth: AuthService
+    private auth: AuthService,
+    private api: ApiService
   ) { }
   
   ngOnInit() {
     this.user = this.auth.userData()
-    this.auth.login(this.user.email)
-    this.user = this.auth.userData()
+    this.api.getCredit(this.user.user_id).toPromise()
+      .then((data: any) => {
+        this.user.credit = data.credit
+        this.auth.setUserData(this.user)
+      })
     if (localStorage.getItem('darkMode') === 'on') {
       document.body.setAttribute('data-theme', 'dark');
       this.darkMode = true
