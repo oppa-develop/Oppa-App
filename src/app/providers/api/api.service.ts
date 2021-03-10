@@ -137,7 +137,9 @@ export class ApiService {
   }
 
   scheduleService(data) {
-    return of({
+    console.log({data});
+    return this.http.post<any>(`${this.apiUrl}/services/schedule`, data)
+    /* return of({
       id: faker.random.number(),
       date: faker.date.past().toISOString(),
       type: 'Servicio de acompañamiento',
@@ -149,7 +151,7 @@ export class ApiService {
       serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
       serverRating: (faker.random.number(1)) ? faker.random.number(5) : 0,
       state: 'Terminado'
-    }).pipe(delay(this.delay));
+    }).pipe(delay(this.delay)); */
   }
 
   getWalletHistory(user_id: number): Observable<any[]> {
@@ -228,6 +230,18 @@ export class ApiService {
         byteArrays[sliceIndex] = new Uint8Array(bytes);
     }
     return new Blob(byteArrays, { type: contentType });
+  }
+
+  payWithWallet(amoutn: number): Observable<any> {
+    return of({
+      message: 'Payment ok'
+    }).pipe(delay(10000));
+  }
+
+  payWithWebpay(amoutn: number): Observable<any> {
+    return of({
+      message: 'Payment ok'
+    }).pipe(delay(10000));
   }
 
 }

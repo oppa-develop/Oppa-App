@@ -92,7 +92,8 @@ export class ModalPage implements OnInit {
       hour: [null, Validators.required],
       receptor: [null, Validators.required],
       address: [null, Validators.required],
-      service_id: [this.service.service_id]
+      service_id: [this.service.service_id],
+      paymentMethod: [null, Validators.required]
     })
   }
 
@@ -124,47 +125,52 @@ export class ModalPage implements OnInit {
         message: 'Solicitando servicio...'
       });
       await loading.present();
-
-      /* this.api.scheduleService(this.scheduleServiceForm.value).toPromise()
-        .then((data: any) => {
-          console.log('then', data)
-          loading.dismiss()
-          this.presentAlert(data)
+      let scheduleData = {
+        client_id: this.scheduleServiceForm.value.receptor.client_id,
+        user_id: this.scheduleServiceForm.value.receptor.user_id,
+        date: this.scheduleServiceForm.value.date,
+        start: this.scheduleServiceForm.value.hour,
+        end: null,
+        service_id: this.scheduleServiceForm.value.service_id,
+        address_id: this.scheduleServiceForm.value.address.address_id,
+        category_id: this.service.categories_category_id,
+        receptor: this.scheduleServiceForm.value.receptor,
+        provider_id: null,
+        service: null,
+        address: null
+      }
+      this.api.scheduleService(scheduleData).toPromise()
+        .then((res: any) => {
+          this.ws.connect();
+          console.log('datos de la bdd con el posible proveedor', res.serviceRequested);
+          scheduleData.provider_id = res.serviceRequested.providers_provider_id
+          scheduleData.service = this.service
+          scheduleData.address = this.scheduleServiceForm.value.address
+          this.ws.emit('notificateProvider', scheduleData)
+          this.ws.emit('notificationsProvider', { // aqui el usuario se suscribe a las notificaciones
+            user_id: this.user.user_id,
+            client_id: this.user.client_id
+          });
+          this.ws.listen('notificateUser').subscribe((data: any) => {
+            console.log('confirmación por parte del proveedor', data);
+            if (data.state == 'accepted') {
+              loading.dismiss()
+              this.presentAlert(data)
+            }
+          })
         })
         .catch(err => {
-          console.log(err);
-        }) */
-        this.ws.connect();
-        this.ws.emit('requestService', this.scheduleServiceForm.value);
-        this.ws.listen('requestService').subscribe((service: any) => {
-          if (service.error) {
-            loading.dismiss()
-            // alert(service.error)
-            let error: string = service.error;
-            switch(service.error) {
-              case 'No service found':
-                error = 'Servicio no disponible en la fecha y hora seleccionada';
-              break
-            }
-            this.presentToast(error, 'danger')
-            this.ws.close()
-          } else {
-            // alert(service.services_service_id || service);
-            loading.dismiss()
-            this.presentAlert(service)
-            console.log(service)
-            this.ws.close()
-          }
+          loading.dismiss()
         })
     } else {
       this.presentToast('Formulario incompleto.', 'danger')
     }
   }
 
-  async presentAlert(service) {
+  async presentAlert(data) {
     const alert = await this.alertController.create({
       header: 'Agendar Servicio',
-      message: `Tu servicio será agendado con ${service.firstname} ${service.lastname} para el próximo ${this.dateFormat.transform(dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD'), 'fullDate')} a las ${dayjs(this.scheduleServiceForm.value.hour).format('HH:mm')} horas.`,
+      message: `Tu servicio será agendado con ${data.provider.firstname} ${data.provider.lastname} para el próximo ${this.dateFormat.transform(dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD'), 'fullDate')} a las ${dayjs(this.scheduleServiceForm.value.hour).format('HH:mm')} horas.`,
       buttons: [{
         text: 'Cancelar',
         role: 'cancel',
@@ -172,16 +178,55 @@ export class ModalPage implements OnInit {
           console.log('Agendar servicio cancelado');
         }
       }, {
-        text: 'Agendar',
-        handler: () => {
+        text: 'Pagar',
+        handler: async () => {
           console.log('Agendando servicio');
-          alert.onDidDismiss().then(() => {
-            this.presentToast('Servicio agendado', null)
-            this.closeModal()
-          })
+          
+          if (this.scheduleServiceForm.value.paymentMethod == 'wallet') {
+            console.log('pagando con monedero');
+            const loading = await this.loadingController.create({
+              message: 'Pagando servicio con monedero...'
+            });
+            await loading.present();
+            this.api.payWithWallet(this.service.price).toPromise()
+              .then((res: any) => {
+                console.log('pago realizado', res);
+                loading.dismiss()
+                this.closeModal()
+                this.presentToast('Servicio agendado', 'success')
+                this.ws.emit('serviceConfirmation', {
+                  success: true,
+                  message: 'Service scheduled',
+                  provider_id: data.provider.provider_id
+                })
+              })
+              .catch(err => {
+                console.log('pago fallido', err);
+                loading.dismiss()
+                this.closeModal()
+                this.presentToast('Servicio no agendado', 'danger')
+                this.ws.emit('serviceConfirmation', {
+                  success: false,
+                  message: 'Service canceled',
+                  provider_id: data.provider.provider_id
+                })
+              })
+          } else if (this.scheduleServiceForm.value.paymentMethod == 'webpay') {
+            console.log('pagando con webpay');
+        
+            this.api.payWithWebpay(this.service.price).toPromise()
+              .then((res: any) => {
+                console.log('pago realizado', res);
+                
+              })
+              .catch(err => {
+                console.log('pago fallido', err);
+                
+              })
+          }
         }
       }]
-    });
+    })
 
     await alert.present();
   }

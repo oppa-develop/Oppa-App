@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Camera, CameraOptions } from '@ionic-native/Camera/ngx';
 import { ActionSheetController, LoadingController, ToastController } from '@ionic/angular';
 import { ApiService } from 'src/app/providers/api/api.service';
@@ -14,7 +14,6 @@ export class CreateAccountPage implements OnInit {
 
   public createAccountForm: FormGroup
   public passConfirmationWrong = null
-  public accountType = 'elder'
 
   img_base64 = "";
   user_img: string;
@@ -40,13 +39,13 @@ export class CreateAccountPage implements OnInit {
 
   createCreateAccountForm() {
     return this.formBuilder.group({
-      firstname: ['test 2', Validators.required],
-      lastname: ['client', Validators.required],
+      firstname: ['Javier', Validators.required],
+      lastname: ['Muñoz', Validators.required],
       birthdate: ['1993/03/27', Validators.required],
       gender: ['hombre', Validators.required],
       rut: ['18.463.527-k', Validators.required],
       phone: ['+569499382', Validators.required],
-      email: ['t.client2@example.com', [Validators.email, Validators.required]],
+      email: ['j.munoz@example.com', [Validators.email, Validators.required]],
       password: ['asd', Validators.required],
       checkPassword: ['asd', Validators.required],
       image_ext: ['png'],

@@ -61,7 +61,7 @@
         </ion-list-header>
         <ion-radio-group *ngIf="scheduleServiceForm.value.receptor" formControlName="address">
           <ion-item class="ion-text-wrap" *ngFor="let address of scheduleServiceForm.value.receptor.addresses">
-            <ion-radio checked="true" slot="start" [value]="scheduleServiceForm.value.receptor.address"></ion-radio>
+            <ion-radio checked="true" slot="start" [value]="address"></ion-radio>
             <ion-label>{{ address.street + ', ' + address.other + ', ' + address.district + ', región ' + address.region + '.' }}</ion-label>
           </ion-item>
         </ion-radio-group>
@@ -101,7 +101,7 @@
         <ion-list-header>
           <h3>Método de Pago</h3>
         </ion-list-header>
-        <ion-radio-group>
+        <ion-radio-group formControlName="paymentMethod">
           <ion-item class="ion-text-wrap">
             <ion-radio [disabled]="service.price > user.credit" slot="start" value="wallet"></ion-radio>
             <ion-label>Monedero: ${{ (user.credit | number) || 0 }}</ion-label>
