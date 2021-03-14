@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Camera, CameraOptions } from '@ionic-native/Camera/ngx';
 import { ActionSheetController, LoadingController, ToastController } from '@ionic/angular';
 import { ApiService } from 'src/app/providers/api/api.service';
@@ -30,7 +31,9 @@ export class CreateAccountPage implements OnInit {
     private api: ApiService,
     private loadingController: LoadingController,
     private toastCtrl: ToastController,
-    private auth: AuthService
+    private auth: AuthService,
+    public ngZone: NgZone, // NgZone service to remove outside scope warning
+    public router: Router, // para enviar al usuario a otra vista
   ) { }
 
   ngOnInit() {
@@ -169,10 +172,18 @@ export class CreateAccountPage implements OnInit {
       this.api.createAccount(this.createAccountForm.value).toPromise()
         .then(userData => {
           loading.dismiss()
-          this.auth.login({
+          this.ngZone.run(() => {
+            this.router.navigate(['/login']);
+            loading.dismiss()
+          }, err => {
+            console.log(err);
+            loading.dismiss()
+            this.presentToast('No se ha podido crear la cuenta', 'danger');
+          });
+          /* this.auth.login({
             email: userData.email,
             password: this.createAccountForm.value.password
-          })
+          }) */
         })
         .catch(err => {
           loading.dismiss()

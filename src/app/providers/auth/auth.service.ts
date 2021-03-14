@@ -34,6 +34,7 @@ export class AuthService {
         }, err => {
           console.log(err);
           loading.dismiss()
+          this.presentToast('No se ha podido crear la cuenta', 'danger');
         });
       })
       .catch(err => {
@@ -70,8 +71,6 @@ export class AuthService {
   userData() {
     return JSON.parse(localStorage.getItem('user'));
   }
-
-  // user_id, name, lastName, email
 
   setUserData(user: User) {
     localStorage.setItem('user', JSON.stringify(user));
