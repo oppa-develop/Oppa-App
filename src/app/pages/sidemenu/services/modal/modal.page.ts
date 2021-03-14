@@ -144,6 +144,7 @@ export class ModalPage implements OnInit {
           this.ws.connect();
           console.log('datos de la bdd con el posible proveedor', res.serviceRequested);
           scheduleData.provider_id = res.serviceRequested.providers_provider_id
+          this.scheduleServiceForm.value.provider_has_services_id = res.serviceRequested.provider_has_services_id
           scheduleData.service = this.service
           scheduleData.address = this.scheduleServiceForm.value.address
           this.ws.emit('notificateProvider', scheduleData)
@@ -188,22 +189,36 @@ export class ModalPage implements OnInit {
               message: 'Pagando servicio con monedero...'
             });
             await loading.present();
-            this.api.payWithWallet(this.service.price).toPromise()
+            const movement = {
+              amount: this.service.price,
+              type: 'pago',
+              user_id: this.user.user_id,
+              scheduleServiceData: {
+                clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
+                clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
+                date: this.scheduleServiceForm.value.date,
+                start: this.scheduleServiceForm.value.hour,
+                provider_has_services_provider_has_services_id: this.scheduleServiceForm.value.provider_has_services_id
+              }
+            }
+            
+            this.api.payWithWallet(movement).toPromise()
               .then((res: any) => {
                 console.log('pago realizado', res);
-                loading.dismiss()
-                this.closeModal()
-                this.presentToast('Servicio agendado', 'success')
+                this.user.credit -= movement.amount;
+                this.auth.setUserData(this.user);
+                loading.dismiss();
+                this.closeModal();
+                this.presentToast('Servicio agendado', 'success');
                 this.ws.emit('serviceConfirmation', {
                   success: true,
                   message: 'Service scheduled',
-                  provider_id: data.provider.provider_id
-                })
+                  provider: data.provider
+                });
               })
               .catch(err => {
                 console.log('pago fallido', err);
                 loading.dismiss()
-                this.closeModal()
                 this.presentToast('Servicio no agendado', 'danger')
                 this.ws.emit('serviceConfirmation', {
                   success: false,
@@ -217,11 +232,9 @@ export class ModalPage implements OnInit {
             this.api.payWithWebpay(this.service.price).toPromise()
               .then((res: any) => {
                 console.log('pago realizado', res);
-                
               })
               .catch(err => {
                 console.log('pago fallido', err);
-                
               })
           }
         }

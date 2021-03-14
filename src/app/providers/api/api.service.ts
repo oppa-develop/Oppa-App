@@ -78,8 +78,8 @@ export class ApiService {
     ]).pipe(delay(this.delay));
   }
 
-  getServicesHistory(user_id: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/services/history/user/${user_id}`);
+  getServicesHistory(client_id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/services/history/client/${client_id}`);
     /* return of([
       {
         id: parseInt(faker.random.uuid()),
@@ -232,16 +232,14 @@ export class ApiService {
     return new Blob(byteArrays, { type: contentType });
   }
 
-  payWithWallet(amoutn: number): Observable<any> {
+  payWithWebpay(amoutn: number): Observable<any> {
     return of({
       message: 'Payment ok'
     }).pipe(delay(10000));
   }
 
-  payWithWebpay(amoutn: number): Observable<any> {
-    return of({
-      message: 'Payment ok'
-    }).pipe(delay(10000));
+  payWithWallet(movement: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/wallets/new-movement`, movement)
   }
 
 }

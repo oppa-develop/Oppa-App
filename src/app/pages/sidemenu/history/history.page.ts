@@ -5,6 +5,7 @@ import { Service } from 'src/app/models/service';
 import { User } from 'src/app/models/user';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { AuthService } from 'src/app/providers/auth/auth.service';
+import { environment } from 'src/environments/environment';
 import { UpdateModalPage } from './update-modal/update-modal.page';
 
 @Component({
@@ -16,6 +17,7 @@ export class HistoryPage implements OnInit {
 
   $services: Observable<Service[]>
   user: User
+  apiUrl: string = environment.HOST + '/'
 
   constructor(
     private api: ApiService,
@@ -26,7 +28,7 @@ export class HistoryPage implements OnInit {
 
   ngOnInit() {
     this.user = this.auth.userData();
-    this.$services = this.api.getServicesHistory(this.user.user_id)
+    this.$services = this.api.getServicesHistory(this.user.client_id)
   }
 
   async rank(service: Service) {

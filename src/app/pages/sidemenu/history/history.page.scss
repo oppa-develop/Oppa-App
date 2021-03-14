@@ -1,34 +1,23 @@
-ion-card>ion-img {
-  object-fit: cover;
-  height: 25vh;
+ion-card-header ion-grid ion-row ion-col ion-label {
+  height: 100%;
+  display: inline-block;
+  vertical-align: middle;
+  padding-bottom: 10px;
 }
 
-ion-avatar {
-  position: absolute;
-  top: 15%;
-  left: 33%;
-  width: 120px;
-  height: 120px;
+.elder-data {
+  margin-top: -145px;
 }
 
-.state {
-  position: absolute;
-  right: 30px;
-  top: 31.7vh;
+.elder-data ion-avatar {
+  margin: auto;
 }
 
-ion-icon.star {
-  font-size: 18px;
+.elder-data ion-text {
+  color: white;
+  font-size: large;
 }
 
-ion-icon:not(.star) {
-  margin-right: 10px;
-}
-
-ion-item {
-  height: 38px;
-}
-
-ion-list {
-  padding-top: 0;
+ion-title>ion-label {
+  color: white;
 }
