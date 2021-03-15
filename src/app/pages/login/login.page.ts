@@ -21,7 +21,6 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     this.loginForm = this.createLoginForm()
-    console.log(this.loginForm.value.password.length);
     
     if (localStorage.getItem('darkMode') === 'on') {
       document.body.setAttribute('data-theme', 'dark');
@@ -60,8 +59,8 @@ export class LoginPage implements OnInit {
 
   createLoginForm() {
     return this.formBuilder.group({
-      email: [environment.user.email || null, [Validators.required, Validators.email]],
-      password: [environment.user.password || null, Validators.required]
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required]
     })
   }
 

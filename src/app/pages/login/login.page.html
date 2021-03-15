@@ -11,8 +11,8 @@
             <ion-input formControlName="email" type="email" required></ion-input>
           </ion-item>
           <ion-item>
-            <ion-icon *ngIf="loginForm.value.password.length == 0" slot="start" name="lock-open-outline"></ion-icon>
-            <ion-icon *ngIf="loginForm.value.password.length > 0" slot="start" name="lock-closed-outline"></ion-icon>
+            <ion-icon *ngIf="loginForm.value.password?.length == 0" slot="start" name="lock-open-outline"></ion-icon>
+            <ion-icon *ngIf="loginForm.value.password?.length > 0" slot="start" name="lock-closed-outline"></ion-icon>
             <ion-label position="floating">Contraseña</ion-label>
             <ion-input formControlName="password" [type]="passwordTypeInput" required #passwordEyeRegister clearOnEdit="false"></ion-input>
             <ion-icon class="password-icon" slot="end" [name]="(passwordTypeInput === 'text')?'eye-off':'eye'" (click)="togglePasswordMode()"></ion-icon>
