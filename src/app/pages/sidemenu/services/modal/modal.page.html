@@ -62,11 +62,12 @@
         <ion-radio-group *ngIf="scheduleServiceForm.value.receptor" formControlName="address">
           <ion-item class="ion-text-wrap" *ngFor="let address of scheduleServiceForm.value.receptor.addresses">
             <ion-radio checked="true" slot="start" [value]="address"></ion-radio>
-            <ion-label>{{ address.street + ', ' + address.other + ', ' + address.district + ', región ' + address.region + '.' }}</ion-label>
-          </ion-item>
+            <ion-label class="ion-text-wrap" *ngIf="address.other">{{ address.street + ', ' + address.other + ', ' + address.district + ', región ' + address.region + '.' }}</ion-label>
+            <ion-label class="ion-text-wrap" *ngIf="!address.other">{{ address.street + ', ' + address.district + ', región ' + address.region + '.' }}</ion-label>
+        </ion-item>
         </ion-radio-group>
-        <ion-button *ngIf="scheduleServiceForm.value.receptor" class="ion-padding-horizontal" expand="block" color="secondary" (click)="addLocation()">Editar Dirección</ion-button>
-        <ng-template hidden>
+        <!-- <ion-button *ngIf="scheduleServiceForm.value.receptor" class="ion-padding-horizontal" expand="block" color="secondary" (click)="addLocation()">Editar Dirección</ion-button> -->
+        <!-- <ng-template>
           <ion-item>
             <ion-label>Calle</ion-label>
             <ion-input formControlName="street" type="text" placeholder="Calle, Avenida, Pasaje..." required></ion-input>
@@ -97,7 +98,7 @@
               <ion-select-option *ngFor="let district of $districts | async" [value]="district.codigo">{{ district.nombre }}</ion-select-option>
             </ion-select>
           </ion-item>
-        </ng-template>
+        </ng-template> -->
         <ion-list-header>
           <h3>Método de Pago</h3>
         </ion-list-header>

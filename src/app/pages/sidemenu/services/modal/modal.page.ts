@@ -198,7 +198,9 @@ export class ModalPage implements OnInit {
                 clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
                 date: this.scheduleServiceForm.value.date,
                 start: this.scheduleServiceForm.value.hour,
-                provider_has_services_provider_has_services_id: this.scheduleServiceForm.value.provider_has_services_id
+                provider_has_services_provider_has_services_id: this.scheduleServiceForm.value.provider_has_services_id,
+                addresses_address_id: this.scheduleServiceForm.value.address.address_id,
+                addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id
               }
             }
             
