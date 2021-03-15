@@ -13,8 +13,8 @@ export class LocationService {
     private http: HttpClient
   ) { }
 
-  getDistrictsByRegion(region: string): Observable<any> {
-    return this.http.jsonp<any>(`${this.baseUrl}/regiones/${region}/comunas`, 'callback')
+  getDistricts(): Observable<any> {
+    return this.http.jsonp<any>(`${this.baseUrl}/comunas`, 'callback')
   }
 
   getRegions(): Observable<any> {

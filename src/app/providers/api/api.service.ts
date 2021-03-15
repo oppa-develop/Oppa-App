@@ -30,6 +30,10 @@ export class ApiService {
     }])
   }
 
+  saveNewAddress(address): Observable<any[]> {
+    return this.http.post<any[]>(`${this.apiUrl}/addresses/new-address`, address)
+  }
+
   login(email: string, password: string): Observable<User> {
     return this.http.post<User>(this.apiUrl + '/auth/login-client', { email, password });
   }
