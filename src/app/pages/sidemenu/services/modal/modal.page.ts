@@ -102,11 +102,6 @@ export class ModalPage implements OnInit {
     
   }
 
-  getDistrictsByRegion() {
-    console.log('Seleccionando comunas de la región', this.scheduleServiceForm.value.region)
-    this.$districts = this.location.getDistrictsByRegion(this.scheduleServiceForm.value.region)
-  }
-
   addLocation() {
 
   }

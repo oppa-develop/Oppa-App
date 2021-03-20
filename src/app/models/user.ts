@@ -23,4 +23,6 @@ export interface User {
   avatar?: string
   accountType?: string
   role?: string
-  addresses?: string[]}
+  addresses?: string[]
+
+}
