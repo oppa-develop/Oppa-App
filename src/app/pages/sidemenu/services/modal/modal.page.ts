@@ -110,8 +110,10 @@ export class ModalPage implements OnInit {
     this.minHour = (dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD') == dayjs().format('YYYY-MM-DD')) ? dayjs().format('HH:mm') : dayjs('2020-01-01').format('HH:mm')
   }
 
-  async closeModal() {
-    await this.modalController.dismiss()
+  async closeModal(reload: boolean) {
+    await this.modalController.dismiss({
+      reload
+    })
   }
 
   async scheduleService() {
@@ -152,6 +154,9 @@ export class ModalPage implements OnInit {
             if (data.state == 'accepted') {
               loading.dismiss()
               this.presentAlert(data)
+            } else if (data.state == 'canceled') {
+              loading.dismiss()
+              this.presentToast('Proveedor ha cancelado', 'danger')
             }
           })
         })
@@ -205,7 +210,7 @@ export class ModalPage implements OnInit {
                 this.user.credit -= movement.amount;
                 this.auth.setUserData(this.user);
                 loading.dismiss();
-                this.closeModal();
+                this.closeModal(true);
                 this.presentToast('Servicio agendado', 'success');
                 this.ws.emit('serviceConfirmation', {
                   success: true,

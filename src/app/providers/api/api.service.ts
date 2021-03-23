@@ -47,7 +47,7 @@ export class ApiService {
   }
 
   getServicesBySuperCategoryTitle(superCategoryTitle: string): Observable<any[]> {
-    return this.http.get<Service[]>(`${this.apiUrl}/services/super-category/${superCategoryTitle}`);
+    return this.http.get<Service[]>(`${this.apiUrl}/services/super-category/title/${superCategoryTitle}`);
   }
 
   getServices(): Observable<any[]> {
@@ -84,60 +84,6 @@ export class ApiService {
 
   getServicesHistory(client_id: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/services/history/client/${client_id}`);
-    /* return of([
-      {
-        id: parseInt(faker.random.uuid()),
-        date: faker.date.past().toISOString(),
-        type: 'Servicio a Domicilio',
-        name: 'peluquería',
-        description: faker.lorem.paragraph(),
-        price: parseInt('9990'),
-        img: '../../../../assets/images/pexels-nick-demou-1319460.jpg',
-        serverName: faker.name.findName(),
-        serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
-        serverRating: (faker.random.number(1)) ? faker.random.number(5) : 0,
-        state: 'En curso'
-      },
-      {
-        id: parseInt(faker.random.uuid()),
-        date: faker.date.past().toISOString(),
-        type: 'Servicio de acompañamiento',
-        name: 'realizar trámite',
-        description: faker.lorem.paragraph(),
-        price: parseInt('9990'),
-        img: '../../../../assets/images/1789259.jpg',
-        serverName: faker.name.findName(),
-        serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
-        serverRating: (faker.random.number(1)) ? faker.random.number(5) : 0,
-        state: 'Terminado'
-      },
-      {
-        id: parseInt(faker.random.uuid()),
-        date: faker.date.past().toISOString(),
-        type: 'Servicio a Domicilio',
-        name: 'podología',
-        description: faker.lorem.paragraph(),
-        price: parseInt('14990'),
-        img: '../../../../assets/images/pexels-stephanie-allen-4085445.jpg',
-        serverName: faker.name.findName(),
-        serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
-        serverRating: (faker.random.number(1)) ? faker.random.number(5) : 0,
-        state: 'Cancelado'
-      },
-      {
-        id: parseInt(faker.random.uuid()),
-        date: faker.date.past().toISOString(),
-        type: 'Servicio de acompañamiento',
-        name: 'cobro',
-        description: faker.lorem.paragraph(),
-        price: parseInt('14990'),
-        img: '../../../../assets/images/pexels-eduardo-soares-5497951.jpg',
-        serverName: faker.name.findName(),
-        serverImg: `https://loremflickr.com/320/240/selfie?lock=${faker.random.number()}`,
-        serverRating: (faker.random.number(1)) ? faker.random.number(5) : 0,
-        state: 'Terminado'
-      },
-    ]).pipe(delay(this.delay)); */
   }
 
   scheduleService(data) {

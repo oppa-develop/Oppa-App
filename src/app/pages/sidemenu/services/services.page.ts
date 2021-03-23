@@ -48,6 +48,11 @@ export class ServicesPage implements OnInit {
         service
       }
     })
+
+    modal.onDidDismiss()
+      .then((res: any) => {
+        if (res.data.reload) this.user = this.auth.userData()
+      })
     return await modal.present()
   }
 
