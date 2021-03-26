@@ -45,6 +45,7 @@ export class ModalPage implements OnInit {
     header: 'Flexibilidad Horaria',
     subHeader: 'Tiempo variable del comienzo del servicio.'
   };
+  scheduleData: any
 
   constructor(
     private modalController: ModalController,
@@ -78,7 +79,7 @@ export class ModalPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    
+
     console.log('ionViewDidEnter');
 
     // We connect to the server
@@ -99,7 +100,7 @@ export class ModalPage implements OnInit {
 
   selectReceptor() {
     console.log(this.scheduleServiceForm.value.receptor);
-    
+
   }
 
   addLocation() {
@@ -122,7 +123,7 @@ export class ModalPage implements OnInit {
         message: 'Solicitando servicio...'
       });
       await loading.present();
-      let scheduleData = {
+      this.scheduleData = {
         client_id: this.scheduleServiceForm.value.receptor.client_id,
         user_id: this.scheduleServiceForm.value.receptor.user_id,
         date: this.scheduleServiceForm.value.date,
@@ -136,29 +137,12 @@ export class ModalPage implements OnInit {
         service: null,
         address: null
       }
-      this.api.scheduleService(scheduleData).toPromise()
+      this.api.scheduleService(this.scheduleData).toPromise()
         .then((res: any) => {
           this.ws.connect();
-          console.log('datos de la bdd con el posible proveedor', res.serviceRequested);
-          scheduleData.provider_id = res.serviceRequested.providers_provider_id
-          this.scheduleServiceForm.value.provider_has_services_id = res.serviceRequested.provider_has_services_id
-          scheduleData.service = this.service
-          scheduleData.address = this.scheduleServiceForm.value.address
-          this.ws.emit('notificateProvider', scheduleData)
-          this.ws.emit('notificationsProvider', { // aqui el usuario se suscribe a las notificaciones
-            user_id: this.user.user_id,
-            client_id: this.user.client_id
-          });
-          this.ws.listen('notificateUser').subscribe((data: any) => {
-            console.log('confirmación por parte del proveedor', data);
-            if (data.state == 'accepted') {
-              loading.dismiss()
-              this.presentAlert(data)
-            } else if (data.state == 'canceled') {
-              loading.dismiss()
-              this.presentToast('Proveedor ha cancelado', 'danger')
-            }
-          })
+          console.log('datos de la bdd con los posibles proveedores', res.serviceRequested);
+
+          this.getProvider(res.serviceRequested, loading)
         })
         .catch(err => {
           loading.dismiss()
@@ -166,6 +150,34 @@ export class ModalPage implements OnInit {
     } else {
       this.presentToast('Formulario incompleto.', 'danger')
     }
+  }
+
+  getProvider(serviceRequested, loading: HTMLIonLoadingElement) {
+    this.scheduleData.provider_id = serviceRequested[0].providers_provider_id
+    this.scheduleServiceForm.value.provider_has_services_id = serviceRequested[0].provider_has_services_id
+    this.scheduleData.service = this.service
+    this.scheduleData.address = this.scheduleServiceForm.value.address
+
+    this.ws.emit('notificateProvider', this.scheduleData)
+    this.ws.emit('notificationsProvider', { // aqui el usuario se suscribe a las notificaciones
+      user_id: this.user.user_id,
+      client_id: this.user.client_id
+    });
+    this.ws.listen('notificateUser').subscribe((data: any) => {
+      console.log('confirmación por parte del proveedor', data);
+      if (data.state == 'accepted') {
+        loading.dismiss()
+        this.presentAlert(data)
+      } else if (data.state == 'canceled') {
+        if (serviceRequested.length > 1) {
+          serviceRequested.shift()
+          this.getProvider(serviceRequested, loading)
+        } else {
+          loading.dismiss()
+          this.presentToast('No hemos conseguido proveedor', 'danger')
+        }
+      }
+    })
   }
 
   async presentAlert(data) {
@@ -182,7 +194,7 @@ export class ModalPage implements OnInit {
         text: 'Pagar',
         handler: async () => {
           console.log('Agendando servicio');
-          
+
           if (this.scheduleServiceForm.value.paymentMethod == 'wallet') {
             console.log('pagando con monedero');
             const loading = await this.loadingController.create({
@@ -203,7 +215,7 @@ export class ModalPage implements OnInit {
                 addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id
               }
             }
-            
+
             this.api.payWithWallet(movement).toPromise()
               .then((res: any) => {
                 console.log('pago realizado', res);
@@ -230,7 +242,7 @@ export class ModalPage implements OnInit {
               })
           } else if (this.scheduleServiceForm.value.paymentMethod == 'webpay') {
             console.log('pagando con webpay');
-        
+
             this.api.payWithWebpay(this.service.price).toPromise()
               .then((res: any) => {
                 console.log('pago realizado', res);
