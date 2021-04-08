@@ -163,16 +163,20 @@ export class ModalPage implements OnInit {
       user_id: this.user.user_id,
       client_id: this.user.client_id
     });
-    this.ws.listen('notificateUser').subscribe((data: any) => {
+    const listenConfirmation = this.ws.listen('notificateUser').subscribe((data: any) => {
       console.log('confirmación por parte del proveedor', data);
       if (data.state == 'accepted') {
         loading.dismiss()
         this.presentAlert(data)
       } else if (data.state == 'canceled') {
-        if (serviceRequested.length > 1) {
-          serviceRequested.shift()
+        console.count();
+        listenConfirmation.unsubscribe();
+        serviceRequested.shift();
+        if (serviceRequested.length) {
+          console.log('solicitando servicio a siguiente proveedor', serviceRequested.length);
           this.getProvider(serviceRequested, loading)
         } else {
+          console.log('no quedan proveedores', serviceRequested.length);
           loading.dismiss()
           this.presentToast('No hemos conseguido proveedor', 'danger')
         }
@@ -188,6 +192,11 @@ export class ModalPage implements OnInit {
         text: 'Cancelar',
         role: 'cancel',
         handler: () => {
+          this.ws.emit('serviceConfirmation', {
+            success: false,
+            message: 'Service canceled',
+            provider_id: data.provider.provider_id
+          });
           console.log('Agendar servicio cancelado');
         }
       }, {
@@ -236,7 +245,7 @@ export class ModalPage implements OnInit {
                 this.presentToast('Servicio no agendado', 'danger')
                 this.ws.emit('serviceConfirmation', {
                   success: false,
-                  message: 'Service canceled',
+                  message: 'Pago rechazado',
                   provider_id: data.provider.provider_id
                 })
               })
