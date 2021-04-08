@@ -27,7 +27,7 @@
 
 
 ion-card > ion-img {
-  height: 20vh;
+  height: 25vh;
   width: 100%;
   object-fit: cover;
 }
@@ -37,9 +37,9 @@ ion-avatar {
   width: 88px;
 }
 
-ion-card {
+/* ion-card {
   border-radius: 20px;
-}
+} */
 
 ion-footer {
   z-index: 99;
@@ -67,4 +67,8 @@ ion-footer {
   position: absolute;
   display: block;
   border-radius: 20px 20px 0 0;
+}
+
+.text-shadow {
+  text-shadow: 2px 2px 4px #000;
 }

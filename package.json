@@ -8,7 +8,7 @@
     "start": "ionic serve --lab --consolelogs --external --devapp --no-open",
     "build": "ionic capacitor build android",
     "fix:dependencies": "npx jetify",
-    "resources": "capacitor-resources -p android",
+    "resources": "capacitor-resources -p android -t cover",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
