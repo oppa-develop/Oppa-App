@@ -32,19 +32,19 @@
         </ion-list-header>
         <ion-item class="ion-margin-vertical">
           <ion-icon slot="start" name="person-outline"></ion-icon>
-          <ion-label position="floating">Nombre</ion-label>
-          <ion-input formControlName="firstname" type="text" required></ion-input>
+          <ion-label class="ion-text-wrap" position="fixed">Nombre</ion-label>
+          <ion-input class="ion-text-right ion-text-wrap" formControlName="firstname" type="text" required></ion-input>
         </ion-item>
         <ion-item class="ion-margin-vertical">
           <ion-icon slot="start" name="person-outline"></ion-icon>
-          <ion-label position="floating">Apellido</ion-label>
-          <ion-input formControlName="lastname" type="text" required></ion-input>
+          <ion-label class="ion-text-wrap" position="fixed">Apellido</ion-label>
+          <ion-input class="ion-text-right ion-text-wrap" formControlName="lastname" type="text" required></ion-input>
         </ion-item>
         <ion-item class="ion-margin-vertical">
           <ion-label>Género</ion-label>
-          <ion-icon slot="start" *ngIf="user.gender == 'otro'" name="male-female-outline"></ion-icon>
-          <ion-icon slot="start" *ngIf="user.gender == 'hombre'" name="male-outline"></ion-icon>
-          <ion-icon slot="start" *ngIf="user.gender == 'mujer'" name="female-outline"></ion-icon>
+          <ion-icon slot="start" *ngIf="userDataForm.get('gender').value == 'otro'" name="male-female-outline"></ion-icon>
+          <ion-icon slot="start" *ngIf="userDataForm.get('gender').value == 'hombre'" name="male-outline"></ion-icon>
+          <ion-icon slot="start" *ngIf="userDataForm.get('gender').value == 'mujer'" name="female-outline"></ion-icon>
           <ion-select formControlName="gender" placeholder="Seleccionar" class="ion-no-padding" cancelText="cancelar" okText="aceptar">
             <ion-select-option value="mujer">Mujer</ion-select-option>
             <ion-select-option value="hombre">Hombre</ion-select-option>
@@ -53,18 +53,18 @@
         </ion-item>
         <ion-item class="ion-margin-vertical">
           <ion-icon slot="start" name="call-outline"></ion-icon>
-          <ion-label position="floating">Teléfono</ion-label>
-          <ion-input formControlName="phone" type="tel" required></ion-input>
+          <ion-label class="ion-text-wrap" position="fixed">Teléfono</ion-label>
+          <ion-input class="ion-text-right ion-text-wrap" formControlName="phone" type="tel" required></ion-input>
         </ion-item>
         <ion-item class="ion-margin-vertical">
           <ion-icon slot="start" name="mail-outline"></ion-icon>
-          <ion-label position="floating">Email</ion-label>
-          <ion-input formControlName="email" type="email" required></ion-input>
+          <ion-label class="ion-text-wrap" position="fixed">Email</ion-label>
+          <ion-input class="ion-text-right ion-text-wrap" formControlName="email" type="email" required></ion-input>
         </ion-item>
         <ion-item class="ion-margin-vertical">
           <ion-icon slot="start" name="calendar-outline"></ion-icon>
-          <ion-label position="floating">Fecha de Nacimiento</ion-label>
-          <ion-input formControlName="birthdate" type="text" required></ion-input>
+          <ion-label class="ion-text-wrap" position="fixed">Fecha de Nacimiento</ion-label>
+          <ion-input class="ion-text-right ion-text-wrap" formControlName="birthdate" type="text" required></ion-input>
         </ion-item>
       </ion-list>
       <ion-button expand="block" color="primary" class="ion-margin-bottom">Actualizar Datos</ion-button>
@@ -78,7 +78,8 @@
         </ion-list-header>
         <ion-item button *ngFor="let elder of user.elders">
           <ion-avatar slot="start">
-            <ion-img [src]="apiUrl + elder.img_url"></ion-img>
+            <ion-img *ngIf="elder.img_url" [src]="apiUrl + elder.img_url"></ion-img>
+            <ion-img *ngIf="!elder.img_url" src="../../../../assets/images/default_avatar.png"></ion-img>
           </ion-avatar>
           <ion-label>
             <h2>{{ elder.firstname + ' ' + elder.lastname }}</h2>
@@ -92,7 +93,7 @@
           <ion-icon name="create-outline" slot="end"></ion-icon>
         </ion-item>
       </ion-list>
-      <ion-button expand="block" color="primary" class="ion-margin-bottom">Agregar Usuario</ion-button>
+      <ion-button expand="block" color="primary" class="ion-margin-bottom" (click)="createElderAccount()">Agregar Usuario</ion-button>
     </ion-card>
   </form>
   <ion-card class="ion-margin-horizontal ion-padding-horizontal">
@@ -116,12 +117,12 @@
           <ion-title color="primary">Nueva Dirección</ion-title>
         </ion-list-header>
         <ion-item class="ion-margin-vertical">
-          <ion-label position="floating">Calle</ion-label>
-          <ion-input placeholder="Ej: Av. Providencia #286" formControlName="street" type="text" required></ion-input>
+          <ion-label class="ion-text-wrap" position="fixed">Calle</ion-label>
+          <ion-input class="ion-text-right ion-text-wrap" placeholder="Ej: Av. Providencia #286" formControlName="street" type="text" required></ion-input>
         </ion-item>
         <ion-item class="ion-margin-vertical">
-          <ion-label position="floating">Dpto, villa, pasaje, etc. (opcional)</ion-label>
-          <ion-input placeholder="Ej: Depto. A605" formControlName="other" type="text"></ion-input>
+          <ion-label class="ion-text-wrap" position="fixed">Dpto, villa, pasaje, etc. (opcional)</ion-label>
+          <ion-input class="ion-text-right ion-text-wrap" placeholder="Ej: Depto. A605" formControlName="other" type="text"></ion-input>
         </ion-item>
         <ion-item class="ion-margin-vertical">
           <ion-label>Comuna</ion-label>

@@ -1,12 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController, ModalController, ToastController } from '@ionic/angular';
 import { User } from 'src/app/models/user';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { AuthService } from 'src/app/providers/auth/auth.service';
 import { LocationService } from 'src/app/providers/location/location.service';
 import { environment } from 'src/environments/environment';
+import { NewElderPage } from './new-elder/new-elder.page';
 
 @Component({
   selector: 'app-account',
@@ -32,7 +33,8 @@ export class AccountPage implements OnInit {
     private dateFormat: DatePipe,
     private toastCtrl: ToastController,
     private location: LocationService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private modalController: ModalController
   ) { }
 
   ngOnInit() {
@@ -130,6 +132,18 @@ export class AccountPage implements OnInit {
       color
     });
     toast.present();
+  }
+
+  async createElderAccount() {
+    const modal = await this.modalController.create({
+      component: NewElderPage
+    })
+
+    modal.onDidDismiss()
+      .then((res: any) => {
+        if (res.data.reload) this.user = this.auth.userData()
+      })
+    return await modal.present()
   }
 
 }

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { User } from 'src/app/models/user';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { AuthService } from 'src/app/providers/auth/auth.service';
@@ -28,7 +30,9 @@ export class SidemenuPage implements OnInit {
 
   constructor(
     private auth: AuthService,
-    private api: ApiService
+    private api: ApiService,
+    private alertController: AlertController,
+    public router: Router
   ) { }
   
   ngOnInit() {
@@ -45,6 +49,7 @@ export class SidemenuPage implements OnInit {
       document.body.setAttribute('data-theme', 'light');
       this.darkMode = false
     }
+    if (localStorage.getItem('createElderAccountAlert') !== 'done') this.presentAlert()
   }
   
   ionViewWillEnter() {
@@ -64,6 +69,29 @@ export class SidemenuPage implements OnInit {
       document.body.setAttribute('data-theme', 'light');
       localStorage.setItem('darkMode', 'off');
     }
+  }
+
+  async presentAlert() {
+    localStorage.setItem('createElderAccountAlert', 'done')
+    const alert = await this.alertController.create({
+      header: '¿Sabías que puedes apadrinar a tu adulto mayor?',
+      message: `Si quieres crear la cuenta de tu Oppa Senior, puedes hacerlo desde el apartado Mis Datos.`,
+      buttons: [{
+        text: 'Ahora no',
+        role: 'cancel',
+        handler: () => {
+          console.log('cancela apadrinar');
+        }
+      }, {
+        text: 'Ir',
+        handler: async () => {
+          console.log('quiere apadrinar');
+          this.router.navigate(['/sidemenu/account']);
+        }
+      }]
+    })
+
+    await alert.present();
   }
 
 }

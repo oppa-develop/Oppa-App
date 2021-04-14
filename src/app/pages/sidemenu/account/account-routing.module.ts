@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: AccountPage
+  },
+  {
+    path: 'new-elder',
+    loadChildren: () => import('./new-elder/new-elder.module').then( m => m.NewElderPageModule)
   }
 ];
 
