@@ -34,8 +34,12 @@ export class ApiService {
     return this.http.post<any[]>(`${this.apiUrl}/addresses/new-address`, address)
   }
 
-  login(email: string, password: string): Observable<User> {
+  loginWithEmail(email: string, password: string): Observable<User> {
     return this.http.post<User>(this.apiUrl + '/auth/login-client', { email, password });
+  }
+
+  loginWithRut(rut: string, password: string): Observable<User> {
+    return this.http.post<User>(this.apiUrl + '/auth/login-client/rut', { rut, password });
   }
 
   getCredit(user_id: number): Observable<any> {
@@ -159,6 +163,17 @@ export class ApiService {
     let formData = serialize(newAccount);
     console.log(formData);
     return this.http.post<any>(`${this.apiUrl}/users/new-client`, formData);
+  }
+
+  createElderAccount(newAccount): Observable<any> {
+    console.log(newAccount);
+    delete newAccount['checkPassword']
+    if (newAccount.image) {
+      newAccount.image = this.base64toBlob(newAccount.image, 'image/' + newAccount.image_ext);
+    }
+    let formData = serialize(newAccount);
+    console.log(formData);
+    return this.http.post<any>(`${this.apiUrl}/users/new-elder`, formData);
   }
 
   private base64toBlob(base64Data: string, contentType: string) {
