@@ -54,13 +54,14 @@ export class LoginPage implements OnInit {
   }
 
   login() {
-    this.auth.login(this.loginForm.value.email, this.loginForm.value.password)
+    this.auth.loginWithRut(this.loginForm.value.rut, this.loginForm.value.password)
   }
 
   createLoginForm() {
     return this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      // email: ['', Validators.email],
+      password: ['', Validators.required],
+      rut: ['', Validators.required]
     })
   }
 

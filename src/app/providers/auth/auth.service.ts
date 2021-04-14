@@ -20,12 +20,44 @@ export class AuthService {
     private loadingController: LoadingController
   ) { }
 
-  async login(email, password?) {
+  async loginWithEmail(email, password?) {
     const loading = await this.loadingController.create({
       message: 'Ingresando...'
     });
     await loading.present()
-    this.api.login(email, password).toPromise()
+    this.api.loginWithEmail(email, password).toPromise()
+      .then((userData: any) => {
+        localStorage.setItem('user', JSON.stringify(userData.user));
+        this.ngZone.run(() => {
+          this.router.navigate(['/sidemenu/services']);
+          loading.dismiss()
+        }, err => {
+          console.log(err);
+          loading.dismiss()
+          this.presentToast('No se ha podido crear la cuenta', 'danger');
+        });
+      })
+      .catch(err => {
+        loading.dismiss()
+        let errMessage: string;
+        switch (err.error.message) {
+          case 'User is not a client':
+            errMessage = 'Usuario no registrado.'
+            break
+          default:
+            errMessage = 'Email y/o contraseña incorrectas.'
+            break
+        }
+        this.presentToast(errMessage, 'danger');
+      })
+  }
+
+  async loginWithRut(rut, password?) {
+    const loading = await this.loadingController.create({
+      message: 'Ingresando...'
+    });
+    await loading.present()
+    this.api.loginWithRut(rut, password).toPromise()
       .then((userData: any) => {
         localStorage.setItem('user', JSON.stringify(userData.user));
         this.ngZone.run(() => {
