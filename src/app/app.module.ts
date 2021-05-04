@@ -24,6 +24,7 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 // import { File } from '@ionic-native/file/ngx';
 import { Camera } from '@ionic-native/Camera/ngx';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -58,7 +59,8 @@ import { Camera } from '@ionic-native/Camera/ngx';
     },
     ApiService,
     LocationService,
-    WebSocketService
+    WebSocketService,
+    LocalNotifications
   ],
   bootstrap: [AppComponent]
 })

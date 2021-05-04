@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
 import { User } from 'src/app/models/user';
@@ -6,6 +6,9 @@ import { Message } from 'src/app/models/message';
 import { AuthService } from 'src/app/providers/auth/auth.service';
 
 import { WebSocketService } from 'src/app/providers/web-socket/web-socket.service';
+import { MessageList } from 'src/app/models/message-list';
+import { environment } from 'src/environments/environment';
+import { ApiService } from 'src/app/providers/api/api.service';
 
 @Component({
   selector: 'app-chat',
@@ -19,19 +22,27 @@ export class ChatPage implements OnInit {
   user: User;
   public serverMessages = new Array<Message>();
   wsConnectionState: string;
+  apiUrl: string = environment.HOST + '/'
   @ViewChild('content') private content: any;
+  @Input() public chat: MessageList
 
   constructor(
     protected ws: WebSocketService,
     private modalController: ModalController,
     private formBuilder: FormBuilder,
-    private auth: AuthService
+    private auth: AuthService,
+    private api: ApiService
   ) { }
 
   ngOnInit() {
     this.user = this.auth.userData();
     this.darkMode = (localStorage.getItem('darkMode') == 'on') ? true : false;
     this.messageForm = this.createMesageForm();
+    this.api.getChatMessages(this.chat.chat_id).toPromise()
+      .then((res: any) => {
+        this.serverMessages = res.chatMessages
+        this.scrollToBottom();
+      })
   }
 
   ionViewDidEnter() {
@@ -43,7 +54,7 @@ export class ChatPage implements OnInit {
 
     // Tell the server which room I want to connect to
     this.ws.emit('connectToChat', {
-      chat: 'prueba'
+      chat: this.chat.chat_id
     });
 
     // whatever the room I'm connected to, listen to the 'message' socket
@@ -63,13 +74,14 @@ export class ChatPage implements OnInit {
 
   sendMessage() {
     const message = {
-      user: this.user,
       text: this.messageForm.value.message,
       url: null,
       type: 'text',
-      chats_chat_id: 1,
       created_at: new Date(),
-      chat: 'prueba'
+      chats_chat_id: this.chat.chat_id,
+      users_user_id: this.user.user_id,
+      firstname: this.user.firstname,
+      lastname: this.user.lastname
     }
     console.log('sending message', message);
     this.serverMessages.push(message)

@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import { User } from 'src/app/models/user';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { AuthService } from 'src/app/providers/auth/auth.service';
+import { WebSocketService } from 'src/app/providers/web-socket/web-socket.service';
 import { environment } from 'src/environments/environment';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 
 @Component({
   selector: 'app-sidemenu',
@@ -16,6 +18,7 @@ export class SidemenuPage implements OnInit {
   pages = [
     { title: 'Servicios',     icon: 'construct-outline',        url: '/sidemenu/services'},
     { title: 'Mis Datos',     icon: 'person-outline',           url: '/sidemenu/account'},
+    { title: 'Ficha clínica', icon: 'document-text-outline',    url: '/sidemenu/clinical-record'},
     { title: 'Mensajes',      icon: 'chatbox-ellipses-outline', url: '/sidemenu/messages'},
     { title: 'Monedero',      icon: 'wallet-outline',           url: '/sidemenu/wallet'},
     { title: 'Mis Servicios', icon: 'document-text-outline',    url: '/sidemenu/history'},
@@ -30,9 +33,12 @@ export class SidemenuPage implements OnInit {
 
   constructor(
     private auth: AuthService,
+    protected ws: WebSocketService,
     private api: ApiService,
     private alertController: AlertController,
-    public router: Router
+    public router: Router,
+    private toastCtrl: ToastController,
+    private localNotifications: LocalNotifications
   ) { }
   
   ngOnInit() {
@@ -50,6 +56,23 @@ export class SidemenuPage implements OnInit {
       this.darkMode = false
     }
     if (localStorage.getItem('createElderAccountAlert') !== 'done') this.presentAlert()
+
+    this.ws.connect();
+    this.ws.emit('notificationsClient', { // aqui el cliente se suscribe a las notificaciones
+      user_id: this.user.user_id,
+      client_id: this.user.client_id
+    });
+    this.ws.listen('notificateClient').subscribe((data: any) => { 
+      //cuando llega una notificación, hace lo siguiente
+      this.localNotifications.schedule({
+        id: 1,
+        title: `Nuevo mensaje de ${data.firstname} ${data.lastname}`,
+        text: `${data.text}`,
+        launch: true
+      });
+      
+      if (this.router.url !== '/sidemenu/messages' && data.type === 'message') this.presentToast(`Nuevo mensaje de ${data.firstname} ${data.lastname}:\n${data.text}`, 'dark')
+    })
   }
   
   ionViewWillEnter() {
@@ -92,6 +115,15 @@ export class SidemenuPage implements OnInit {
     })
 
     await alert.present();
+  }
+
+  async presentToast(message: string, color: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2000,
+      color
+    });
+    toast.present();
   }
 
 }

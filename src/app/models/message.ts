@@ -1,12 +1,11 @@
-import { User } from "./user";
-
 export interface Message {
 
-  user: User
-  text: string
-  url: string
-  type: string
-  chats_chat_id: number
-  created_at: Date
+  message_id?: number,
+  text: string,
+  url: string,
+  type: string,
+  created_at: Date,
+  chats_chat_id: number,
+  users_user_id: number
   
 }

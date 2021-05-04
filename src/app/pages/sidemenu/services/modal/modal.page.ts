@@ -238,6 +238,25 @@ export class ModalPage implements OnInit {
                   message: 'Service scheduled',
                   provider: data.provider
                 });
+
+                // ahora solicitamos la creacion de la sala de chat
+                let newChat = {
+                  users_ids: [data.provider.user_id, this.scheduleServiceForm.value.receptor.user_id],
+                  provider_img_url: data.provider.img_url,
+                  provider_name: data.provider.firstname +  ' ' + data.provider.lastname,
+                  receptor_img_url: this.scheduleServiceForm.value.receptor.img_url,
+                  receptor_name: this.scheduleServiceForm.value.receptor.firstname + ' ' + this.scheduleServiceForm.value.receptor.lastname,
+                  title: this.service.title,
+                  scheduled_services_scheduled_services_id: res.credits.scheduleServiceId
+                }
+                if (this.scheduleServiceForm.value.receptor.user_id !== this.user.user_id) newChat.users_ids.push(this.user.user_id)
+                this.api.createChat(newChat).toPromise()
+                  .then((res: any) => {
+                    console.log('chat creado');
+                  })
+                  .catch(err => {
+                    console.log(err);
+                  })
               })
               .catch(err => {
                 console.log('pago fallido', err);
