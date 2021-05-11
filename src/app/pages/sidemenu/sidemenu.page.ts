@@ -58,11 +58,11 @@ export class SidemenuPage implements OnInit {
     if (localStorage.getItem('createElderAccountAlert') !== 'done') this.presentAlert()
 
     this.ws.connect();
-    this.ws.emit('notificationsClient', { // aqui el cliente se suscribe a las notificaciones
+    this.ws.emit('notificationsUser', { // aqui el cliente se suscribe a las notificaciones
       user_id: this.user.user_id,
       client_id: this.user.client_id
     });
-    this.ws.listen('notificateClient').subscribe((data: any) => { 
+    this.ws.listen('notificateUser').subscribe((data: any) => { 
       //cuando llega una notificación, hace lo siguiente
       this.localNotifications.schedule({
         id: 1,

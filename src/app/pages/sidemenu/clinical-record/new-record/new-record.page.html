@@ -25,7 +25,7 @@
           <ion-label position="fixed">Descripción</ion-label>
           <ion-textarea required formControlName="description"></ion-textarea>
         </ion-item>
-        <ion-item>
+        <!-- <ion-item>
           <ion-label>Tipo</ion-label>
           <ion-select class="ion-text-wrap" required formControlName="icon" (ionChange)="setIconType()" placeholder="Seleccionar" [interfaceOptions]="customActionSheetOptions" interface="action-sheet" cancelText="Cancelar">
             <ion-select-option value="medic">Diagnóstico de enfermedad</ion-select-option>
@@ -33,6 +33,31 @@
             <ion-select-option value="pills">Receta de medicamento</ion-select-option>
             <ion-select-option value="document-text-outline">Otro</ion-select-option>
           </ion-select>
+        </ion-item> -->
+        <ion-item>
+          <ion-radio-group formControlName="icon">
+            <ion-label>Tipo</ion-label>
+        
+            <ion-item class="ion-no-padding">
+              <ion-label>Diagnóstico de enfermedad</ion-label>
+              <ion-radio slot="start" value="medic"></ion-radio>
+            </ion-item>
+        
+            <ion-item class="ion-no-padding">
+              <ion-label>Colocación de inyección</ion-label>
+              <ion-radio slot="start" value="syringe"></ion-radio>
+            </ion-item>
+        
+            <ion-item class="ion-no-padding">
+              <ion-label>Receta de medicamento</ion-label>
+              <ion-radio slot="start" value="pills"></ion-radio>
+            </ion-item>
+        
+            <ion-item class="ion-no-padding">
+              <ion-label>Otro</ion-label>
+              <ion-radio slot="start" value="document-text-outline"></ion-radio>
+            </ion-item>
+          </ion-radio-group>
         </ion-item>
       </ion-list>
     </ion-card>

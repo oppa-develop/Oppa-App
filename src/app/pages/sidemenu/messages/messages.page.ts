@@ -30,7 +30,7 @@ export class MessagesPage implements OnInit {
   ngOnInit() {
     this.user = this.auth.userData()
     this.$messages = this.api.getChatList(this.user.user_id)
-    this.ws.listen('notificateClient').subscribe((data: any) => { 
+    this.ws.listen('notificateUser').subscribe((data: any) => { 
       //cuando llega una notificación, hace lo siguiente
       this.$messages = this.api.getChatList(this.user.user_id)
     })
