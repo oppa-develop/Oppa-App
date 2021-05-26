@@ -4,6 +4,7 @@ import { MessageList } from 'src/app/models/message-list';
 import { Message } from 'src/app/models/message';
 import { Service } from 'src/app/models/service';
 import { User } from 'src/app/models/user';
+import { Record } from 'src/app/models/record';
 import { delay } from "rxjs/operators"; // solo para simular retardo en conexión
 
 import * as faker from 'faker/locale/es_MX'
@@ -191,36 +192,12 @@ export class ApiService {
     return this.http.patch(`${this.apiUrl}/users/edit`, userData)
   }
 
-  getUserRecords(user_id: number): Observable<any> {
-    console.log({user_id});
-    
-    return of({
-      success: true,
-      message: 'User records',
-      records: [
-        {
-          title: 'Paracetamol cada 8 hrs',
-          description: 'Tomar un paracetamol cada 8 horas por 4 días.',
-          created_at: new Date(),
-          icon: 'pills',
-          iconType: 'custom-icon'
-        },
-        {
-          title: 'Inyección de penicilina',
-          description: 'Se inyecta penicilina por amigdalitis severa.',
-          created_at: new Date(),
-          icon: 'syringe',
-          iconType: 'custom-icon'
-        },
-        {
-          title: 'Amigdalitis',
-          description: 'Se diagnostica amigalitis.',
-          created_at: new Date(),
-          icon: 'medic',
-          iconType: 'custom-icon'
-        },
-      ]
-    }).pipe(delay(1000));
+  getUserRecords(user_id: number): Observable<Record[]> {
+    return this.http.get<Record[]>(`${this.apiUrl}/records/${user_id}`)
+  }
+
+  createRecord(record: Record): Observable<Record> {
+    return this.http.post<Record>(`${this.apiUrl}/records/new-record`, record)
   }
 
 }

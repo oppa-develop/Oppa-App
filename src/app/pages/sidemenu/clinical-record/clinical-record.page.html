@@ -54,14 +54,14 @@
       <!-- userRecords list -->
       <ng-template [ngIf]="userRecords.value">
         <ion-item *ngFor="let record of userRecords.value.records">
-          <ion-icon *ngIf="record.iconType === 'ion-icon'" slot="start" size="large" [name]="record.icon"></ion-icon>
-          <ion-icon *ngIf="record.iconType === 'custom-icon'" slot="start" size="large" src="../../../../assets/icons/{{record.icon}}.svg"></ion-icon>
+          <ion-icon *ngIf="record.icon_type === 'ion-icon'" slot="start" size="large" [name]="record.icon"></ion-icon>
+          <ion-icon *ngIf="record.icon_type === 'custom-icon'" slot="start" size="large" src="../../../../assets/icons/{{record.icon}}.svg"></ion-icon>
           <ion-label>
             <h2>{{ record.title }}</h2>
             <p class="ion-text-wrap">{{ record.description }}</p>
           </ion-label>
           <ion-icon class="ion-padding-bottom" slot="end" size="large" name="calendar-outline"></ion-icon>
-          <time slot="end">{{ record.created_at | date:'dd-mm-yy'}}</time>
+          <time slot="end">{{ record.created_at | date:'shortDate'}}</time>
         </ion-item>
       </ng-template>
 

@@ -20,4 +20,8 @@ export class LocationService {
   getRegions(): Observable<any> {
     return this.http.jsonp<any>(`${this.baseUrl}/regiones`, 'callback')
   }
+
+  getDistrictsByRegion(region: string): Observable<any> {
+    return this.http.jsonp<any>(`${this.baseUrl}/regiones/${region}/comunas`, 'callback')
+  }
 }

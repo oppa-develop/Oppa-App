@@ -39,7 +39,23 @@
 
       <!-- skeleton loading -->
       <ng-template [ngIf]="wallet.loading">
-
+        <ion-item *ngFor="let i of [1,2,3,4,5,6]">
+          <ion-grid class="ion-no-padding">
+            <ion-row>
+              <ion-col size="2">
+                <ion-skeleton-text animated class="ion-no-margin ion-float-left" style="width: 5vh; height: 5vh; margin-bottom: 10px"></ion-skeleton-text>
+              </ion-col>
+              <ion-col>
+                <ion-skeleton-text animated class="ion-no-margin" style="width: 30%; height: 12px; margin-bottom: 10px"></ion-skeleton-text>
+                <ion-skeleton-text animated class="ion-no-margin" style="width: 60%; height: 12px; margin-bottom: 10px"></ion-skeleton-text>
+                <ion-skeleton-text animated class="ion-no-margin" style="width: 50%; height: 12px; margin-bottom: 10px"></ion-skeleton-text>
+              </ion-col>
+              <ion-col size="2">
+                <ion-skeleton-text animated class="ion-no-margin" style="width: 100%; height: 15px; margin-bottom: 10px"></ion-skeleton-text>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
       </ng-template>
 
       <!-- walletMovements list -->

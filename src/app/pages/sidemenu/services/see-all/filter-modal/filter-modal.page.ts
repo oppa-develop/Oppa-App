@@ -8,7 +8,8 @@ import { ModalController } from '@ionic/angular';
 })
 export class FilterModalPage implements OnInit {
 
-  orderBy: string = 'recommended'
+  @Input() orderBy: string
+  @Input() mode: string
 
   constructor(
     private modalController: ModalController
@@ -17,14 +18,15 @@ export class FilterModalPage implements OnInit {
   ngOnInit() {
   }
 
-  @Input() public mode: string
 
   selectOrderBy(orderBy: string) {
     this.orderBy = orderBy
   }
-
-  closeModal() {
-    this.modalController.dismiss()
+  
+  async closeModal() {
+    await this.modalController.dismiss({
+      filter: this.orderBy
+    })
   }
 
 }

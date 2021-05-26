@@ -120,15 +120,15 @@
           <ion-input class="ion-text-right ion-text-wrap" placeholder="Ej: Depto. A605" formControlName="other" type="text"></ion-input>
         </ion-item>
         <ion-item class="ion-margin-vertical">
-          <ion-label>Comuna</ion-label>
-          <ion-select formControlName="district" placeholder="Seleccionar" class="ion-no-padding" cancelText="cancelar" okText="aceptar">
-            <ion-select-option *ngFor="let district of districts">{{ district.nombre }}</ion-select-option>
+          <ion-label>Región</ion-label>
+          <ion-select formControlName="region" placeholder="Seleccionar" class="ion-no-padding" cancelText="cancelar" okText="aceptar" (ionChange)="getDistrictsByRegion()">
+            <ion-select-option *ngFor="let region of regions">{{ region.nombre }}</ion-select-option>
           </ion-select>
         </ion-item>
         <ion-item class="ion-margin-vertical">
-          <ion-label>Región</ion-label>
-          <ion-select formControlName="region" placeholder="Seleccionar" class="ion-no-padding" cancelText="cancelar" okText="aceptar">
-            <ion-select-option *ngFor="let region of regions">{{ region.nombre }}</ion-select-option>
+          <ion-label>Comuna</ion-label>
+          <ion-select formControlName="district" placeholder="Seleccionar" class="ion-no-padding" cancelText="cancelar" okText="aceptar">
+            <ion-select-option *ngFor="let district of districts">{{ district.nombre }}</ion-select-option>
           </ion-select>
         </ion-item>
       </form>

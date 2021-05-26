@@ -19,6 +19,7 @@ export class SeeAllPage implements OnInit {
   $services: Observable<Service[]>
   private params: Subscription = new Subscription();
   apiUrl: string = environment.HOST + '/'
+  orderBy: string = 'alphaAsc'
 
   constructor(
     private route: ActivatedRoute,
@@ -45,6 +46,7 @@ export class SeeAllPage implements OnInit {
         service
       }
     })
+
     return await modal.present()
   }
 
@@ -64,10 +66,16 @@ export class SeeAllPage implements OnInit {
     const modal = await this.modalController.create({
       component: FilterModalPage,
       componentProps: {
-        mode
+        mode,
+        orderBy: this.orderBy
       },
       cssClass: modalType
     })
+
+    modal.onDidDismiss()
+      .then((res: any) => {
+        if (res.data.filter) this.orderBy = res.data.filter
+      })
 
     return await modal.present()
   }

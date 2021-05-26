@@ -11,11 +11,11 @@
   <div *ngIf="mode == 'all' || mode == 'orderBy'">
     <ion-title class="ion-padding-top ion-padding-bottom" *ngIf="mode == 'all'">Ordenar por</ion-title>
     <ion-list lines="none">
-      <ion-item button (click)="selectOrderBy('recommended')">
+      <!-- <ion-item button (click)="selectOrderBy('recommended')">
         <ion-icon slot="start" name="ribbon-outline"></ion-icon>
         Recomendado para ti (predeterminado)
         <ion-icon *ngIf="orderBy == 'recommended'" color="success" slot="end" name="checkmark-outline"></ion-icon>
-      </ion-item>
+      </ion-item> -->
       <ion-item button (click)="selectOrderBy('alphaAsc')">
         <ion-icon slot="start" name="arrow-up-outline"></ion-icon>
         Alfabeto (ascendente)
@@ -25,6 +25,16 @@
         <ion-icon slot="start" name="arrow-down-outline"></ion-icon>
         Alfabeto (descendente)
         <ion-icon *ngIf="orderBy == 'alphaDesc'" color="success" slot="end" name="checkmark-outline"></ion-icon>
+      </ion-item>
+      <ion-item button (click)="selectOrderBy('priceAsc')">
+        <ion-icon slot="start" name="arrow-up-outline"></ion-icon>
+        Precio (ascendente)
+        <ion-icon *ngIf="orderBy == 'priceAsc'" color="success" slot="end" name="checkmark-outline"></ion-icon>
+      </ion-item>
+      <ion-item button (click)="selectOrderBy('priceDesc')">
+        <ion-icon slot="start" name="arrow-down-outline"></ion-icon>
+        Precio (descendente)
+        <ion-icon *ngIf="orderBy == 'priceDesc'" color="success" slot="end" name="checkmark-outline"></ion-icon>
       </ion-item>
     </ion-list>
   </div>
@@ -45,6 +55,6 @@
 
 <ion-footer>
   <ion-toolbar>
-    <ion-button class="ion-padding-horizontal" expand="block" color="primary">aceptar</ion-button>
+    <ion-button class="ion-padding-horizontal" expand="block" color="primary" (click)="closeModal()">aceptar</ion-button>
   </ion-toolbar>
 </ion-footer>

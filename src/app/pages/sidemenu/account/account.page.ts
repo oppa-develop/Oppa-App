@@ -45,7 +45,6 @@ export class AccountPage implements OnInit {
     this.user = this.auth.userData()
     this.userDataForm = this.createUserDataForm()
     this.newAddressForm = this.createNewAddressForm()
-    console.table(this.user)
     this.location.getDistricts().toPromise()
       .then((districts) => {
         this.districts = districts
@@ -53,6 +52,15 @@ export class AccountPage implements OnInit {
     this.location.getRegions().toPromise()
       .then((regions) => {
         this.regions = regions
+      })
+  }
+
+  getDistrictsByRegion(){
+    console.log('asdlkajsdlkajsdl')
+    this.newAddressForm.controls.district.reset()
+    this.location.getDistrictsByRegion(this.regions.find(region => region.nombre === this.newAddressForm.value.region).codigo).toPromise()
+      .then((districts: any) => {
+        this.districts = districts
       })
   }
 
