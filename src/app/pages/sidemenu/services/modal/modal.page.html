@@ -66,39 +66,6 @@
             <ion-label class="ion-text-wrap" *ngIf="!address.other">{{ address.street + ', ' + address.district + ', región ' + address.region + '.' }}</ion-label>
         </ion-item>
         </ion-radio-group>
-        <!-- <ion-button *ngIf="scheduleServiceForm.value.receptor" class="ion-padding-horizontal" expand="block" color="secondary" (click)="addLocation()">Editar Dirección</ion-button> -->
-        <!-- <ng-template>
-          <ion-item>
-            <ion-label>Calle</ion-label>
-            <ion-input formControlName="street" type="text" placeholder="Calle, Avenida, Pasaje..." required></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label></ion-label>
-            <ion-input type="text" placeholder="Dpto., Suite, Block... (opcional)"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label>Región</ion-label>
-            <ion-select interface="action-sheet"
-                        [interfaceOptions]="ActionSheetOptionsRegions"
-                        placeholder="Seleccionar"
-                        formControlName="region"
-                        cancelText="Cancelar"
-                        (ionChange)="getDistrictsByRegion()">
-              <ion-select-option *ngFor="let region of $regions | async" [value]="region.codigo">{{ region.nombre }}</ion-select-option>
-            </ion-select>
-          </ion-item>
-          <ion-item>
-            <ion-label>Comúna</ion-label>
-            <ion-select [disabled]="(scheduleServiceForm.value.region === null)"
-                        interface="action-sheet"
-                        [interfaceOptions]="ActionSheetOptionsDistricts"
-                        placeholder="Seleccionar"
-                        formControlName="district"
-                        cancelText="Cancelar">
-              <ion-select-option *ngFor="let district of $districts | async" [value]="district.codigo">{{ district.nombre }}</ion-select-option>
-            </ion-select>
-          </ion-item>
-        </ng-template> -->
         <ion-list-header>
           <h3>Método de Pago</h3>
         </ion-list-header>

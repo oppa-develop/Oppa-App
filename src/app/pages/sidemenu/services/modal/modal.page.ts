@@ -167,7 +167,7 @@ export class ModalPage implements OnInit {
     });
     const listenConfirmation = this.ws.listen('notificateUser').subscribe((data: any) => {
       console.log('confirmación por parte del proveedor', data);
-      this.cancelRequest = false
+      // this.cancelRequest = false
       if (data.state == 'accepted') {
         loading.dismiss()
         this.presentAlert(data)
