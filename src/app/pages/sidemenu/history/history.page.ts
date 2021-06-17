@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, ModalController } from '@ionic/angular';
+import { AlertController, ModalController, ToastController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { Service } from 'src/app/models/service';
 import { User } from 'src/app/models/user';
@@ -23,6 +23,7 @@ export class HistoryPage implements OnInit {
     private api: ApiService,
     private modalController: ModalController,
     private alertController: AlertController,
+    private toastCtrl: ToastController,
     private auth: AuthService
   ) { }
 
@@ -31,55 +32,29 @@ export class HistoryPage implements OnInit {
     this.$services = this.api.getServicesHistory(this.user.client_id)
   }
 
-  async rank(service: Service) {
-    console.table(service)
+  async cancelService(service) {
     const alert = await this.alertController.create({
-      header: 'Calificar Servicio',
-      inputs: [
-        {
-          name: 'stars',
-          type: 'radio',
-          label: 'Muy malo',
-          value: '1'
-        },
-        {
-          name: 'stars',
-          type: 'radio',
-          label: 'Malo',
-          value: 'value2'
-        },
-        {
-          name: 'stars',
-          type: 'radio',
-          label: 'Ni bueno ni malo',
-          value: '3'
-        },
-        {
-          name: 'stars',
-          type: 'radio',
-          label: 'Bueno',
-          value: '4'
-        },
-        {
-          name: 'stars',
-          type: 'radio',
-          label: 'Excelente',
-          value: '5'
-        }
-      ],
+      header: '¿Desea cancelar el servicio?',
       buttons: [
         {
-          text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'secondary',
+          text: 'No',
           handler: () => {
-            console.log('Confirm Cancel');
+            console.log('no se cancela el servicio');
           }
         }, {
-          text: 'Aceptar',
-          handler: (stars) => {
-            console.log('Confirm Accept with', stars, 'stars')
-            this.rankService(service.id, stars)
+          text: 'Sí',
+          handler: () => {
+            console.log('Confirma cancelar el servicio');
+            this.api.changeServiceScheduledState({
+              scheduled_services_id: service.scheduled_services_id,
+              state: 'cancelado'
+            }).toPromise()
+              .then((res: any) => {
+                this.$services = this.api.getServicesHistory(this.user.client_id)
+              })
+              .catch(err => {
+                this.presentToast('No se ha podido cancelar el servicio. Intente nuevamente', 'danger')
+              })
           }
         }
       ]
@@ -88,14 +63,70 @@ export class HistoryPage implements OnInit {
     await alert.present();
   }
 
-  rankService(serviceId: number, stars: number) {
-    this.api.rankService({ serviceId, stars }).toPromise()
-      .then((data: any) => {
-        this.$services = this.api.getServicesHistory(this.user.user_id)
-      })
-      .catch(err => {
-        console.log(err)
-      })
+  async rank(service) {
+    console.table(service)
+    const alert = await this.alertController.create({
+      header: 'Calificar Servicio',
+      inputs: [
+        {
+          name: 'rank',
+          type: 'radio',
+          label: 'Muy malo',
+          value: 'Muy malo'
+        },
+        {
+          name: 'rank',
+          type: 'radio',
+          label: 'Malo',
+          value: 'Malo'
+        },
+        {
+          name: 'rank',
+          type: 'radio',
+          label: 'Ni bueno ni malo',
+          value: 'Ni bueno ni malo'
+        },
+        {
+          name: 'rank',
+          type: 'radio',
+          label: 'Bueno',
+          value: 'Bueno'
+        },
+        {
+          name: 'rank',
+          type: 'radio',
+          label: 'Excelente',
+          value: 'Excelente'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Cancela calificar servicio');
+          }
+        }, {
+          text: 'Aceptar',
+          handler: (rank) => {
+            console.log('califica el servicio como:', rank)
+            this.api.rankService({
+              scheduled_services_id: service.scheduled_services_id,
+              rank
+            }).toPromise()
+              .then((data: any) => {
+                this.$services = this.api.getServicesHistory(this.user.user_id)
+              })
+              .catch(err => {
+                console.log(err)
+              })
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   async openModal(service: Service) {
@@ -106,6 +137,15 @@ export class HistoryPage implements OnInit {
       }
     })
     return await modal.present()
+  }
+
+  async presentToast(message: string, color: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2000,
+      color
+    });
+    toast.present();
   }
 
 }

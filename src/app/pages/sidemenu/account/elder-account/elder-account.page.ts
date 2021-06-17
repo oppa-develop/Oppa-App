@@ -1,23 +1,24 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActionSheetController, AlertController, ModalController, ToastController } from '@ionic/angular';
 import { User } from 'src/app/models/user';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { AuthService } from 'src/app/providers/auth/auth.service';
 import { LocationService } from 'src/app/providers/location/location.service';
-import { environment } from 'src/environments/environment';
-import { NewElderPage } from './new-elder/new-elder.page';
 import { Camera, CameraOptions } from '@ionic-native/Camera/ngx';
-import { ElderAccountPage } from './elder-account/elder-account.page';
+import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-account',
-  templateUrl: './account.page.html',
-  styleUrls: ['./account.page.scss'],
+  selector: 'app-elder-account',
+  templateUrl: './elder-account.page.html',
+  styleUrls: ['./elder-account.page.scss'],
 })
-export class AccountPage implements OnInit {
+export class ElderAccountPage implements OnInit {
 
+  
+  @Input() public elder: User
+  @Input() public index: number
   user: User
   user_img: string;
   userDataForm: FormGroup
@@ -43,6 +44,7 @@ export class AccountPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log(this.elder, this.index)
     this.user = this.auth.userData()
     this.userDataForm = this.createUserDataForm()
     this.newAddressForm = this.createNewAddressForm()
@@ -50,37 +52,28 @@ export class AccountPage implements OnInit {
       .then((districts) => {
         this.districts = districts
       })
-      .catch((err) => {
-        console.log(err)
-      })
     this.location.getRegions().toPromise()
       .then((regions) => {
         this.regions = regions
       })
-      .catch((err) => {
-        console.log(err)
-      })
   }
 
-  getDistrictsByRegion() {
+  getDistrictsByRegion(){
     this.newAddressForm.controls.district.reset()
     this.location.getDistrictsByRegion(this.regions.find(region => region.nombre === this.newAddressForm.value.region)?.codigo).toPromise()
       .then((districts: any) => {
         this.districts = districts
       })
-      .catch((err) => {
-        console.log(err)
-      })
   }
 
   createUserDataForm() {
     return this.formBuilder.group({
-      user_id: [this.user.user_id, Validators.required],
-      firstname: [this.user.firstname, Validators.required],
-      lastname: [this.user.lastname, Validators.required],
-      gender: [this.user.gender, Validators.required],
-      birthdate: [this.dateFormat.transform(this.user.birthdate, 'dd-MM-yyyy'), Validators.required],
-      phone: [this.user.phone, Validators.required],
+      user_id: [this.elder.user_id, Validators.required],
+      firstname: [this.elder.firstname, Validators.required],
+      lastname: [this.elder.lastname, Validators.required],
+      gender: [this.elder.gender, Validators.required],
+      birthdate: [this.dateFormat.transform(this.elder.birthdate, 'dd-MM-yyyy'), Validators.required],
+      phone: [this.elder.phone, Validators.required],
       image_ext: [''],
       image: [null]
     })
@@ -88,7 +81,7 @@ export class AccountPage implements OnInit {
 
   createNewAddressForm() {
     return this.formBuilder.group({
-      users_user_id: [this.user.user_id, Validators.required],
+      users_user_id: [this.elder.user_id, Validators.required],
       street: ['', Validators.required],
       other: [null],
       district: ['', Validators.required],
@@ -108,21 +101,21 @@ export class AccountPage implements OnInit {
       // imageData is either a base64 encoded string or a file URI
       this.userDataForm.value.image = imageData;
       this.user_img = imageData;
-      switch (imageData.charAt(0)) {
+      switch(imageData.charAt(0)) {
         case '/':
           this.userDataForm.value.image_ext = 'jpg'
-          break
+        break
         case 'i':
           this.userDataForm.value.image_ext = 'png'
-          break
+        break
         case 'R':
           this.userDataForm.value.image_ext = 'gif'
-          break
+        break
       }
     })
-      .catch(err => {
-        console.log(err);
-      });
+    .catch(err => {
+      console.log(err);
+    });
   }
 
   async selectImage() {
@@ -148,12 +141,11 @@ export class AccountPage implements OnInit {
     });
     await actionSheet.present();
   }
-
+  
   saveData() {
     this.api.editUser(this.userDataForm.value).toPromise()
       .then((res: any) => {
-        this.user = res.user;
-        this.auth.setUserData(this.user);
+        this.elder = res.user; 
         this.presentToast('Datos actualizados.', 'success')
       })
   }
@@ -161,20 +153,19 @@ export class AccountPage implements OnInit {
   addAddress() {
     this.isAddingAnAddress = true
   }
-
+  
   saveAddress() {
-    if (this.newAddressForm.valid) {
-      this.api.saveNewAddress(this.newAddressForm.value).toPromise()
-        .then((res: any) => {
-          this.isAddingAnAddress = false
-          this.newAddressForm.reset()
-          this.user.addresses = res.userAddresses
-          this.auth.setUserData(this.user)
-        })
-        .catch(err => {
-          this.presentToast('Error al guardar nueva dirección', 'danger');
-        })
-    }
+    this.api.saveNewAddress(this.newAddressForm.value).toPromise()
+      .then((res: any) => {
+        this.isAddingAnAddress = false
+        this.newAddressForm.reset()
+        this.elder.addresses = res.userAddresses
+        this.user.elders[this.index] = this.elder
+        this.auth.setUserData(this.user)
+      })
+      .catch(err => {
+        this.presentToast('Error al guardar nueva dirección', 'danger');
+      })
   }
 
   cancelNewAddress() {
@@ -185,7 +176,7 @@ export class AccountPage implements OnInit {
   async deleteAddress(address, index) {
     const alert = await this.alertController.create({
       header: '¿Desea eliminar la siguiente dirección?',
-      message: address.street + ', ' + (address.other ? address.other + ', ' : '') + address.district + ', región ' + address.region + '.',
+      message: address.street + ', ' + (address.other ? address.other + ', ':'') + address.district + ', región ' + address.region + '.',
       buttons: [{
         text: 'Cancelar',
         role: 'cancel',
@@ -201,7 +192,8 @@ export class AccountPage implements OnInit {
             this.api.deleteAddress(address.address_id).toPromise()
               .then((res: any) => {
                 console.log('Dirección eliminada');
-                this.user.addresses = res.userAddresses
+                this.elder.addresses = res.userAddresses
+                this.user.elders[this.index] = this.elder
                 this.auth.setUserData(this.user)
               })
           })
@@ -220,35 +212,11 @@ export class AccountPage implements OnInit {
     });
     toast.present();
   }
-
-  async createElderAccount() {
-    const modal = await this.modalController.create({
-      component: NewElderPage
+  
+  async closeModal(reload: boolean) {
+    await this.modalController.dismiss({
+      reload
     })
-
-    modal.onDidDismiss()
-      .then((res: any) => {
-        if (res.data.reload) this.user = this.auth.userData()
-      })
-
-    return await modal.present()
-  }
-
-  async editElderAccount(elder: User, index: number) {
-    const modal = await this.modalController.create({
-      component: ElderAccountPage,
-      componentProps: {
-        elder,
-        index
-      }
-    })
-
-    modal.onDidDismiss()
-      .then((res: any) => {
-        if (res.data.reload) this.user = this.auth.userData()
-      })
-
-    return await modal.present()
   }
 
 }

@@ -25,13 +25,6 @@ export class ApiService {
     private http: HttpClient
   ) { }
 
-  rankService(data): Observable<any> { // serviceId, rankNumber
-    return of([{
-      success: true,
-      message: 'Service ranked correctly'
-    }])
-  }
-
   saveNewAddress(address): Observable<any[]> {
     return this.http.post<any[]>(`${this.apiUrl}/addresses/new-address`, address)
   }
@@ -198,6 +191,18 @@ export class ApiService {
 
   createRecord(record: Record): Observable<Record> {
     return this.http.post<Record>(`${this.apiUrl}/records/new-record`, record)
+  }
+
+  changeServiceScheduledState(scheduledService): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/services/scheduled/change-state`, scheduledService);
+  }
+
+  rankService(data): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/services/scheduled/rank`, data)
+  }
+
+  deleteAddress(address_id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/addresses/delete/${address_id}`)
   }
 
 }

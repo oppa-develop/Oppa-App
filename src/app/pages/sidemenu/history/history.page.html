@@ -79,7 +79,7 @@
               </h3>
             </ion-col>
             <ion-chip class="state ion-no-margin">
-              <ion-text color="dark">{{ service.state }}</ion-text>
+              <ion-text color="dark">{{ service.state | titlecase }}</ion-text>
             </ion-chip>
           </ion-row>
           <ion-row class="ion-no-padding">
@@ -100,7 +100,10 @@
           </ion-row>
           <ion-row>
             <ion-col size="12">
-              <ion-button expand="block" color="primary">cancelar</ion-button>
+              <ion-button *ngIf="service.state === 'agendado'" expand="block" color="primary" (click)="cancelService(service)">cancelar</ion-button>
+            </ion-col>
+            <ion-col size="12">
+              <ion-button *ngIf="service.state === 'terminado' && service.rank === null" expand="block" color="primary" (click)="rank(service)">calificar</ion-button>
             </ion-col>
           </ion-row>
         </ion-grid>

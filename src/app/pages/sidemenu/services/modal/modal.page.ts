@@ -47,6 +47,8 @@ export class ModalPage implements OnInit {
   };
   scheduleData: any
 
+  cancelRequest: boolean = true
+
   constructor(
     private modalController: ModalController,
     private auth: AuthService,
@@ -100,7 +102,7 @@ export class ModalPage implements OnInit {
 
   selectReceptor() {
     console.log(this.scheduleServiceForm.value.receptor);
-
+    
   }
 
   addLocation() {
@@ -165,6 +167,7 @@ export class ModalPage implements OnInit {
     });
     const listenConfirmation = this.ws.listen('notificateUser').subscribe((data: any) => {
       console.log('confirmación por parte del proveedor', data);
+      this.cancelRequest = false
       if (data.state == 'accepted') {
         loading.dismiss()
         this.presentAlert(data)
@@ -182,6 +185,22 @@ export class ModalPage implements OnInit {
         }
       }
     })
+    
+    /* setTimeout(() => {
+      if (this.cancelRequest) {
+        loading.dismiss()
+        listenConfirmation.unsubscribe();
+        serviceRequested.shift();
+        if (serviceRequested.length) {
+          console.log('solicitando servicio a siguiente proveedor', serviceRequested.length);
+          this.getProvider(serviceRequested, loading)
+        } else {
+          console.log('no quedan proveedores', serviceRequested.length);
+          loading.dismiss()
+          this.presentToast('No hemos conseguido proveedor', 'danger')
+        }
+      }
+    }, 60000) */
   }
 
   async presentAlert(data) {
