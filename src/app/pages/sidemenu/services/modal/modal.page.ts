@@ -102,11 +102,6 @@ export class ModalPage implements OnInit {
 
   selectReceptor() {
     console.log(this.scheduleServiceForm.value.receptor);
-    
-  }
-
-  addLocation() {
-
   }
 
   setMinHour() {
@@ -126,8 +121,8 @@ export class ModalPage implements OnInit {
       });
       await loading.present();
       this.scheduleData = {
-        client_id: this.scheduleServiceForm.value.receptor.client_id,
-        user_id: this.scheduleServiceForm.value.receptor.user_id,
+        client_id: this.user.client_id,
+        user_id: this.user.user_id,
         date: this.scheduleServiceForm.value.date,
         start: this.scheduleServiceForm.value.hour,
         end: null,
@@ -224,11 +219,11 @@ export class ModalPage implements OnInit {
           console.log('Agendando servicio');
 
           if (this.scheduleServiceForm.value.paymentMethod == 'wallet') {
-            console.log('pagando con monedero');
             const loading = await this.loadingController.create({
               message: 'Pagando servicio con monedero...'
             });
             await loading.present();
+            console.log('pagando con monedero');
             const movement = {
               amount: this.service.price,
               type: 'pago',
@@ -288,14 +283,25 @@ export class ModalPage implements OnInit {
                 })
               })
           } else if (this.scheduleServiceForm.value.paymentMethod == 'webpay') {
+            const loading = await this.loadingController.create({
+              message: 'Pagando servicio con webpay...'
+            });
+            await loading.present();
             console.log('pagando con webpay');
 
-            this.api.payWithWebpay(this.service.price).toPromise()
+            this.api.payWithWebpay().toPromise()
               .then((res: any) => {
-                console.log('pago realizado', res);
+
               })
               .catch(err => {
                 console.log('pago fallido', err);
+                loading.dismiss()
+                this.presentToast('Servicio no agendado', 'danger')
+                this.ws.emit('serviceConfirmation', {
+                  success: false,
+                  message: 'Pago rechazado',
+                  provider_id: data.provider.provider_id
+                })
               })
           }
         }

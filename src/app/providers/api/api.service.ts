@@ -171,14 +171,12 @@ export class ApiService {
     return new Blob(byteArrays, { type: contentType });
   }
 
-  payWithWebpay(amoutn: number): Observable<any> {
-    return of({
-      message: 'Payment ok'
-    }).pipe(delay(10000));
-  }
-
   payWithWallet(movement: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/wallets/new-movement`, movement)
+  }
+
+  payWithWebpay(movement: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}//payments/pay`, movement)
   }
 
   editUser(userData): Observable<any> {
