@@ -49,11 +49,11 @@
               <ion-label>CVV</ion-label>
               <ion-input formControlName="cvv" class="ion-text-right"></ion-input>
             </ion-item>
-            <ion-item *ngIf="cardDataForm.value.type === 'credit'">
+            <ion-item>
               <ion-label>Mes de expiración</ion-label>
               <ion-input formControlName="month" class="ion-text-right"></ion-input>
             </ion-item>
-            <ion-item *ngIf="cardDataForm.value.type === 'credit'">
+            <ion-item>
               <ion-label>Año de expiración</ion-label>
               <ion-input formControlName="year" class="ion-text-right"></ion-input>
             </ion-item>
