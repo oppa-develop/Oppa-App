@@ -82,6 +82,10 @@ export class ApiService {
     return this.http.post<any>(`${this.apiUrl}/services/schedule`, data)
   }
 
+  scheduleService2(data) {
+    return this.http.post<any>(`${this.apiUrl}/services/schedule2`, data)
+  }
+
   createChat(newChat): Observable<any> {
     return this.http.post(`${this.apiUrl}/chats/new-chat`, newChat)
   }
@@ -176,7 +180,11 @@ export class ApiService {
   }
 
   payWithWebpay(movement: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}//payments/pay`, movement)
+    return this.http.post<any>(`${this.apiUrl}/transbank/create`, movement)
+  }
+
+  confirmPayWithWebpay(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/transbank/confirm`, data)
   }
 
   editUser(userData): Observable<any> {

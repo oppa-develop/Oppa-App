@@ -13,6 +13,8 @@ import { ApiService } from 'src/app/providers/api/api.service';
 import { DatePipe } from '@angular/common';
 import { environment } from 'src/environments/environment';
 import { WebSocketService } from 'src/app/providers/web-socket/web-socket.service';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { NewCardPage } from 'src/app/pages/new-card/new-card.page';
 
 @Component({
   selector: 'app-modal',
@@ -59,7 +61,8 @@ export class ModalPage implements OnInit {
     private alertController: AlertController,
     private dateFormat: DatePipe,
     private toastCtrl: ToastController,
-    private ws: WebSocketService
+    private ws: WebSocketService,
+    private iab: InAppBrowser
   ) { }
 
   @Input() public service: Service
@@ -180,7 +183,7 @@ export class ModalPage implements OnInit {
         }
       }
     })
-    
+
     /* setTimeout(() => {
       if (this.cancelRequest) {
         loading.dismiss()
@@ -216,7 +219,7 @@ export class ModalPage implements OnInit {
       }, {
         text: 'Pagar',
         handler: async () => {
-          console.log('Agendando servicio');
+          console.log('Agendando servicio', this.scheduleServiceForm.value.paymentMethod);
 
           if (this.scheduleServiceForm.value.paymentMethod == 'wallet') {
             const loading = await this.loadingController.create({
@@ -257,7 +260,7 @@ export class ModalPage implements OnInit {
                 let newChat = {
                   users_ids: [data.provider.user_id, this.scheduleServiceForm.value.receptor.user_id],
                   provider_img_url: data.provider.img_url,
-                  provider_name: data.provider.firstname +  ' ' + data.provider.lastname,
+                  provider_name: data.provider.firstname + ' ' + data.provider.lastname,
                   receptor_img_url: this.scheduleServiceForm.value.receptor.img_url,
                   receptor_name: this.scheduleServiceForm.value.receptor.firstname + ' ' + this.scheduleServiceForm.value.receptor.lastname,
                   title: this.service.title,
@@ -283,32 +286,68 @@ export class ModalPage implements OnInit {
                 })
               })
           } else if (this.scheduleServiceForm.value.paymentMethod == 'webpay') {
-            const loading = await this.loadingController.create({
-              message: 'Pagando servicio con webpay...'
-            });
-            await loading.present();
             console.log('pagando con webpay');
 
-            this.api.payWithWebpay().toPromise()
-              .then((res: any) => {
-
-              })
-              .catch(err => {
-                console.log('pago fallido', err);
-                loading.dismiss()
-                this.presentToast('Servicio no agendado', 'danger')
-                this.ws.emit('serviceConfirmation', {
-                  success: false,
-                  message: 'Pago rechazado',
-                  provider_id: data.provider.provider_id
-                })
-              })
+            this.openModalWebpay(data, {
+              clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
+              clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
+              date: this.scheduleServiceForm.value.date,
+              start: this.scheduleServiceForm.value.hour,
+              provider_has_services_provider_has_services_id: this.scheduleServiceForm.value.provider_has_services_id,
+              addresses_address_id: this.scheduleServiceForm.value.address.address_id,
+              addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id
+            })
           }
         }
       }]
     })
 
     await alert.present();
+  }
+
+  async openModalWebpay(data, scheduleServiceData) {
+    const modal = await this.modalController.create({
+      component: NewCardPage,
+      componentProps: {
+        service: this.service
+      }
+    })
+
+    modal.onDidDismiss()
+      .then((res: any) => {
+        this.api.scheduleService2(scheduleServiceData).toPromise()
+          .then((res2: any) => {
+            if (res.data.transactionOk) {
+              this.closeModal(true);
+              this.presentToast('Servicio agendado', 'success');
+              this.ws.emit('serviceConfirmation', {
+                success: true,
+                message: 'Service scheduled',
+                provider: data.provider
+              });
+    
+              // ahora solicitamos la creacion de la sala de chat
+              let newChat = {
+                users_ids: [data.provider.user_id, this.scheduleServiceForm.value.receptor.user_id],
+                provider_img_url: data.provider.img_url,
+                provider_name: data.provider.firstname + ' ' + data.provider.lastname,
+                receptor_img_url: this.scheduleServiceForm.value.receptor.img_url,
+                receptor_name: this.scheduleServiceForm.value.receptor.firstname + ' ' + this.scheduleServiceForm.value.receptor.lastname,
+                title: this.service.title,
+                scheduled_services_scheduled_services_id: res2.scheduleService.scheduled_services_id
+              }
+              if (this.scheduleServiceForm.value.receptor.user_id !== this.user.user_id) newChat.users_ids.push(this.user.user_id)
+              this.api.createChat(newChat).toPromise()
+                .then((res: any) => {
+                  console.log('chat creado');
+                })
+                .catch(err => {
+                  console.log(err);
+                })
+            }
+          })
+      })
+    return await modal.present()
   }
 
 }

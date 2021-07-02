@@ -18,6 +18,10 @@ const routes: Routes = [
     path: '',
     redirectTo: '/sidemenu',
     pathMatch: 'full'
+  },
+  {
+    path: 'new-card',
+    loadChildren: () => import('./pages/new-card/new-card.module').then( m => m.NewCardPageModule)
   }
 
 ];

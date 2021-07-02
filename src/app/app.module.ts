@@ -25,6 +25,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 // import { File } from '@ionic-native/file/ngx';
 import { Camera } from '@ionic-native/Camera/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -60,7 +61,8 @@ import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
     ApiService,
     LocationService,
     WebSocketService,
-    LocalNotifications
+    LocalNotifications,
+    InAppBrowser
   ],
   bootstrap: [AppComponent]
 })
