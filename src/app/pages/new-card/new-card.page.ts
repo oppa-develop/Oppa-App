@@ -35,6 +35,11 @@ export class NewCardPage implements OnInit {
     })
   }
 
+  prueba() {
+    let p = this.cardDataForm.value.cardNumber.toString().slice(1)[0] === '4'
+    console.log(p)
+  }
+
   pay() {
     this.api.payWithWebpay(this.cardDataForm.value).toPromise()
       .then((res: any) => {
