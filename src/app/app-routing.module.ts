@@ -22,7 +22,11 @@ const routes: Routes = [
   {
     path: 'new-card',
     loadChildren: () => import('./pages/new-card/new-card.module').then( m => m.NewCardPageModule)
+  },  {
+    path: 'recover-account',
+    loadChildren: () => import('./pages/recover-account/recover-account.module').then( m => m.RecoverAccountPageModule)
   }
+
 
 ];
 
