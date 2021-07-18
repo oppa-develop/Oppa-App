@@ -27,10 +27,10 @@ export class NewCardPage implements OnInit {
   createCardDataForm() {
     return this.formBuilder.group({
       type: ['', Validators.required],
-      cardNumber: ['4051 8856 0044 6623', Validators.required],
-      cvv: ['123', Validators.required],
-      month: ['12', Validators.required],
-      year: ['26', Validators.required],
+      cardNumber: ['', Validators.required],
+      cvv: ['', Validators.required],
+      month: ['', Validators.required],
+      year: ['', Validators.required],
       amount: [this.service.price, Validators.required]
     })
   }
