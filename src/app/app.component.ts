@@ -4,6 +4,7 @@ import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { Autostart } from '@ionic-native/autostart/ngx';
 
 @Component({
   selector: 'app-root',
@@ -16,10 +17,12 @@ export class AppComponent {
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private screenOrientation: ScreenOrientation
+    private screenOrientation: ScreenOrientation,
+    private autostart: Autostart
   ) {
     this.setPortrait();
     this.initializeApp();
+    this.autostart.enable();
   }
   
   // set orientation to portrait

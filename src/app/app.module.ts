@@ -26,6 +26,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { Camera } from '@ionic-native/Camera/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { Autostart } from '@ionic-native/autostart/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -39,6 +40,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
     FormsModule
   ],
   providers: [
+    Autostart,
     ScreenOrientation,
     StatusBar,
     SplashScreen,
