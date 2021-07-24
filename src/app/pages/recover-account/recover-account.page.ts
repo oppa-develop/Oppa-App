@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 import { ApiService } from 'src/app/providers/api/api.service';
 
 @Component({
@@ -18,6 +19,7 @@ export class RecoverAccountPage implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private api: ApiService,
+    private toastCtrl: ToastController,
     public router: Router // para enviar al usuario a otra vista
   ) { }
 
@@ -41,14 +43,33 @@ export class RecoverAccountPage implements OnInit {
   }
 
   getCode() {
-    this.step = 2
+    this.api.getCode(this.recoverAccountForm.value.rut).toPromise()
+      .then((res: any) => {
+        this.step = 2
+      })
+      .catch(err => {
+        this.step = 1
+        this.presentToast('Error al solicitar código. Intente nuevamente.', 'danger')
+      })
   }
-  
+
   sendNewPass() {
-    this.router.navigate(['/login']);
-    this.step = 1
-    this.recoverAccountForm.reset()
-    this.changePassForm.reset()
+    let data = {
+      code: this.changePassForm.value.code,
+      password: this.changePassForm.value.password,
+      rut: this.recoverAccountForm.value.rut
+    }
+    this.api.changePass(data).toPromise()
+      .then(() => {
+        this.presentToast('Contraseña cambiada con éxito.', 'success')
+        this.router.navigate(['/login'])
+        this.step = 1
+        this.recoverAccountForm.reset()
+        this.changePassForm.reset()
+      })
+      .catch(err => {
+        this.presentToast('Error al cambiar contraseña. Intente nuevamente.', 'danger')
+      })
   }
 
   // confirm new password validator
@@ -57,7 +78,7 @@ export class RecoverAccountPage implements OnInit {
       this.confirm_password.setErrors({ mismatch: false });
       this.passConfirmationWrong = false;
     } else {
-      this.confirm_password.setErrors({ mismatch: false });
+      this.confirm_password.setErrors({ mismatch: true });
       this.passConfirmationWrong = true;
     }
   }
@@ -69,6 +90,15 @@ export class RecoverAccountPage implements OnInit {
 
   get confirm_password(): AbstractControl {
     return this.changePassForm.controls['checkPassword'];
+  }
+
+  async presentToast(message: string, color: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2000,
+      color
+    });
+    toast.present();
   }
 
 }

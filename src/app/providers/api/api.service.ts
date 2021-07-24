@@ -211,5 +211,12 @@ export class ApiService {
     return this.http.delete(`${this.apiUrl}/addresses/delete/${address_id}`)
   }
 
-}
+  getCode(rut: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/recover-account`, rut)
+  }
 
+  changePass(data: any): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/users/change-password`, data)
+  }
+
+}

@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
   <ion-grid *ngIf="step === 1">
     <ion-img src="../../../assets/images/password-img.svg"></ion-img>
     <ion-row>
@@ -50,7 +50,7 @@
             </ion-item>
             <span *ngIf="confirm_password.hasError('mismatch')" class="pass-not-match red-text"><strong>Las contraseñas deben coincidir.</strong></span>
           </ion-list>
-          <ion-button type="submit" class="bottom-btn" expand="block" color="primary">Enviar</ion-button>
+          <ion-button type="submit" class="bottom-btn" expand="block" color="primary">Cambiar Contraseña</ion-button>
         </form>
       </ion-col>
     </ion-row>
