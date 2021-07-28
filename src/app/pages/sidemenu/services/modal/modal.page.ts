@@ -49,7 +49,7 @@ export class ModalPage implements OnInit {
   };
   scheduleData: any
 
-  cancelRequest: boolean = true
+  nextProvider: boolean = true
 
   constructor(
     private modalController: ModalController,
@@ -124,8 +124,8 @@ export class ModalPage implements OnInit {
       });
       await loading.present();
       this.scheduleData = {
-        client_id: this.user.client_id,
-        user_id: this.user.user_id,
+        client_id: this.scheduleServiceForm.value.receptor.client_id,
+        user_id: this.scheduleServiceForm.value.receptor.user_id,
         date: this.scheduleServiceForm.value.date,
         start: this.scheduleServiceForm.value.hour,
         end: null,
@@ -157,6 +157,7 @@ export class ModalPage implements OnInit {
     this.scheduleServiceForm.value.provider_has_services_id = serviceRequested[0].provider_has_services_id
     this.scheduleData.service = this.service
     this.scheduleData.address = this.scheduleServiceForm.value.address
+    this.scheduleData.state = 'requesting'
 
     this.ws.emit('notificateProvider', this.scheduleData)
     this.ws.emit('notificationsProvider', { // aqui el usuario se suscribe a las notificaciones
@@ -165,7 +166,7 @@ export class ModalPage implements OnInit {
     });
     const listenConfirmation = this.ws.listen('notificateUser').subscribe((data: any) => {
       console.log('confirmación por parte del proveedor', data);
-      // this.cancelRequest = false
+      this.nextProvider = false
       if (data.state == 'accepted') {
         loading.dismiss()
         this.presentAlert(data)
@@ -184,8 +185,10 @@ export class ModalPage implements OnInit {
       }
     })
 
-    /* setTimeout(() => {
-      if (this.cancelRequest) {
+    setTimeout(() => {
+      if (this.nextProvider) {
+        this.scheduleData.state = 'canceling'
+        this.ws.emit('notificateProvider', this.scheduleData)
         loading.dismiss()
         listenConfirmation.unsubscribe();
         serviceRequested.shift();
@@ -198,7 +201,7 @@ export class ModalPage implements OnInit {
           this.presentToast('No hemos conseguido proveedor', 'danger')
         }
       }
-    }, 60000) */
+    }, 60000)
   }
 
   async presentAlert(data) {
