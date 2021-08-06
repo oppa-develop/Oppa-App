@@ -97,6 +97,7 @@ export class SidemenuPage implements OnInit {
   async presentAlert() {
     localStorage.setItem('createElderAccountAlert', 'done')
     const alert = await this.alertController.create({
+      backdropDismiss: false,
       header: '¿Sabías que puedes apadrinar a tu adulto mayor?',
       message: `Si quieres crear la cuenta de tu Oppa Senior, puedes hacerlo desde el apartado Mis Datos.`,
       buttons: [{

@@ -34,6 +34,7 @@ export class HistoryPage implements OnInit {
 
   async cancelService(service) {
     const alert = await this.alertController.create({
+      backdropDismiss: false,
       header: '¿Desea cancelar el servicio?',
       buttons: [
         {
@@ -66,6 +67,7 @@ export class HistoryPage implements OnInit {
   async rank(service) {
     console.table(service)
     const alert = await this.alertController.create({
+      backdropDismiss: false,
       header: 'Calificar Servicio',
       inputs: [
         {

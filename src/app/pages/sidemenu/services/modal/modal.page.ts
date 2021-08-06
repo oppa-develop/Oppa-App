@@ -206,6 +206,7 @@ export class ModalPage implements OnInit {
 
   async presentAlert(data) {
     const alert = await this.alertController.create({
+      backdropDismiss: false,
       header: 'Agendar Servicio',
       message: `Tu servicio será agendado con ${data.provider.firstname} ${data.provider.lastname} para el próximo ${this.dateFormat.transform(dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD'), 'fullDate')} a las ${dayjs(this.scheduleServiceForm.value.hour).format('HH:mm')} horas.`,
       buttons: [{

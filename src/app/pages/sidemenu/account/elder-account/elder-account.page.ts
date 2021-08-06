@@ -175,6 +175,7 @@ export class ElderAccountPage implements OnInit {
 
   async deleteAddress(address, index) {
     const alert = await this.alertController.create({
+      backdropDismiss: false,
       header: '¿Desea eliminar la siguiente dirección?',
       message: address.street + ', ' + (address.other ? address.other + ', ':'') + address.district + ', región ' + address.region + '.',
       buttons: [{
