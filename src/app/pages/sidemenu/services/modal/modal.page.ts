@@ -15,6 +15,7 @@ import { environment } from 'src/environments/environment';
 import { WebSocketService } from 'src/app/providers/web-socket/web-socket.service';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { NewCardPage } from 'src/app/pages/new-card/new-card.page';
+import { ModalsAndAlertsService } from 'src/app/providers/modalsAndAlerts/modals-and-alerts.service';
 
 @Component({
   selector: 'app-modal',
@@ -62,7 +63,7 @@ export class ModalPage implements OnInit {
     private dateFormat: DatePipe,
     private toastCtrl: ToastController,
     private ws: WebSocketService,
-    private iab: InAppBrowser
+    private modalsAndAlerts: ModalsAndAlertsService
   ) { }
 
   @Input() public service: Service
@@ -108,7 +109,7 @@ export class ModalPage implements OnInit {
   }
 
   setMinHour() {
-    this.minHour = (dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD') == dayjs().format('YYYY-MM-DD')) ? dayjs().format('HH:mm') : dayjs('2020-01-01').format('HH:mm')
+    this.minHour = (dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD') == dayjs().format('YYYY-MM-DD')) ? dayjs().add(2,'h').format('HH:mm') : dayjs('2020-01-01').format('HH:mm')
   }
 
   async closeModal(reload: boolean) {
@@ -140,12 +141,16 @@ export class ModalPage implements OnInit {
       this.api.scheduleService(this.scheduleData).toPromise()
         .then((res: any) => {
           this.ws.connect();
-          console.log('datos de la bdd con los posibles proveedores', res.serviceRequested);
-
-          this.getProvider(res.serviceRequested, loading)
+          if (res.serviceRequested.length > 0) {
+            this.getProvider(res.serviceRequested, loading)
+          } else {
+            throw new Error('No hay proveedores disponibles en la fecha y hora seleccionada.')
+          }
         })
         .catch(err => {
           loading.dismiss()
+          this.modalsAndAlerts.changeState(false)
+          this.presentToast(err.message, 'dark')
         })
     } else {
       this.presentToast('Formulario incompleto.', 'danger')
