@@ -15,7 +15,6 @@ import { environment } from 'src/environments/environment';
 import { WebSocketService } from 'src/app/providers/web-socket/web-socket.service';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { NewCardPage } from 'src/app/pages/new-card/new-card.page';
-import { ModalsAndAlertsService } from 'src/app/providers/modalsAndAlerts/modals-and-alerts.service';
 
 @Component({
   selector: 'app-modal',
@@ -62,8 +61,7 @@ export class ModalPage implements OnInit {
     private alertController: AlertController,
     private dateFormat: DatePipe,
     private toastCtrl: ToastController,
-    private ws: WebSocketService,
-    private modalsAndAlerts: ModalsAndAlertsService
+    private ws: WebSocketService
   ) { }
 
   @Input() public service: Service
@@ -100,6 +98,10 @@ export class ModalPage implements OnInit {
   }
 
   scheduleService() {
+    // comprobamos el formulario y si está bien, lo enviamos al servidor
+    if (this.scheduleServiceForm.valid) {
+      
+    }
     
   }
 
