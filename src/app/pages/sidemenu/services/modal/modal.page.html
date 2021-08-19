@@ -50,7 +50,6 @@
                       [interfaceOptions]="ActionSheetOptionsElder"
                       placeholder="Seleccionar"
                       formControlName="receptor"
-                      (ionChange)="selectReceptor()"
                       cancelText="Cancelar">
             <ion-select-option [value]="user">{{ user.firstname + ' ' + user.lastname }} (yo)</ion-select-option>
             <ion-select-option *ngFor="let elder of user?.elders" [value]="elder">{{ elder.firstname + ' ' + elder.lastname }}</ion-select-option>

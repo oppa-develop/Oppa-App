@@ -43,13 +43,6 @@ export class ModalPage implements OnInit {
   ActionSheetOptionsElder = {
     header: 'Servicio para:'
   };
-  ActionSheetOptionsFlexibility = {
-    header: 'Flexibilidad Horaria',
-    subHeader: 'Tiempo variable del comienzo del servicio.'
-  };
-  scheduleData: any
-
-  nextProvider: boolean = true
 
   constructor(
     private modalController: ModalController,
@@ -82,7 +75,7 @@ export class ModalPage implements OnInit {
       hour: [null, Validators.required],
       receptor: [null, Validators.required],
       address: [null, Validators.required],
-      service_id: [this.service.service_id],
+      service: [this.service, Validators.required],
       paymentMethod: [null, Validators.required]
     })
   }
@@ -97,14 +90,6 @@ export class ModalPage implements OnInit {
     })
   }
 
-  scheduleService() {
-    // comprobamos el formulario y si está bien, lo enviamos al servidor
-    if (this.scheduleServiceForm.valid) {
-      
-    }
-    
-  }
-
   async presentToast(message: string, color: string) {
     const toast = await this.toastCtrl.create({
       message,
@@ -112,6 +97,27 @@ export class ModalPage implements OnInit {
       color
     });
     toast.present();
+  }
+
+  async scheduleService() {
+    // comprobamos el formulario y, si está bien, comenzamos la solicitud
+    if (this.scheduleServiceForm.valid) {
+      const loading = await this.loadingController.create({
+        message: 'Buscando proveedores...'
+      });
+      await loading.present();
+
+      // solicitamos una lista con los posibles proveedores
+      this.api.getPotentialProviders(this.scheduleServiceForm.value.address.region, this.scheduleServiceForm.value.address.district, this.scheduleServiceForm.value.service.service_id, dayjs(this.scheduleServiceForm.value.date).format('DD-MM-YYYY'), this.scheduleServiceForm.value.hour, this.user.gender).toPromise()
+        .then((res: any) => {
+          loading.dismiss();
+        })
+        .catch(err => {
+          console.log(err)
+          this.presentToast('Hubo un error al intentar obtener los proveedores', 'danger')
+        })
+      this.ws.emit('notification', { type: 'service request', emitter: this.user.user_id, destination: 2, message: this.scheduleServiceForm.value, state: 'data sended' })
+    }
   }
 
 }
