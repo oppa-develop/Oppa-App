@@ -46,7 +46,6 @@ export class WebSocketService {
 
   close() {
     console.log('desconectando websocket');
-    // this.emit('disconnect', null)
     this.socket.disconnect();
   }
 

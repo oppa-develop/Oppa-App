@@ -81,7 +81,7 @@ export class ModalPage implements OnInit {
   }
 
   setMinHour() {
-    this.minHour = (dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD') == dayjs().format('YYYY-MM-DD')) ? dayjs().add(2,'h').format('HH:mm') : dayjs('2020-01-01').format('HH:mm')
+    this.minHour = (dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD') == dayjs().format('YYYY-MM-DD')) ? dayjs().add(2, 'h').format('HH:mm') : dayjs('2020-01-01').format('HH:mm')
   }
 
   closeModal(reload: boolean) {
@@ -107,17 +107,60 @@ export class ModalPage implements OnInit {
       });
       await loading.present();
 
+      // formateamos la data antes de enviarla
+      if (this.scheduleServiceForm.value.receptor.token) delete this.scheduleServiceForm.value.receptor.token
+      this.scheduleServiceForm.value.date = dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD')
+      this.scheduleServiceForm.value.hour = this.scheduleServiceForm.value.hour.split('T')[1].slice(0,5)
+
       // solicitamos una lista con los posibles proveedores
-      this.api.getPotentialProviders(this.scheduleServiceForm.value.address.region, this.scheduleServiceForm.value.address.district, this.scheduleServiceForm.value.service.service_id, dayjs(this.scheduleServiceForm.value.date).format('DD-MM-YYYY'), this.scheduleServiceForm.value.hour, this.user.gender).toPromise()
+      this.api.getPotentialProviders(this.scheduleServiceForm.value.address.region, this.scheduleServiceForm.value.address.district, this.scheduleServiceForm.value.service.service_id, this.scheduleServiceForm.value.date, this.scheduleServiceForm.value.hour, this.user.gender).toPromise()
         .then((res: any) => {
           loading.dismiss();
+          if (res.potentialServices.length) {
+            // si hay servicios agendables, se envía una solicitud proveedor por proveedor hasta que se encuentre uno que acepte el servicio
+            this.sendRequestToProvider(res.potentialServices)
+          } else {
+            // en caso de no haber servicios agendables, se muestra un mensaje de error
+            this.presentToast('No se encontraron proveedores disponibles en esta fecha y/u horario', 'danger')
+          }
         })
         .catch(err => {
           console.log(err)
+          loading.dismiss();
           this.presentToast('Hubo un error al intentar obtener los proveedores', 'danger')
         })
-      this.ws.emit('notification', { type: 'service request', emitter: this.user.user_id, destination: 2, message: this.scheduleServiceForm.value, state: 'data sended' })
     }
   }
+
+  async sendRequestToProvider(potentialServices: any[]) {
+    const loading = await this.loadingController.create({
+      message: 'Solicitando servicio a proveedor...'
+    });
+    await loading.present();
+
+    this.ws.emit('notification', { 
+      type: 'service request',
+      emitter: this.user.user_id,
+      destination: potentialServices[0].providers_provider_id,
+      message: this.scheduleServiceForm.value,
+      state: 'data sended'
+    })
+
+    this.ws.listen('notification').subscribe((data: any) => {
+      loading.dismiss();
+      if (data.type == 'service request' && data.state == 'request accepted') {
+
+      } else if (data.type == 'service request' && data.state == 'request rejected') {
+        potentialServices.shift()
+        if (potentialServices.length) {
+          this.sendRequestToProvider(potentialServices)
+        } else {
+          this.ws.close()
+          this.presentToast('No se encontraron proveedores disponibles en esta fecha y/u horario', 'danger')
+        }
+      }
+    })
+  }
+
 
 }

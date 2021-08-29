@@ -176,7 +176,7 @@ export class ApiService {
   }
 
   getPotentialProviders(region: string, district: string, service_id: number, date: string, hour: string, gender: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/services/${service_id}/potential-providers/region/${region}district/${district}/date/${date}/hour/${hour}/gender/${gender}`);
+    return this.http.get<any[]>(`${this.apiUrl}/services/${service_id}/potential-providers/region/${region}/district/${district}/date/${date}/hour/${hour}/gender/${gender}`);
   }
 
   payWithWallet(movement: any): Observable<any> {
