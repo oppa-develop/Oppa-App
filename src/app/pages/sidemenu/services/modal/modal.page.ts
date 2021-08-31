@@ -60,10 +60,9 @@ export class ModalPage implements OnInit {
   @Input() public service: Service
 
   ngOnInit() {
-    this.scheduleServiceForm = this.createScheduleServiceForm()
-    console.log('service', this.service);
-    this.$regions = this.location.getRegions()
     this.user = this.auth.userData()
+    this.scheduleServiceForm = this.createScheduleServiceForm()
+    this.$regions = this.location.getRegions()
 
     // We connect to the server
     this.ws.connect()
@@ -73,7 +72,7 @@ export class ModalPage implements OnInit {
     return this.formBuilder.group({
       date: [null, Validators.required],
       hour: [null, Validators.required],
-      receptor: [null, Validators.required],
+      receptor: [(this.user?.elders.length) ? null : this.user, Validators.required],
       address: [null, Validators.required],
       service: [this.service, Validators.required],
       paymentMethod: [null, Validators.required]
@@ -110,12 +109,14 @@ export class ModalPage implements OnInit {
       // formateamos la data antes de enviarla
       if (this.scheduleServiceForm.value.receptor.token) delete this.scheduleServiceForm.value.receptor.token
       this.scheduleServiceForm.value.date = dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD')
-      this.scheduleServiceForm.value.hour = this.scheduleServiceForm.value.hour.split('T')[1].slice(0,5)
+      this.scheduleServiceForm.value.hour = (this.scheduleServiceForm.value.hour.includes('T') > 0) ? this.scheduleServiceForm.value.hour.split('T')[1].slice(0,5) : this.scheduleServiceForm.value.hour
 
       // solicitamos una lista con los posibles proveedores
       this.api.getPotentialProviders(this.scheduleServiceForm.value.address.region, this.scheduleServiceForm.value.address.district, this.scheduleServiceForm.value.service.service_id, this.scheduleServiceForm.value.date, this.scheduleServiceForm.value.hour, this.user.gender).toPromise()
         .then((res: any) => {
           loading.dismiss();
+          console.log(res);
+          
           if (res.potentialServices.length) {
             // si hay servicios agendables, se envía una solicitud proveedor por proveedor hasta que se encuentre uno que acepte el servicio
             this.sendRequestToProvider(res.potentialServices)
@@ -141,16 +142,19 @@ export class ModalPage implements OnInit {
     this.ws.emit('notification', { 
       type: 'service request',
       emitter: this.user.user_id,
-      destination: potentialServices[0].providers_provider_id,
+      destination: potentialServices[0].providers_users_user_id,
       message: this.scheduleServiceForm.value,
       state: 'data sended'
     })
 
     this.ws.listen('notification').subscribe((data: any) => {
-      loading.dismiss();
+      console.log('data received', data);
+      
       if (data.type == 'service request' && data.state == 'request accepted') {
-
+        loading.dismiss();
+        // proceder al pago según el método seleccionado
       } else if (data.type == 'service request' && data.state == 'request rejected') {
+        loading.dismiss();
         potentialServices.shift()
         if (potentialServices.length) {
           this.sendRequestToProvider(potentialServices)
