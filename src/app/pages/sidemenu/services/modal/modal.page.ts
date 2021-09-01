@@ -31,6 +31,7 @@ export class ModalPage implements OnInit {
   scheduleServiceForm: FormGroup
   elderSelected: User
   apiUrl: string = environment.HOST + '/'
+  requestingStatus: string = 'requesting'
 
   ActionSheetOptionsRegions = {
     header: 'Regiones',
@@ -109,14 +110,14 @@ export class ModalPage implements OnInit {
       // formateamos la data antes de enviarla
       if (this.scheduleServiceForm.value.receptor.token) delete this.scheduleServiceForm.value.receptor.token
       this.scheduleServiceForm.value.date = dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD')
-      this.scheduleServiceForm.value.hour = (this.scheduleServiceForm.value.hour.includes('T') > 0) ? this.scheduleServiceForm.value.hour.split('T')[1].slice(0,5) : this.scheduleServiceForm.value.hour
+      this.scheduleServiceForm.value.hour = (this.scheduleServiceForm.value.hour.includes('T') > 0) ? this.scheduleServiceForm.value.hour.split('T')[1].slice(0, 5) : this.scheduleServiceForm.value.hour
 
       // solicitamos una lista con los posibles proveedores
       this.api.getPotentialProviders(this.scheduleServiceForm.value.address.region, this.scheduleServiceForm.value.address.district, this.scheduleServiceForm.value.service.service_id, this.scheduleServiceForm.value.date, this.scheduleServiceForm.value.hour, this.user.gender).toPromise()
         .then((res: any) => {
           loading.dismiss();
           console.log(res);
-          
+
           if (res.potentialServices.length) {
             // si hay servicios agendables, se envía una solicitud proveedor por proveedor hasta que se encuentre uno que acepte el servicio
             this.sendRequestToProvider(res.potentialServices)
@@ -139,7 +140,7 @@ export class ModalPage implements OnInit {
     });
     await loading.present();
 
-    this.ws.emit('notification', { 
+    this.ws.emit('notification', {
       type: 'service request',
       emitter: this.user.user_id,
       destination: potentialServices[0].providers_users_user_id,
@@ -147,24 +148,51 @@ export class ModalPage implements OnInit {
       state: 'data sended'
     })
 
-    this.ws.listen('notification').subscribe((data: any) => {
-      console.log('data received', data);
+    const notifyingProvider = this.ws.listen('notification').subscribe((data: any) => {
+      this.requestingStatus = 'requesting'
       
       if (data.type == 'service request' && data.state == 'request accepted') {
         loading.dismiss();
         // proceder al pago según el método seleccionado
+        console.log('ahora hay q pagar');
+        this.payment()
+      } else if (data.type == 'service request' && data.state == 'provider busy') {
+        console.log('el proveedor está ocupado');
+        console.count()
+        if (potentialServices.length > 1) {
+          loading.dismiss();
+          potentialServices.shift()
+          if (potentialServices.length) {
+            notifyingProvider.unsubscribe()
+            this.sendRequestToProvider(potentialServices)
+          } else {
+            notifyingProvider.unsubscribe()
+            this.presentToast('No se encontraron proveedores disponibles en esta fecha y/u horario', 'danger')
+          }
+        } else if (potentialServices.length <= 1) { // si el proveedor cancela por estar ocupado, volvemos a solicitar el servicio luego de un tiempo
+          setTimeout(() => {
+            loading.dismiss();
+            notifyingProvider.unsubscribe()
+            this.sendRequestToProvider(potentialServices)
+          }, 5000)
+        }
       } else if (data.type == 'service request' && data.state == 'request rejected') {
         loading.dismiss();
         potentialServices.shift()
         if (potentialServices.length) {
+          notifyingProvider.unsubscribe()
           this.sendRequestToProvider(potentialServices)
         } else {
-          this.ws.close()
+          notifyingProvider.unsubscribe()
           this.presentToast('No se encontraron proveedores disponibles en esta fecha y/u horario', 'danger')
         }
       }
     })
   }
 
+  payment() {
+    this.requestingStatus = 'paying off'
+
+  }
 
 }
