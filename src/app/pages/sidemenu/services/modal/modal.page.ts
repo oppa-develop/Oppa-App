@@ -148,14 +148,42 @@ export class ModalPage implements OnInit {
       state: 'data sended'
     })
 
-    const notifyingProvider = this.ws.listen('notification').subscribe((data: any) => {
+    const notifyingProvider = this.ws.listen('notification').subscribe(async (data: any) => {
       this.requestingStatus = 'requesting'
+      console.log(data);
       
       if (data.type == 'service request' && data.state == 'request accepted') {
         loading.dismiss();
-        // proceder al pago según el método seleccionado
-        console.log('ahora hay q pagar');
-        this.payment()
+
+        const alert = await this.alertController.create({
+          backdropDismiss: false,
+          header: 'Agendar Servicio',
+          message: `Tu servicio será agendado con ${data.provider.firstname} ${data.provider.lastname} para el próximo ${this.dateFormat.transform(this.scheduleServiceForm.value.date, 'fullDate')} a las ${this.scheduleServiceForm.value.hour} horas.`,
+          buttons: [{
+            text: 'Cancelar',
+            role: 'cancel',
+            handler: () => {
+              this.ws.emit('serviceConfirmation', {
+                success: false,
+                message: 'Service canceled',
+                provider_id: data.provider.provider_id
+              });
+              console.log('Agendar servicio cancelado');
+            }
+          }, {
+            text: 'Pagar',
+            handler: async () => {
+              console.log('Agendando servicio', this.scheduleServiceForm.value.paymentMethod);
+    
+              // si el proveedor acepta realizar el servicio, procedemos al pago según el método seleccionado
+              if (this.scheduleServiceForm.value.paymentMethod === 'wallet') this.paymentWithWallet()
+              if (this.scheduleServiceForm.value.paymentMethod === 'webpay') this.paymentWithWebpay(data)
+            }
+          }]
+        })
+    
+        await alert.present();
+        
       } else if (data.type == 'service request' && data.state == 'provider busy') {
         console.log('el proveedor está ocupado');
         console.count()
@@ -190,9 +218,72 @@ export class ModalPage implements OnInit {
     })
   }
 
-  payment() {
+  paymentWithWallet() {
     this.requestingStatus = 'paying off'
+    console.log('pagando con Wallet');
+    
+  }
 
+  paymentWithWebpay(data) {
+    this.requestingStatus = 'paying off'
+    console.log('pagando con Webpay', data);
+    this.openModalWebpay(data, {
+      clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
+      clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
+      date: this.scheduleServiceForm.value.date,
+      start: this.scheduleServiceForm.value.hour,
+      provider_has_services_provider_has_services_id: this.scheduleServiceForm.value.provider_has_services_id,
+      addresses_address_id: this.scheduleServiceForm.value.address.address_id,
+      addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id
+    })
+  }
+
+  async openModalWebpay(data, scheduleServiceData) {
+    const modal = await this.modalController.create({
+      component: NewCardPage,
+      componentProps: {
+        service: this.service
+      }
+    })
+
+    modal.onDidDismiss()
+      .then((res: any) => {
+        this.api.scheduleService2(scheduleServiceData).toPromise()
+          .then((res2: any) => {
+            if (res.data.transactionOk) {
+              this.closeModal(true);
+              this.presentToast('Servicio agendado', 'success');
+              this.ws.emit('serviceConfirmation', {
+                success: true,
+                message: 'Service scheduled',
+                provider: data.provider
+              });
+    
+              // ahora solicitamos la creacion de la sala de chat
+              let newChat = {
+                users_ids: [data.provider.user_id, this.scheduleServiceForm.value.receptor.user_id],
+                provider_img_url: data.provider.img_url,
+                provider_name: data.provider.firstname + ' ' + data.provider.lastname,
+                receptor_img_url: this.scheduleServiceForm.value.receptor.img_url,
+                receptor_name: this.scheduleServiceForm.value.receptor.firstname + ' ' + this.scheduleServiceForm.value.receptor.lastname,
+                title: this.service.title,
+                scheduled_services_scheduled_services_id: res2.scheduleService.scheduled_services_id
+              }
+              if (this.scheduleServiceForm.value.receptor.user_id !== this.user.user_id) newChat.users_ids.push(this.user.user_id)
+              this.api.createChat(newChat).toPromise()
+                .then((res: any) => {
+                  console.log('chat creado');
+                })
+                .catch(err => {
+                  console.log('error al crear chat', err);
+                })
+            }
+          })
+          .catch(err => {
+            console.log('error al registrar servicio agendado', err);
+          })
+      })
+    return await modal.present()
   }
 
 }
