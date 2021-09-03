@@ -32,6 +32,7 @@ export class ModalPage implements OnInit {
   elderSelected: User
   apiUrl: string = environment.HOST + '/'
   requestingStatus: string = 'requesting'
+  provider_has_services_provider_has_services_id: number
 
   ActionSheetOptionsRegions = {
     header: 'Regiones',
@@ -154,6 +155,7 @@ export class ModalPage implements OnInit {
       
       if (data.type == 'service request' && data.state == 'request accepted') {
         loading.dismiss();
+        notifyingProvider.unsubscribe()
 
         const alert = await this.alertController.create({
           backdropDismiss: false,
@@ -174,7 +176,8 @@ export class ModalPage implements OnInit {
             text: 'Pagar',
             handler: async () => {
               console.log('Agendando servicio', this.scheduleServiceForm.value.paymentMethod);
-    
+              this.provider_has_services_provider_has_services_id = potentialServices[0].provider_has_services_id
+
               // si el proveedor acepta realizar el servicio, procedemos al pago según el método seleccionado
               if (this.scheduleServiceForm.value.paymentMethod === 'wallet') this.paymentWithWallet()
               if (this.scheduleServiceForm.value.paymentMethod === 'webpay') this.paymentWithWebpay(data)
@@ -232,7 +235,7 @@ export class ModalPage implements OnInit {
       clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
       date: this.scheduleServiceForm.value.date,
       start: this.scheduleServiceForm.value.hour,
-      provider_has_services_provider_has_services_id: this.scheduleServiceForm.value.provider_has_services_id,
+      provider_has_services_provider_has_services_id: this.provider_has_services_provider_has_services_id,
       addresses_address_id: this.scheduleServiceForm.value.address.address_id,
       addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id
     })
@@ -253,10 +256,20 @@ export class ModalPage implements OnInit {
             if (res.data.transactionOk) {
               this.closeModal(true);
               this.presentToast('Servicio agendado', 'success');
-              this.ws.emit('serviceConfirmation', {
-                success: true,
-                message: 'Service scheduled',
-                provider: data.provider
+              console.log('Servicio agendado', {
+                type: 'client payment',
+                emitter: this.user.user_id,
+                destination: data.provider.user_id,
+                message: `Servicio pagado y agendado`,
+                state: 'payment accepted'
+              });
+              
+              this.ws.emit('notification', {
+                type: 'client payment',
+                emitter: this.user.user_id,
+                destination: data.provider.user_id,
+                message: `Servicio pagado y agendado`,
+                state: 'payment accepted'
               });
     
               // ahora solicitamos la creacion de la sala de chat
@@ -281,6 +294,15 @@ export class ModalPage implements OnInit {
           })
           .catch(err => {
             console.log('error al registrar servicio agendado', err);
+            this.closeModal(false);
+            this.presentToast('Error al agendar servicio', 'danger');
+            this.ws.emit('notification', {
+              type: 'service request',
+              emitter: this.user.user_id,
+              destination: data.provider.user_id,
+              message: `Servicio pagado y agendado`,
+              state: 'payment rejected'
+            });
           })
       })
     return await modal.present()
