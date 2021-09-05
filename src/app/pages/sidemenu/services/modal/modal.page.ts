@@ -15,6 +15,7 @@ import { environment } from 'src/environments/environment';
 import { WebSocketService } from 'src/app/providers/web-socket/web-socket.service';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { NewCardPage } from 'src/app/pages/new-card/new-card.page';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-modal',
@@ -179,7 +180,7 @@ export class ModalPage implements OnInit {
               this.provider_has_services_provider_has_services_id = potentialServices[0].provider_has_services_id
 
               // si el proveedor acepta realizar el servicio, procedemos al pago según el método seleccionado
-              if (this.scheduleServiceForm.value.paymentMethod === 'wallet') this.paymentWithWallet()
+              if (this.scheduleServiceForm.value.paymentMethod === 'wallet') this.paymentWithWallet(data)
               if (this.scheduleServiceForm.value.paymentMethod === 'webpay') this.paymentWithWebpay(data)
             }
           }]
@@ -221,10 +222,57 @@ export class ModalPage implements OnInit {
     })
   }
 
-  paymentWithWallet() {
+  paymentWithWallet(data) {
     this.requestingStatus = 'paying off'
     console.log('pagando con Wallet');
+    this.api.payWithWallet({
+      amount: this.service.price,
+      type: 'pago',
+      user_id: this.user.user_id
+    }).toPromise()
+      .then((res: any) => {
+        this.api.scheduleService2({
+          clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
+          clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
+          date: this.scheduleServiceForm.value.date,
+          start: this.scheduleServiceForm.value.hour,
+          provider_has_services_provider_has_services_id: this.provider_has_services_provider_has_services_id,
+          addresses_address_id: this.scheduleServiceForm.value.address.address_id,
+          addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id
+        }).toPromise()
+          .then((res2: any) => {
+            if (res.success) {
+              this.user.credit = res.credits.total
+              this.auth.setUserData(this.user)
+              this.closeModal(true);
+              this.presentToast('Servicio agendado', 'success');
+              
+              this.ws.emit('notification', {
+                type: 'client payment',
+                emitter: this.user.user_id,
+                destination: data.provider.user_id,
+                message: `Servicio pagado y agendado`,
+                state: 'payment accepted'
+              });
     
+              // ahora solicitamos la creacion de la sala de chat
+              this.createChat(data, res2)
+            }
+          })
+          .catch(err => {
+            console.log('error al registrar servicio agendado', err);
+            this.closeModal(false);
+            this.presentToast('Error al agendar servicio', 'danger');
+            this.ws.emit('notification', {
+              type: 'service request',
+              emitter: this.user.user_id,
+              destination: data.provider.user_id,
+              message: `Servicio pagado y agendado`,
+              state: 'payment rejected'
+            });
+          })
+      })
+
   }
 
   paymentWithWebpay(data) {
@@ -256,13 +304,6 @@ export class ModalPage implements OnInit {
             if (res.data.transactionOk) {
               this.closeModal(true);
               this.presentToast('Servicio agendado', 'success');
-              console.log('Servicio agendado', {
-                type: 'client payment',
-                emitter: this.user.user_id,
-                destination: data.provider.user_id,
-                message: `Servicio pagado y agendado`,
-                state: 'payment accepted'
-              });
               
               this.ws.emit('notification', {
                 type: 'client payment',
@@ -273,23 +314,7 @@ export class ModalPage implements OnInit {
               });
     
               // ahora solicitamos la creacion de la sala de chat
-              let newChat = {
-                users_ids: [data.provider.user_id, this.scheduleServiceForm.value.receptor.user_id],
-                provider_img_url: data.provider.img_url,
-                provider_name: data.provider.firstname + ' ' + data.provider.lastname,
-                receptor_img_url: this.scheduleServiceForm.value.receptor.img_url,
-                receptor_name: this.scheduleServiceForm.value.receptor.firstname + ' ' + this.scheduleServiceForm.value.receptor.lastname,
-                title: this.service.title,
-                scheduled_services_scheduled_services_id: res2.scheduleService.scheduled_services_id
-              }
-              if (this.scheduleServiceForm.value.receptor.user_id !== this.user.user_id) newChat.users_ids.push(this.user.user_id)
-              this.api.createChat(newChat).toPromise()
-                .then((res: any) => {
-                  console.log('chat creado');
-                })
-                .catch(err => {
-                  console.log('error al crear chat', err);
-                })
+              this.createChat(data, res2)
             }
           })
           .catch(err => {
@@ -306,6 +331,26 @@ export class ModalPage implements OnInit {
           })
       })
     return await modal.present()
+  }
+
+  createChat(data, newServiceData) {
+    let newChat = {
+      users_ids: [data.provider.user_id, this.scheduleServiceForm.value.receptor.user_id],
+      provider_img_url: data.provider.img_url,
+      provider_name: data.provider.firstname + ' ' + data.provider.lastname,
+      receptor_img_url: this.scheduleServiceForm.value.receptor.img_url,
+      receptor_name: this.scheduleServiceForm.value.receptor.firstname + ' ' + this.scheduleServiceForm.value.receptor.lastname,
+      title: this.service.title,
+      scheduled_services_scheduled_services_id: newServiceData.scheduleService.scheduled_services_id
+    }
+    if (this.scheduleServiceForm.value.receptor.user_id !== this.user.user_id) newChat.users_ids.push(this.user.user_id)
+    this.api.createChat(newChat).toPromise()
+      .then((res: any) => {
+        console.log('chat creado');
+      })
+      .catch(err => {
+        console.log('error al crear chat', err);
+      })
   }
 
 }
