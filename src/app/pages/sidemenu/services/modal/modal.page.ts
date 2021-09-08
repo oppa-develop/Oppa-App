@@ -13,9 +13,8 @@ import { ApiService } from 'src/app/providers/api/api.service';
 import { DatePipe } from '@angular/common';
 import { environment } from 'src/environments/environment';
 import { WebSocketService } from 'src/app/providers/web-socket/web-socket.service';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { NewCardPage } from 'src/app/pages/new-card/new-card.page';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import * as faker from 'faker/locale/es_MX'
 
 @Component({
   selector: 'app-modal',
@@ -34,6 +33,7 @@ export class ModalPage implements OnInit {
   apiUrl: string = environment.HOST + '/'
   requestingStatus: string = 'requesting'
   provider_has_services_provider_has_services_id: number
+  isLoading: boolean = false
 
   ActionSheetOptionsRegions = {
     header: 'Regiones',
@@ -108,6 +108,7 @@ export class ModalPage implements OnInit {
         message: 'Buscando proveedores...'
       });
       await loading.present();
+      this.isLoading = true
 
       // formateamos la data antes de enviarla
       if (this.scheduleServiceForm.value.receptor.token) delete this.scheduleServiceForm.value.receptor.token
@@ -118,6 +119,7 @@ export class ModalPage implements OnInit {
       this.api.getPotentialProviders(this.scheduleServiceForm.value.address.region, this.scheduleServiceForm.value.address.district, this.scheduleServiceForm.value.service.service_id, this.scheduleServiceForm.value.date, this.scheduleServiceForm.value.hour, this.user.gender).toPromise()
         .then((res: any) => {
           loading.dismiss();
+          this.isLoading = false
           console.log(res);
 
           if (res.potentialServices.length) {
@@ -141,21 +143,41 @@ export class ModalPage implements OnInit {
       message: 'Solicitando servicio a proveedor...'
     });
     await loading.present();
+    this.isLoading = true
+
+    // si pasa un tiempo definido, se cancela la solicitud
+    setTimeout(() => {
+      if (!this.isLoading) {
+        loading.dismiss();
+        this.ws.emit('notification', {
+          type: 'service request',
+          emitter: this.user.user_id,
+          destination: potentialServices[0].providers_users_user_id,
+          message: this.scheduleServiceForm.value,
+          state: 'service canceled by time out',
+          id: faker.random.uuid()
+        })
+      }
+    }, 180000)
+
+    const requestId = faker.random.uuid()
 
     this.ws.emit('notification', {
       type: 'service request',
       emitter: this.user.user_id,
       destination: potentialServices[0].providers_users_user_id,
       message: this.scheduleServiceForm.value,
-      state: 'data sended'
+      state: 'data sended',
+      id: requestId
     })
 
     const notifyingProvider = this.ws.listen('notification').subscribe(async (data: any) => {
       this.requestingStatus = 'requesting'
       console.log(data);
       
-      if (data.type == 'service request' && data.state == 'request accepted') {
+      if (data.type === 'service request' && data.state === 'request accepted' && data.id === requestId) {
         loading.dismiss();
+        this.isLoading = false
         notifyingProvider.unsubscribe()
 
         const alert = await this.alertController.create({
@@ -166,11 +188,14 @@ export class ModalPage implements OnInit {
             text: 'Cancelar',
             role: 'cancel',
             handler: () => {
-              this.ws.emit('serviceConfirmation', {
-                success: false,
-                message: 'Service canceled',
-                provider_id: data.provider.provider_id
-              });
+              this.ws.emit('notification', {
+                type: 'service request',
+                emitter: this.user.user_id,
+                destination: potentialServices[0].providers_users_user_id,
+                message: this.scheduleServiceForm.value,
+                state: 'service canceled by client',
+                id: requestId
+              })
               console.log('Agendar servicio cancelado');
             }
           }, {
@@ -188,11 +213,12 @@ export class ModalPage implements OnInit {
     
         await alert.present();
         
-      } else if (data.type == 'service request' && data.state == 'provider busy') {
+      } else if (data.type === 'service request' && data.state === 'provider busy' && data.id === requestId) {
         console.log('el proveedor está ocupado');
         console.count()
         if (potentialServices.length > 1) {
           loading.dismiss();
+          this.isLoading = false
           potentialServices.shift()
           if (potentialServices.length) {
             notifyingProvider.unsubscribe()
@@ -204,12 +230,14 @@ export class ModalPage implements OnInit {
         } else if (potentialServices.length <= 1) { // si el proveedor cancela por estar ocupado, volvemos a solicitar el servicio luego de un tiempo
           setTimeout(() => {
             loading.dismiss();
+            this.isLoading = false
             notifyingProvider.unsubscribe()
             this.sendRequestToProvider(potentialServices)
           }, 5000)
         }
-      } else if (data.type == 'service request' && data.state == 'request rejected') {
+      } else if (data.type === 'service request' && data.state === 'request rejected' && data.id === requestId) {
         loading.dismiss();
+        this.isLoading = false
         potentialServices.shift()
         if (potentialServices.length) {
           notifyingProvider.unsubscribe()
@@ -218,6 +246,15 @@ export class ModalPage implements OnInit {
           notifyingProvider.unsubscribe()
           this.presentToast('No se encontraron proveedores disponibles en esta fecha y/u horario', 'danger')
         }
+      } else if (data.id !== requestId) {
+        this.ws.emit('notification', {
+          type: 'service request',
+          emitter: this.user.user_id,
+          destination: data.emitter,
+          message: this.scheduleServiceForm.value,
+          state: 'service canceled by time out',
+          id: faker.random.uuid()
+        })
       }
     })
   }
