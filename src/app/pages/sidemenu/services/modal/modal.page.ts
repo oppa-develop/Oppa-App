@@ -205,12 +205,12 @@ export class ModalPage implements OnInit {
               this.provider_has_services_provider_has_services_id = potentialServices[0].provider_has_services_id
 
               // si el proveedor acepta realizar el servicio, procedemos al pago según el método seleccionado
-              if (this.scheduleServiceForm.value.paymentMethod === 'wallet') this.paymentWithWallet(data)
-              if (this.scheduleServiceForm.value.paymentMethod === 'webpay') this.paymentWithWebpay(data)
+              if (this.scheduleServiceForm.value.paymentMethod === 'wallet') this.paymentWithWallet(data, notifyingProvider)
+              if (this.scheduleServiceForm.value.paymentMethod === 'webpay') this.paymentWithWebpay(data, notifyingProvider)
             }
           }]
         })
-    
+     
         await alert.present();
         
       } else if (data.type === 'service request' && data.state === 'provider busy' && data.id === requestId) {
@@ -259,7 +259,7 @@ export class ModalPage implements OnInit {
     })
   }
 
-  paymentWithWallet(data) {
+  paymentWithWallet(data, notifyingProvider) {
     this.requestingStatus = 'paying off'
     console.log('pagando con Wallet');
     this.api.payWithWallet({
@@ -278,6 +278,7 @@ export class ModalPage implements OnInit {
           addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id
         }).toPromise()
           .then((res2: any) => {
+            notifyingProvider.unsubscribe()
             if (res.success) {
               this.user.credit = res.credits.total
               this.auth.setUserData(this.user)
@@ -297,6 +298,7 @@ export class ModalPage implements OnInit {
             }
           })
           .catch(err => {
+            notifyingProvider.unsubscribe()
             console.log('error al registrar servicio agendado', err);
             this.closeModal(false);
             this.presentToast('Error al agendar servicio', 'danger');
@@ -312,7 +314,7 @@ export class ModalPage implements OnInit {
 
   }
 
-  paymentWithWebpay(data) {
+  paymentWithWebpay(data, notifyingProvider) {
     this.requestingStatus = 'paying off'
     console.log('pagando con Webpay', data);
     this.openModalWebpay(data, {
@@ -323,10 +325,10 @@ export class ModalPage implements OnInit {
       provider_has_services_provider_has_services_id: this.provider_has_services_provider_has_services_id,
       addresses_address_id: this.scheduleServiceForm.value.address.address_id,
       addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id
-    })
+    }, notifyingProvider)
   }
 
-  async openModalWebpay(data, scheduleServiceData) {
+  async openModalWebpay(data, scheduleServiceData, notifyingProvider) {
     const modal = await this.modalController.create({
       component: NewCardPage,
       componentProps: {
@@ -338,6 +340,7 @@ export class ModalPage implements OnInit {
       .then((res: any) => {
         this.api.scheduleService2(scheduleServiceData).toPromise()
           .then((res2: any) => {
+            notifyingProvider.unsubscribe()
             if (res.data.transactionOk) {
               this.closeModal(true);
               this.presentToast('Servicio agendado', 'success');
@@ -355,6 +358,7 @@ export class ModalPage implements OnInit {
             }
           })
           .catch(err => {
+            notifyingProvider.unsubscribe()
             console.log('error al registrar servicio agendado', err);
             this.closeModal(false);
             this.presentToast('Error al agendar servicio', 'danger');
@@ -362,7 +366,7 @@ export class ModalPage implements OnInit {
               type: 'service request',
               emitter: this.user.user_id,
               destination: data.provider.user_id,
-              message: `Servicio pagado y agendado`,
+              message: `Error al registrar servicio agendado`,
               state: 'payment rejected'
             });
           })
