@@ -122,7 +122,7 @@ export class ModalPage implements OnInit {
           this.isLoading = false
           console.log(res);
 
-          if (res.potentialServices.length) {
+          if (res.potentialServices?.length) {
             // si hay servicios agendables, se envía una solicitud proveedor por proveedor hasta que se encuentre uno que acepte el servicio
             this.sendRequestToProvider(res.potentialServices)
           } else {
@@ -145,22 +145,8 @@ export class ModalPage implements OnInit {
     await loading.present();
     this.isLoading = true
 
-    // si pasa un tiempo definido, se cancela la solicitud
-    setTimeout(() => {
-      if (!this.isLoading) {
-        loading.dismiss();
-        this.ws.emit('notification', {
-          type: 'service request',
-          emitter: this.user.user_id,
-          destination: potentialServices[0].providers_users_user_id,
-          message: this.scheduleServiceForm.value,
-          state: 'service canceled by time out',
-          id: faker.random.uuid()
-        })
-      }
-    }, 180000)
-
-    const requestId = faker.random.uuid()
+    let requestId = faker.random.uuid()
+    sessionStorage.setItem('requestId', requestId)
 
     this.ws.emit('notification', {
       type: 'service request',
@@ -173,6 +159,7 @@ export class ModalPage implements OnInit {
 
     const notifyingProvider = this.ws.listen('notification').subscribe(async (data: any) => {
       this.requestingStatus = 'requesting'
+      requestId = data.id
       console.log(data);
       
       if (data.type === 'service request' && data.state === 'request accepted' && data.id === requestId) {
@@ -257,6 +244,26 @@ export class ModalPage implements OnInit {
         })
       }
     })
+    
+    // si pasa un tiempo definido, se cancela la solicitud
+    setTimeout(() => {
+      console.log('timeOut', this.isLoading, sessionStorage.getItem('requestId') === requestId)
+      if (this.isLoading && sessionStorage.getItem('requestId') === requestId) {
+        loading.dismiss(); // quitamos el loading
+        notifyingProvider.unsubscribe() // desuscribimos al observador de las notificaciones
+        this.ws.emit('notification', { // emitimos una notificación para que el proveedor cancele la solicitud por time out
+          type: 'service request',
+          emitter: this.user.user_id,
+          destination: potentialServices[0].providers_users_user_id,
+          message: this.scheduleServiceForm.value,
+          state: 'service canceled by time out',
+          id: faker.random.uuid()
+        })
+        potentialServices.shift() // eliminamos el proveedor que no contestó de la lista de proveedores
+        if (potentialServices.length) this.sendRequestToProvider(potentialServices) // volvemos a solicitar el servicio si quedan proveedores
+        else this.presentToast('No se encontraron proveedores disponibles en estas fechas y/u horarios', 'danger') // si no quedan proveedores, mostramos un mensaje de error
+      }
+    }, 1000 * 60 * 5)
   }
 
   paymentWithWallet(data, notifyingProvider) {
@@ -306,7 +313,7 @@ export class ModalPage implements OnInit {
               type: 'service request',
               emitter: this.user.user_id,
               destination: data.provider.user_id,
-              message: `Servicio pagado y agendado`,
+              message: `Error al registrar servicio agendado`,
               state: 'payment rejected'
             });
           })
