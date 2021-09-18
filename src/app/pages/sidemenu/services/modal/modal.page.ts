@@ -231,6 +231,7 @@ export class ModalPage implements OnInit {
         potentialServices.shift()
         if (potentialServices.length) {
           notifyingProvider.unsubscribe()
+          this.registerCancelService('Service canceled by provider')
           this.sendRequestToProvider(potentialServices)
         } else {
           notifyingProvider.unsubscribe()
