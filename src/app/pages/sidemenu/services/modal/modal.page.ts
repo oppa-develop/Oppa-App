@@ -184,6 +184,9 @@ export class ModalPage implements OnInit {
                 id: requestId
               })
               console.log('Agendar servicio cancelado');
+
+              // registramos la cancelación del servicio
+              this.registerCancelService('Service canceled by client')
             }
           }, {
             text: 'Pagar',
@@ -234,12 +237,18 @@ export class ModalPage implements OnInit {
           this.presentToast('No se encontraron proveedores disponibles en esta fecha y/u horario', 'danger')
         }
       } else if (data.id !== requestId) {
+        /**
+         * si la notificación no tiene el mismo id que la solicitud,
+         * se asume que proviene de un proveedor anterior descartado
+         * por timeout y le avisamos al proveedor que se cancela su
+         * solicitud.
+         */
         this.ws.emit('notification', {
           type: 'service request',
           emitter: this.user.user_id,
           destination: data.emitter,
           message: this.scheduleServiceForm.value,
-          state: 'service canceled by time out',
+          state: 'service canceled by timeout',
           id: faker.random.uuid()
         })
       }
@@ -251,14 +260,17 @@ export class ModalPage implements OnInit {
       if (this.isLoading && sessionStorage.getItem('requestId') === requestId) {
         loading.dismiss(); // quitamos el loading
         notifyingProvider.unsubscribe() // desuscribimos al observador de las notificaciones
-        this.ws.emit('notification', { // emitimos una notificación para que el proveedor cancele la solicitud por time out
+        this.ws.emit('notification', { // emitimos una notificación para que el proveedor cancele la solicitud por timeout
           type: 'service request',
           emitter: this.user.user_id,
           destination: potentialServices[0].providers_users_user_id,
           message: this.scheduleServiceForm.value,
-          state: 'service canceled by time out',
+          state: 'Service canceled by timeout',
           id: faker.random.uuid()
         })
+
+        this.registerCancelService('Service canceled by timeout')// registramos la cancelación del servicio
+        
         potentialServices.shift() // eliminamos el proveedor que no contestó de la lista de proveedores
         if (potentialServices.length) this.sendRequestToProvider(potentialServices) // volvemos a solicitar el servicio si quedan proveedores
         else this.presentToast('No se encontraron proveedores disponibles en estas fechas y/u horarios', 'danger') // si no quedan proveedores, mostramos un mensaje de error
@@ -398,6 +410,25 @@ export class ModalPage implements OnInit {
       })
       .catch(err => {
         console.log('error al crear chat', err);
+      })
+  }
+
+  registerCancelService(reason: string) {
+    this.api.scheduleService2({
+      clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
+      clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
+      date: this.scheduleServiceForm.value.date,
+      start: this.scheduleServiceForm.value.hour,
+      provider_has_services_provider_has_services_id: this.provider_has_services_provider_has_services_id,
+      addresses_address_id: this.scheduleServiceForm.value.address.address_id,
+      addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
+      state: reason,
+    }).toPromise()
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
       })
   }
 

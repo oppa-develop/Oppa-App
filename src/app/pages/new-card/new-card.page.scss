@@ -68,9 +68,9 @@
 }
 
 ion-button {
-  position: fixed;
-  bottom: 10px;
-  width: 95%;
+  bottom: 0;
+  position: absolute;
+  width: 99%;
 }
 
 ion-item-header {
