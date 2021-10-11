@@ -26,21 +26,17 @@ export class NewCardPage implements OnInit {
 
   createCardDataForm() {
     return this.formBuilder.group({
-      type: ['', Validators.required],
-      cardNumber: ['', Validators.required],
-      cvv: ['', Validators.required],
-      month: ['', Validators.required],
-      year: ['', Validators.required],
+      type: [null, Validators.required],
+      cardNumber: [null, Validators.required],
+      cvv: [null, Validators.required],
+      month: [null, Validators.required],
+      year: [null, Validators.required],
       amount: [this.service.price, Validators.required]
     })
   }
 
-  prueba() {
-    let p = this.cardDataForm.value.cardNumber.toString().slice(1)[0] === '4'
-    console.log(p)
-  }
-
   pay() {
+    this.cardDataForm.value.cardNumber = this.cardDataForm.value.cardNumber.toString()
     this.api.payWithWebpay(this.cardDataForm.value).toPromise()
       .then((res: any) => {
         console.log(res)
@@ -56,6 +52,9 @@ export class NewCardPage implements OnInit {
           .catch(err => {
             this.closeModal(false)
           })
+      })
+      .catch(err => {
+        console.log('error al pagar', err);
       })
   }
 

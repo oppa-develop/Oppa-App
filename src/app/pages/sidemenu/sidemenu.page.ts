@@ -16,13 +16,13 @@ import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 export class SidemenuPage implements OnInit {
 
   pages = [
-    { title: 'Servicios',     icon: 'construct-outline',        url: '/sidemenu/services'},
-    { title: 'Mis Datos',     icon: 'person-outline',           url: '/sidemenu/account'},
-    { title: 'Ficha clínica', icon: 'document-text-outline',    url: '/sidemenu/clinical-record'},
-    { title: 'Mensajes',      icon: 'chatbox-ellipses-outline', url: '/sidemenu/messages'},
-    { title: 'Monedero',      icon: 'wallet-outline',           url: '/sidemenu/wallet'},
-    { title: 'Mis Servicios', icon: 'document-text-outline',    url: '/sidemenu/history'},
-    { title: 'Ayuda',         icon: 'help-circle-outline',      url: '/sidemenu/help'},
+    { title: 'Servicios',               icon: 'construct-outline',        url: '/sidemenu/services'},
+    { title: 'Mis Datos y Apadrinados', icon: 'person-outline',           url: '/sidemenu/account'},
+    { title: 'Ficha clínica',           icon: 'document-text-outline',    url: '/sidemenu/clinical-record'},
+    { title: 'Mensajes',                icon: 'chatbox-ellipses-outline', url: '/sidemenu/messages'},
+    { title: 'Monedero',                icon: 'wallet-outline',           url: '/sidemenu/wallet'},
+    { title: 'Mis Servicios',           icon: 'document-text-outline',    url: '/sidemenu/history'},
+    { title: 'Ayuda',                   icon: 'help-circle-outline',      url: '/sidemenu/help'},
   ]
 
   selectedPath = ''

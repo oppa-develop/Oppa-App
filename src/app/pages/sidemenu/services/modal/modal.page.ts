@@ -13,9 +13,8 @@ import { ApiService } from 'src/app/providers/api/api.service';
 import { DatePipe } from '@angular/common';
 import { environment } from 'src/environments/environment';
 import { WebSocketService } from 'src/app/providers/web-socket/web-socket.service';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { NewCardPage } from 'src/app/pages/new-card/new-card.page';
-import { ModalsAndAlertsService } from 'src/app/providers/modalsAndAlerts/modals-and-alerts.service';
+import * as faker from 'faker/locale/es_MX'
 
 @Component({
   selector: 'app-modal',
@@ -32,6 +31,9 @@ export class ModalPage implements OnInit {
   scheduleServiceForm: FormGroup
   elderSelected: User
   apiUrl: string = environment.HOST + '/'
+  requestingStatus: string = 'requesting'
+  provider_has_services_provider_has_services_id: number
+  isLoading: boolean = false
 
   ActionSheetOptionsRegions = {
     header: 'Regiones',
@@ -44,13 +46,6 @@ export class ModalPage implements OnInit {
   ActionSheetOptionsElder = {
     header: 'Servicio para:'
   };
-  ActionSheetOptionsFlexibility = {
-    header: 'Flexibilidad Horaria',
-    subHeader: 'Tiempo variable del comienzo del servicio.'
-  };
-  scheduleData: any
-
-  nextProvider: boolean = true
 
   constructor(
     private modalController: ModalController,
@@ -62,11 +57,41 @@ export class ModalPage implements OnInit {
     private alertController: AlertController,
     private dateFormat: DatePipe,
     private toastCtrl: ToastController,
-    private ws: WebSocketService,
-    private modalsAndAlerts: ModalsAndAlertsService
+    private ws: WebSocketService
   ) { }
 
   @Input() public service: Service
+
+  ngOnInit() {
+    this.user = this.auth.userData()
+    this.scheduleServiceForm = this.createScheduleServiceForm()
+    this.$regions = this.location.getRegions()
+
+    // We connect to the server
+    this.ws.connect()
+  }
+
+  createScheduleServiceForm() {
+    return this.formBuilder.group({
+      date: [null, Validators.required],
+      hour: [null, Validators.required],
+      receptor: [(this.user?.elders.length) ? null : this.user, Validators.required],
+      address: [null, Validators.required],
+      service: [this.service, Validators.required],
+      paymentMethod: [null, Validators.required],
+      price: [this.service.price, Validators.required],
+    })
+  }
+
+  setMinHour() {
+    this.minHour = (dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD') == dayjs().format('YYYY-MM-DD')) ? dayjs().add(2, 'h').format('HH:mm') : dayjs('2020-01-01').format('HH:mm')
+  }
+
+  closeModal(reload: boolean) {
+    this.modalController.dismiss({
+      reload
+    })
+  }
 
   async presentToast(message: string, color: string) {
     const toast = await this.toastCtrl.create({
@@ -77,244 +102,266 @@ export class ModalPage implements OnInit {
     toast.present();
   }
 
-  ngOnInit() {
-    this.scheduleServiceForm = this.createScheduleServiceForm()
-    console.log('service', this.service);
-    this.$regions = this.location.getRegions()
-    this.user = this.auth.userData()
-  }
+  async presentAlert(title: string, message: string) {
+    const alert = await this.alertController.create({
+      header: title,
+      buttons: ['ACEPTAR'],
+      backdropDismiss: false,
+      message
+    });
 
-  ionViewDidEnter() {
-
-    console.log('ionViewDidEnter');
-
-    // We connect to the server
-    this.ws.connect()
-
-  }
-
-  createScheduleServiceForm() {
-    return this.formBuilder.group({
-      date: [null, Validators.required],
-      hour: [null, Validators.required],
-      receptor: [null, Validators.required],
-      address: [null, Validators.required],
-      service_id: [this.service.service_id],
-      paymentMethod: [null, Validators.required]
-    })
-  }
-
-  selectReceptor() {
-    console.log(this.scheduleServiceForm.value.receptor);
-  }
-
-  setMinHour() {
-    this.minHour = (dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD') == dayjs().format('YYYY-MM-DD')) ? dayjs().add(2,'h').format('HH:mm') : dayjs('2020-01-01').format('HH:mm')
-  }
-
-  async closeModal(reload: boolean) {
-    await this.modalController.dismiss({
-      reload
-    })
+    alert.present();
   }
 
   async scheduleService() {
+    // comprobamos el formulario y, si está bien, comenzamos la solicitud
     if (this.scheduleServiceForm.valid) {
       const loading = await this.loadingController.create({
-        message: 'Solicitando servicio...'
+        message: 'Buscando proveedores...'
       });
       await loading.present();
-      this.scheduleData = {
-        client_id: this.scheduleServiceForm.value.receptor.client_id,
-        user_id: this.scheduleServiceForm.value.receptor.user_id,
-        date: this.scheduleServiceForm.value.date,
-        start: this.scheduleServiceForm.value.hour,
-        end: null,
-        service_id: this.scheduleServiceForm.value.service_id,
-        address_id: this.scheduleServiceForm.value.address.address_id,
-        category_id: this.service.categories_category_id,
-        receptor: this.scheduleServiceForm.value.receptor,
-        provider_id: null,
-        service: null,
-        address: null
-      }
-      this.api.scheduleService(this.scheduleData).toPromise()
+      this.isLoading = true
+
+      // formateamos la data antes de enviarla
+      if (this.scheduleServiceForm.value.receptor.token) delete this.scheduleServiceForm.value.receptor.token
+      this.scheduleServiceForm.value.date = dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD')
+      this.scheduleServiceForm.value.hour = (this.scheduleServiceForm.value.hour.includes('T') > 0) ? this.scheduleServiceForm.value.hour.split('T')[1].slice(0, 5) : this.scheduleServiceForm.value.hour
+
+      // solicitamos una lista con los posibles proveedores
+      this.api.getPotentialProviders(this.scheduleServiceForm.value.address.region, this.scheduleServiceForm.value.address.district, this.scheduleServiceForm.value.service.service_id, this.scheduleServiceForm.value.date, this.scheduleServiceForm.value.hour, this.user.gender).toPromise()
         .then((res: any) => {
-          this.ws.connect();
-          if (res.serviceRequested.length > 0) {
-            this.getProvider(res.serviceRequested, loading)
+          loading.dismiss();
+          this.isLoading = false
+          console.log(res);
+
+          if (res.potentialServices?.length) {
+            // si hay servicios agendables, se envía una solicitud proveedor por proveedor hasta que se encuentre uno que acepte el servicio
+            this.sendRequestToProvider(res.potentialServices)
           } else {
-            throw new Error('No hay proveedores disponibles en la fecha y hora seleccionada.')
+            // en caso de no haber servicios agendables, se muestra un mensaje de error
+            this.presentAlert('No se encontraron proveedores disponibles', 'En esta fecha y/u horario no hay proveedores disponibles.')
           }
         })
         .catch(err => {
-          loading.dismiss()
-          this.modalsAndAlerts.changeState(false)
-          this.presentToast(err.message, 'dark')
+          console.log(err)
+          loading.dismiss();
+          this.presentToast('Hubo un error al intentar obtener los proveedores', 'danger')
         })
-    } else {
-      this.presentToast('Formulario incompleto.', 'danger')
     }
   }
 
-  getProvider(serviceRequested, loading: HTMLIonLoadingElement) {
-    this.scheduleData.provider_id = serviceRequested[0].providers_provider_id
-    this.scheduleServiceForm.value.provider_has_services_id = serviceRequested[0].provider_has_services_id
-    this.scheduleData.service = this.service
-    this.scheduleData.address = this.scheduleServiceForm.value.address
-    this.scheduleData.state = 'requesting'
-
-    this.ws.emit('notificateProvider', this.scheduleData)
-    this.ws.emit('notificationsProvider', { // aqui el usuario se suscribe a las notificaciones
-      user_id: this.user.user_id,
-      client_id: this.user.client_id
+  async sendRequestToProvider(potentialServices: any[]) {
+    const loading = await this.loadingController.create({
+      message: 'Solicitando servicio a proveedor...'
     });
-    const listenConfirmation = this.ws.listen('notificateUser').subscribe((data: any) => {
-      console.log('confirmación por parte del proveedor', data);
-      this.nextProvider = false
-      if (data.state == 'accepted') {
-        loading.dismiss()
-        this.presentAlert(data)
-      } else if (data.state == 'canceled') {
-        console.count();
-        listenConfirmation.unsubscribe();
-        serviceRequested.shift();
-        if (serviceRequested.length) {
-          console.log('solicitando servicio a siguiente proveedor', serviceRequested.length);
-          this.getProvider(serviceRequested, loading)
-        } else {
-          console.log('no quedan proveedores', serviceRequested.length);
-          loading.dismiss()
-          this.presentToast('No hemos conseguido proveedor', 'danger')
-        }
-      }
+    await loading.present();
+    this.isLoading = true
+
+    let requestId = faker.random.uuid()
+    sessionStorage.setItem('requestId', requestId)
+
+    this.ws.emit('notification', {
+      type: 'service request',
+      emitter: this.user.user_id,
+      destination: potentialServices[0].providers_users_user_id,
+      message: this.scheduleServiceForm.value,
+      state: 'data sended',
+      id: requestId
     })
 
-    setTimeout(() => {
-      if (this.nextProvider) {
-        this.scheduleData.state = 'canceling'
-        this.ws.emit('notificateProvider', this.scheduleData)
-        loading.dismiss()
-        listenConfirmation.unsubscribe();
-        serviceRequested.shift();
-        if (serviceRequested.length) {
-          console.log('solicitando servicio a siguiente proveedor', serviceRequested.length);
-          this.getProvider(serviceRequested, loading)
-        } else {
-          console.log('no quedan proveedores', serviceRequested.length);
-          loading.dismiss()
-          this.presentToast('No hemos conseguido proveedor', 'danger')
-        }
-      }
-    }, 60000)
-  }
+    const notifyingProvider = this.ws.listen('notification').subscribe(async (data: any) => {
+      this.requestingStatus = 'requesting'
+      requestId = data.id
+      console.log(data);
 
-  async presentAlert(data) {
-    const alert = await this.alertController.create({
-      backdropDismiss: false,
-      header: 'Agendar Servicio',
-      message: `Tu servicio será agendado con ${data.provider.firstname} ${data.provider.lastname} para el próximo ${this.dateFormat.transform(dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD'), 'fullDate')} a las ${dayjs(this.scheduleServiceForm.value.hour).format('HH:mm')} horas.`,
-      buttons: [{
-        text: 'Cancelar',
-        role: 'cancel',
-        handler: () => {
-          this.ws.emit('serviceConfirmation', {
-            success: false,
-            message: 'Service canceled',
-            provider_id: data.provider.provider_id
-          });
-          console.log('Agendar servicio cancelado');
-        }
-      }, {
-        text: 'Pagar',
-        handler: async () => {
-          console.log('Agendando servicio', this.scheduleServiceForm.value.paymentMethod);
+      if (data.type === 'service request' && data.state === 'request accepted' && data.id === requestId) {
+        loading.dismiss();
+        this.isLoading = false
+        notifyingProvider.unsubscribe()
 
-          if (this.scheduleServiceForm.value.paymentMethod == 'wallet') {
-            const loading = await this.loadingController.create({
-              message: 'Pagando servicio con monedero...'
-            });
-            await loading.present();
-            console.log('pagando con monedero');
-            const movement = {
-              amount: this.service.price,
-              type: 'pago',
-              user_id: this.user.user_id,
-              scheduleServiceData: {
-                clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
-                clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
-                date: this.scheduleServiceForm.value.date,
-                start: this.scheduleServiceForm.value.hour,
-                provider_has_services_provider_has_services_id: this.scheduleServiceForm.value.provider_has_services_id,
-                addresses_address_id: this.scheduleServiceForm.value.address.address_id,
-                addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id
-              }
+        const alert = await this.alertController.create({
+          backdropDismiss: false,
+          header: 'Agendar Servicio',
+          message: `Tu servicio será agendado con ${data.provider.firstname} ${data.provider.lastname} para el próximo ${this.dateFormat.transform(this.scheduleServiceForm.value.date, 'fullDate')} a las ${this.scheduleServiceForm.value.hour} horas.`,
+          buttons: [{
+            text: 'Cancelar',
+            role: 'cancel',
+            handler: () => {
+              this.ws.emit('notification', {
+                type: 'service request',
+                emitter: this.user.user_id,
+                destination: potentialServices[0].providers_users_user_id,
+                message: this.scheduleServiceForm.value,
+                state: 'service canceled by client',
+                id: requestId
+              })
+              console.log('Agendar servicio cancelado');
+
+              // registramos la cancelación del servicio
+              this.registerCancelService('Service canceled by client')
             }
+          }, {
+            text: 'Pagar',
+            handler: async () => {
+              console.log('Agendando servicio', this.scheduleServiceForm.value.paymentMethod);
+              this.provider_has_services_provider_has_services_id = potentialServices[0].provider_has_services_id
 
-            this.api.payWithWallet(movement).toPromise()
-              .then((res: any) => {
-                console.log('pago realizado', res);
-                this.user.credit -= movement.amount;
-                this.auth.setUserData(this.user);
-                loading.dismiss();
-                this.closeModal(true);
-                this.presentToast('Servicio agendado', 'success');
-                this.ws.emit('serviceConfirmation', {
-                  success: true,
-                  message: 'Service scheduled',
-                  provider: data.provider
-                });
+              // si el proveedor acepta realizar el servicio, procedemos al pago según el método seleccionado
+              if (this.scheduleServiceForm.value.paymentMethod === 'wallet') this.paymentWithWallet(data, notifyingProvider)
+              if (this.scheduleServiceForm.value.paymentMethod === 'webpay') this.paymentWithWebpay(data, notifyingProvider)
+            }
+          }]
+        })
 
-                // ahora solicitamos la creacion de la sala de chat
-                let newChat = {
-                  users_ids: [data.provider.user_id, this.scheduleServiceForm.value.receptor.user_id],
-                  provider_img_url: data.provider.img_url,
-                  provider_name: data.provider.firstname + ' ' + data.provider.lastname,
-                  receptor_img_url: this.scheduleServiceForm.value.receptor.img_url,
-                  receptor_name: this.scheduleServiceForm.value.receptor.firstname + ' ' + this.scheduleServiceForm.value.receptor.lastname,
-                  title: this.service.title,
-                  scheduled_services_scheduled_services_id: res.credits.scheduleServiceId
-                }
-                if (this.scheduleServiceForm.value.receptor.user_id !== this.user.user_id) newChat.users_ids.push(this.user.user_id)
-                this.api.createChat(newChat).toPromise()
-                  .then((res: any) => {
-                    console.log('chat creado');
-                  })
-                  .catch(err => {
-                    console.log(err);
-                  })
-              })
-              .catch(err => {
-                console.log('pago fallido', err);
-                loading.dismiss()
-                this.presentToast('Servicio no agendado', 'danger')
-                this.ws.emit('serviceConfirmation', {
-                  success: false,
-                  message: 'Pago rechazado',
-                  provider_id: data.provider.provider_id
-                })
-              })
-          } else if (this.scheduleServiceForm.value.paymentMethod == 'webpay') {
-            console.log('pagando con webpay');
+        await alert.present();
 
-            this.openModalWebpay(data, {
-              clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
-              clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
-              date: this.scheduleServiceForm.value.date,
-              start: this.scheduleServiceForm.value.hour,
-              provider_has_services_provider_has_services_id: this.scheduleServiceForm.value.provider_has_services_id,
-              addresses_address_id: this.scheduleServiceForm.value.address.address_id,
-              addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id
-            })
+      } else if (data.type === 'service request' && data.state === 'provider busy' && data.id === requestId) {
+        console.log('el proveedor está ocupado');
+        console.count()
+        if (potentialServices.length > 1) {
+          loading.dismiss();
+          this.isLoading = false
+          potentialServices.shift()
+          if (potentialServices.length) {
+            notifyingProvider.unsubscribe()
+            this.sendRequestToProvider(potentialServices)
+          } else {
+            notifyingProvider.unsubscribe()
+            this.presentToast('No se encontraron proveedores disponibles en esta fecha y/u horario', 'danger')
           }
+        } else if (potentialServices.length <= 1) { // si el proveedor cancela por estar ocupado, volvemos a solicitar el servicio luego de un tiempo
+          setTimeout(() => {
+            loading.dismiss();
+            this.isLoading = false
+            notifyingProvider.unsubscribe()
+            this.sendRequestToProvider(potentialServices)
+          }, 5000)
         }
-      }]
+      } else if (data.type === 'service request' && data.state === 'request rejected' && data.id === requestId) {
+        loading.dismiss();
+        this.isLoading = false
+        potentialServices.shift()
+        if (potentialServices.length) {
+          notifyingProvider.unsubscribe()
+          this.registerCancelService('Service canceled by provider')
+          this.sendRequestToProvider(potentialServices)
+        } else {
+          notifyingProvider.unsubscribe()
+          this.presentToast('No se encontraron proveedores disponibles en esta fecha y/u horario', 'danger')
+        }
+      } else if (data.id !== requestId) {
+        /**
+         * si la notificación no tiene el mismo id que la solicitud,
+         * se asume que proviene de un proveedor anterior descartado
+         * por timeout y le avisamos al proveedor que se cancela su
+         * solicitud.
+         */
+        this.ws.emit('notification', {
+          type: 'service request',
+          emitter: this.user.user_id,
+          destination: data.emitter,
+          message: this.scheduleServiceForm.value,
+          state: 'service canceled by timeout',
+          id: faker.random.uuid()
+        })
+      }
     })
 
-    await alert.present();
+    // si pasa un tiempo definido, se cancela la solicitud
+    setTimeout(() => {
+      console.log('timeOut', this.isLoading, sessionStorage.getItem('requestId') === requestId)
+      if (this.isLoading && sessionStorage.getItem('requestId') === requestId) {
+        loading.dismiss(); // quitamos el loading
+        notifyingProvider.unsubscribe() // desuscribimos al observador de las notificaciones
+        this.ws.emit('notification', { // emitimos una notificación para que el proveedor cancele la solicitud por timeout
+          type: 'service request',
+          emitter: this.user.user_id,
+          destination: potentialServices[0].providers_users_user_id,
+          message: this.scheduleServiceForm.value,
+          state: 'Service canceled by timeout',
+          id: faker.random.uuid()
+        })
+
+        this.registerCancelService('Service canceled by timeout')// registramos la cancelación del servicio
+
+        potentialServices.shift() // eliminamos el proveedor que no contestó de la lista de proveedores
+        if (potentialServices.length) this.sendRequestToProvider(potentialServices) // volvemos a solicitar el servicio si quedan proveedores
+        else this.presentToast('No se encontraron proveedores disponibles en estas fechas y/u horarios', 'danger') // si no quedan proveedores, mostramos un mensaje de error
+      }
+    }, 1000 * 60 * 5)
   }
 
-  async openModalWebpay(data, scheduleServiceData) {
+  paymentWithWallet(data, notifyingProvider) {
+    this.requestingStatus = 'paying off'
+    console.log('pagando con Wallet');
+    this.api.payWithWallet({
+      amount: this.service.price,
+      type: 'pago',
+      user_id: this.user.user_id
+    }).toPromise()
+      .then((res: any) => {
+        this.api.scheduleService2({
+          clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
+          clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
+          date: this.scheduleServiceForm.value.date,
+          start: this.scheduleServiceForm.value.hour,
+          provider_has_services_provider_has_services_id: this.provider_has_services_provider_has_services_id,
+          addresses_address_id: this.scheduleServiceForm.value.address.address_id,
+          addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
+          price: this.scheduleServiceForm.value.price
+        }).toPromise()
+          .then((res2: any) => {
+            notifyingProvider.unsubscribe()
+            if (res.success) {
+              this.user.credit = res.credits.total
+              this.auth.setUserData(this.user)
+              this.closeModal(true);
+              this.presentAlert('Servicio agendado', 'El pago del servicio se ha procesado y el servicio ha sido agendado correctamente.');
+
+              this.ws.emit('notification', {
+                type: 'client payment',
+                emitter: this.user.user_id,
+                destination: data.provider.user_id,
+                message: `Servicio pagado y agendado`,
+                state: 'payment accepted'
+              });
+
+              // ahora solicitamos la creacion de la sala de chat
+              this.createChat(data, res2)
+            }
+          })
+          .catch(err => {
+            notifyingProvider.unsubscribe()
+            console.log('error al registrar servicio agendado', err);
+            this.closeModal(false);
+            this.presentToast('Error al agendar servicio', 'danger');
+            this.ws.emit('notification', {
+              type: 'service request',
+              emitter: this.user.user_id,
+              destination: data.provider.user_id,
+              message: `Error al registrar servicio agendado`,
+              state: 'payment rejected'
+            });
+          })
+      })
+
+  }
+
+  paymentWithWebpay(data, notifyingProvider) {
+    this.requestingStatus = 'paying off'
+    console.log('pagando con Webpay', data);
+    this.openModalWebpay(data, {
+      clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
+      clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
+      date: this.scheduleServiceForm.value.date,
+      start: this.scheduleServiceForm.value.hour,
+      provider_has_services_provider_has_services_id: this.provider_has_services_provider_has_services_id,
+      addresses_address_id: this.scheduleServiceForm.value.address.address_id,
+      addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id
+    }, notifyingProvider)
+  }
+
+  async openModalWebpay(data, scheduleServiceData, notifyingProvider) {
     const modal = await this.modalController.create({
       component: NewCardPage,
       componentProps: {
@@ -326,37 +373,78 @@ export class ModalPage implements OnInit {
       .then((res: any) => {
         this.api.scheduleService2(scheduleServiceData).toPromise()
           .then((res2: any) => {
+            notifyingProvider.unsubscribe()
             if (res.data.transactionOk) {
               this.closeModal(true);
-              this.presentToast('Servicio agendado', 'success');
-              this.ws.emit('serviceConfirmation', {
-                success: true,
-                message: 'Service scheduled',
-                provider: data.provider
+              this.presentAlert('Servicio agendado', 'El pago del servicio se ha procesado y el servicio ha sido agendado correctamente.');
+
+              this.ws.emit('notification', {
+                type: 'client payment',
+                emitter: this.user.user_id,
+                destination: data.provider.user_id,
+                message: `Servicio pagado y agendado`,
+                state: 'payment accepted'
               });
-    
+
               // ahora solicitamos la creacion de la sala de chat
-              let newChat = {
-                users_ids: [data.provider.user_id, this.scheduleServiceForm.value.receptor.user_id],
-                provider_img_url: data.provider.img_url,
-                provider_name: data.provider.firstname + ' ' + data.provider.lastname,
-                receptor_img_url: this.scheduleServiceForm.value.receptor.img_url,
-                receptor_name: this.scheduleServiceForm.value.receptor.firstname + ' ' + this.scheduleServiceForm.value.receptor.lastname,
-                title: this.service.title,
-                scheduled_services_scheduled_services_id: res2.scheduleService.scheduled_services_id
-              }
-              if (this.scheduleServiceForm.value.receptor.user_id !== this.user.user_id) newChat.users_ids.push(this.user.user_id)
-              this.api.createChat(newChat).toPromise()
-                .then((res: any) => {
-                  console.log('chat creado');
-                })
-                .catch(err => {
-                  console.log(err);
-                })
+              this.createChat(data, res2)
             }
+          })
+          .catch(err => {
+            notifyingProvider.unsubscribe()
+            console.log('error al registrar servicio agendado', err);
+            this.closeModal(false);
+            this.presentToast('Error al agendar servicio', 'danger');
+            this.ws.emit('notification', {
+              type: 'service request',
+              emitter: this.user.user_id,
+              destination: data.provider.user_id,
+              message: `Error al registrar servicio agendado`,
+              state: 'payment rejected'
+            });
           })
       })
     return await modal.present()
+  }
+
+  createChat(data, newServiceData) {
+    let newChat = {
+      users_ids: [data.provider.user_id, this.scheduleServiceForm.value.receptor.user_id],
+      provider_img_url: data.provider.img_url,
+      provider_name: data.provider.firstname + ' ' + data.provider.lastname,
+      receptor_img_url: this.scheduleServiceForm.value.receptor.img_url,
+      receptor_name: this.scheduleServiceForm.value.receptor.firstname + ' ' + this.scheduleServiceForm.value.receptor.lastname,
+      title: this.service.title,
+      scheduled_services_scheduled_services_id: newServiceData.scheduleService.scheduled_services_id
+    }
+    if (this.scheduleServiceForm.value.receptor.user_id !== this.user.user_id) newChat.users_ids.push(this.user.user_id)
+    this.api.createChat(newChat).toPromise()
+      .then((res: any) => {
+        console.log('chat creado');
+      })
+      .catch(err => {
+        console.log('error al crear chat', err);
+      })
+  }
+
+  registerCancelService(reason: string) {
+    this.api.scheduleService2({
+      clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
+      clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
+      date: this.scheduleServiceForm.value.date,
+      start: this.scheduleServiceForm.value.hour,
+      provider_has_services_provider_has_services_id: this.provider_has_services_provider_has_services_id,
+      addresses_address_id: this.scheduleServiceForm.value.address.address_id,
+      addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
+      state: reason,
+      price: this.scheduleServiceForm.value.price
+    }).toPromise()
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 
 }

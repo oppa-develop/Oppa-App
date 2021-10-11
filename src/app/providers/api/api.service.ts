@@ -175,6 +175,10 @@ export class ApiService {
     return new Blob(byteArrays, { type: contentType });
   }
 
+  getPotentialProviders(region: string, district: string, service_id: number, date: string, hour: string, gender: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/services/${service_id}/potential-providers/region/${region}/district/${district}/date/${date}/hour/${hour}/gender/${gender}`);
+  }
+
   payWithWallet(movement: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/wallets/new-movement`, movement)
   }
