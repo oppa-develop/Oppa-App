@@ -27,6 +27,7 @@ import { Camera } from '@ionic-native/Camera/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { Autostart } from '@ionic-native/autostart/ngx';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -64,6 +65,7 @@ import { Autostart } from '@ionic-native/autostart/ngx';
     LocationService,
     WebSocketService,
     LocalNotifications,
+    AndroidPermissions,
     InAppBrowser
   ],
   bootstrap: [AppComponent]
