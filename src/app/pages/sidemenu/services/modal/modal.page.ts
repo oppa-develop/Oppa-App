@@ -331,6 +331,11 @@ export class ModalPage implements OnInit {
 
               // ahora solicitamos la creacion de la sala de chat
               this.createChat(data, res2)
+
+              // enviamos al usuario a la vista de historial de servicios
+              this.ngZone.run(() => {
+                this.router.navigate([`/sidemenu/history/${this.scheduleServiceForm.value.receptor.client_id}`]);
+              });
             }
           })
           .catch(err => {
