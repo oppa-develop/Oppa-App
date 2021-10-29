@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, NgZone, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController, ToastController } from '@ionic/angular';
 import { Observable } from 'rxjs';
@@ -15,6 +15,7 @@ import { environment } from 'src/environments/environment';
 import { WebSocketService } from 'src/app/providers/web-socket/web-socket.service';
 import { NewCardPage } from 'src/app/pages/new-card/new-card.page';
 import * as faker from 'faker/locale/es_MX'
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-modal',
@@ -57,6 +58,8 @@ export class ModalPage implements OnInit {
     private alertController: AlertController,
     private dateFormat: DatePipe,
     private toastCtrl: ToastController,
+    public ngZone: NgZone, // NgZone service to remove outside scope warning
+    public router: Router, // para enviar al usuario a otra vista
     private ws: WebSocketService
   ) { }
 
@@ -357,7 +360,8 @@ export class ModalPage implements OnInit {
       start: this.scheduleServiceForm.value.hour,
       provider_has_services_provider_has_services_id: this.provider_has_services_provider_has_services_id,
       addresses_address_id: this.scheduleServiceForm.value.address.address_id,
-      addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id
+      addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
+      price: this.scheduleServiceForm.value.price
     }, notifyingProvider)
   }
 
@@ -388,6 +392,11 @@ export class ModalPage implements OnInit {
 
               // ahora solicitamos la creacion de la sala de chat
               this.createChat(data, res2)
+
+              // enviamos al usuario a la vista de historial de servicios
+              this.ngZone.run(() => {
+                this.router.navigate([`/sidemenu/history/${scheduleServiceData.clients_client_id}`]);
+              });
             }
           })
           .catch(err => {

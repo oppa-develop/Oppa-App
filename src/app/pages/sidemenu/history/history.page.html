@@ -1,9 +1,12 @@
 <ion-header>
   <ion-toolbar color="secondary">
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Mis Servicios</ion-title>
+    <ion-menu-button slot="start"></ion-menu-button>
+    <ion-button class="ion-margin-end" expand="block" (click)="changeUserSelected()" color="light">
+      <ion-text color="dark">
+        {{ userSelected.firstname + ' ' + userSelected.lastname }}
+      </ion-text>
+      <ion-icon name="chevron-down-outline"></ion-icon>
+    </ion-button>
   </ion-toolbar>
 </ion-header>
 

@@ -62,6 +62,7 @@ export class SidemenuPage implements OnInit {
     );
 
     this.user = this.auth.userData()
+    this.pages[5].url += `/${this.user.client_id}` 
     this.api.getCredit(this.user.user_id).toPromise()
       .then((data: any) => {
         this.user.credit = data.credit

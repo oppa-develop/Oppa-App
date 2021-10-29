@@ -90,6 +90,7 @@ export class AccountPage implements OnInit {
     return this.formBuilder.group({
       users_user_id: [this.user.user_id, Validators.required],
       street: ['', Validators.required],
+      number: ['', Validators.required],
       other: [null],
       district: ['', Validators.required],
       region: ['', Validators.required],

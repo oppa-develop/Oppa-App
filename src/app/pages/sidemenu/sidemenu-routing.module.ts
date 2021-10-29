@@ -20,7 +20,7 @@ const routes: Routes = [
         loadChildren: () => import('./messages/messages.module').then( m => m.MessagesPageModule)
       },
       {
-        path: 'history',
+        path: 'history/:client_id',
         loadChildren: () => import('./history/history.module').then( m => m.RatingsPageModule)
       },
       {

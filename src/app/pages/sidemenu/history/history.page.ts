@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, ModalController, ToastController } from '@ionic/angular';
-import { Observable } from 'rxjs';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActionSheetController, AlertController, ModalController, ToastController } from '@ionic/angular';
+import { Observable, Subscription } from 'rxjs';
 import { Service } from 'src/app/models/service';
 import { User } from 'src/app/models/user';
 import { ApiService } from 'src/app/providers/api/api.service';
@@ -16,20 +17,43 @@ import { UpdateModalPage } from './update-modal/update-modal.page';
 export class HistoryPage implements OnInit {
 
   $services: Observable<Service[]>
+  params: Subscription
   user: User
+  userSelected: User
   apiUrl: string = environment.HOST + '/'
 
   constructor(
     private api: ApiService,
     private modalController: ModalController,
     private alertController: AlertController,
+    private actionSheetController: ActionSheetController,
     private toastCtrl: ToastController,
-    private auth: AuthService
+    private auth: AuthService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.user = this.auth.userData();
-    this.$services = this.api.getServicesHistory(this.user.client_id)
+    
+    this.params = this.route.paramMap.subscribe((params: ParamMap) => {
+      let client_id = +params.get('client_id')
+      
+      if (this.user.client_id === client_id) {
+        this.userSelected = this.user
+      } else {
+        this.user.elders.forEach(elder => {
+          if (elder.client_id === client_id) {
+            this.userSelected = elder
+          }
+        })
+      }
+      
+      this.$services = this.api.getServicesHistory(this.userSelected.client_id)
+    })
+  }
+
+  ngOnDestroy() {
+    this.params.unsubscribe();
   }
 
   async cancelService(service) {
@@ -148,6 +172,31 @@ export class HistoryPage implements OnInit {
       color
     });
     toast.present();
+  }
+
+  async changeUserSelected() {
+    let buttons = []
+    buttons.push({
+      text: this.user.firstname + ' ' + this.user.lastname,
+      handler: () => {
+        this.userSelected = this.user
+        this.$services = this.api.getServicesHistory(this.user.client_id)
+      }
+    })
+    this.user.elders.forEach(elder => {
+      buttons.push({
+        text: elder.firstname + ' ' + elder.lastname,
+        handler: () => {
+          this.userSelected = elder
+          this.$services = this.api.getServicesHistory(elder.client_id)
+        }
+      })
+    })
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Seleccionar usuario',
+      buttons
+    });
+    await actionSheet.present();
   }
 
 }
