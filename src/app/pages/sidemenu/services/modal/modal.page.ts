@@ -30,6 +30,7 @@ export class ModalPage implements OnInit {
   $regions: Observable<Location>
   $districts: Observable<Location>
   scheduleServiceForm: FormGroup
+  newAddressForm: FormGroup
   elderSelected: User
   apiUrl: string = environment.HOST + '/'
   requestingStatus: string = 'requesting'
@@ -69,6 +70,7 @@ export class ModalPage implements OnInit {
     this.user = this.auth.userData()
     this.scheduleServiceForm = this.createScheduleServiceForm()
     this.$regions = this.location.getRegions()
+    this.newAddressForm = this.createNewAddressForm()
 
     // We connect to the server
     this.ws.connect()
@@ -83,6 +85,17 @@ export class ModalPage implements OnInit {
       service: [this.service, Validators.required],
       paymentMethod: [null, Validators.required],
       price: [this.service.price, Validators.required],
+    })
+  }
+  
+  createNewAddressForm() {
+    return this.formBuilder.group({
+      users_user_id: [this.user.user_id, Validators.required],
+      street: ['', Validators.required],
+      number: ['', Validators.required],
+      other: [null],
+      district: ['', Validators.required],
+      region: ['', Validators.required],
     })
   }
 
@@ -150,6 +163,8 @@ export class ModalPage implements OnInit {
           loading.dismiss();
           this.presentToast('Hubo un error al intentar obtener los proveedores', 'danger')
         })
+    } else {
+      this.presentToast('Faltan campos por rellenar', 'danger')
     }
   }
 
