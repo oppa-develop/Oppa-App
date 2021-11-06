@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
+import { LoadingController, ToastController } from '@ionic/angular';
 import { ApiService } from 'src/app/providers/api/api.service';
 
 @Component({
@@ -20,6 +20,7 @@ export class RecoverAccountPage implements OnInit {
     private formBuilder: FormBuilder,
     private api: ApiService,
     private toastCtrl: ToastController,
+    private loadingController: LoadingController,
     public router: Router // para enviar al usuario a otra vista
   ) { }
 
@@ -42,12 +43,18 @@ export class RecoverAccountPage implements OnInit {
     })
   }
 
-  getCode() {
-    this.api.getCode(this.recoverAccountForm.value.rut).toPromise()
+  async getCode() {
+    const loading = await this.loadingController.create({
+      message: 'Solicitando código...'
+    });
+    await loading.present()
+    this.api.getCode(this.recoverAccountForm.value).toPromise()
       .then((res: any) => {
         this.step = 2
+        loading.dismiss()
       })
       .catch(err => {
+        loading.dismiss()
         this.step = 1
         this.presentToast('Error al solicitar código. Intente nuevamente.', 'danger')
       })

@@ -86,6 +86,9 @@
             <ion-input class="ion-text-wrap" formControlName="checkPassword" type="password" required (keyup)="onPasswordChange()" [ngClass]="{ invalid: passConfirmationWrong, valid: !passConfirmationWrong }"></ion-input>
           </ion-item>
           <span *ngIf="confirm_password.hasError('mismatch')" class="pass-not-match red-text"><strong>Las contraseñas deben coincidir.</strong></span>
+          <ion-item class="ion-margin-vertical">
+            <ion-label class="ion-text-wrap">Al crear una cuenta estás aceptando los <a><strong>Términos del servicio</strong></a> y <a><strong>Política de privacidad</strong></a></ion-label>
+          </ion-item>
           <ion-button type="submit" class="ion-margin-vertical" expand="block">Crear Cuenta</ion-button>
         </ion-col>
       </ion-row>

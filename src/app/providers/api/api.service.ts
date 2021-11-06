@@ -220,7 +220,7 @@ export class ApiService {
   }
 
   changePass(data: any): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/users/change-password`, data)
+    return this.http.patch(`${this.apiUrl}/auth/change-password`, data)
   }
 
 }
