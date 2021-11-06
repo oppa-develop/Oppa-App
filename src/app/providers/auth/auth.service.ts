@@ -61,7 +61,7 @@ export class AuthService {
       .then((userData: any) => {
         localStorage.setItem('user', JSON.stringify(userData.user));
         this.ngZone.run(() => {
-          this.router.navigate(['/sidemenu/services']);
+          this.router.navigate(['/welcome']);
           loading.dismiss()
         }, err => {
           console.log(err);
