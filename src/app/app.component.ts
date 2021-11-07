@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, QueryList, ViewChildren } from '@angular/core';
 
-import { AlertController, Platform } from '@ionic/angular';
+import { AlertController, IonRouterOutlet, Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 })
 export class AppComponent {
 
+  @ViewChildren(IonRouterOutlet) routerOutlets: QueryList<IonRouterOutlet>;
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -26,19 +27,24 @@ export class AppComponent {
     this.setPortrait();
     this.initializeApp();
     this.autostart.enable();
+    this.backButtonEvent();
+  }
+
+  backButtonEvent() {
+    this.platform.backButton.subscribeWithPriority(10, () => {
+      this.routerOutlets.forEach((outlet: IonRouterOutlet) => {
+        if (outlet?.canGoBack() && (this.router.url !== '/sidemenu/services')) {
+          outlet.pop();
+        } else {
+          this.presentAlert();
+        }
+      });
+    });
   }
 
   // set orientation to portrait
   setPortrait() {
     this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-
-    this.platform.backButton.subscribeWithPriority(10, () => {
-      if (this.router.url !== '/sidemenu/service') {
-        this.router.navigate(['/sidemenu/service']);
-      } else if (this.router.url === '/sidemenu/service') {
-        this.presentAlert();
-      }
-    });
   }
 
   async presentAlert() {
@@ -50,7 +56,7 @@ export class AppComponent {
         text: 'Cancelar',
         role: 'cancel',
         handler: () => {
-          console.log('cancela apadrinar');
+          console.log('no cerrar app');
         }
       }, {
         text: 'Salir',
