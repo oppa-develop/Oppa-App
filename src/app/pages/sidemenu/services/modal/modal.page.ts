@@ -400,7 +400,7 @@ export class ModalPage implements OnInit {
             notifyingProvider.unsubscribe()
             if (res.data.transactionOk) {
               this.closeModal(true);
-              this.presentAlert('Servicio agendado', 'El pago del servicio se ha procesado y el servicio ha sido agendado correctamente.');
+              this.presentAlert('Servicio agendado', 'El pago se ha procesado y el servicio ha sido agendado correctamente.');
 
               this.ws.emit('notification', {
                 type: 'client payment',
