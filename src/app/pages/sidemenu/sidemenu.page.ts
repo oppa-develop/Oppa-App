@@ -68,13 +68,10 @@ export class SidemenuPage implements OnInit {
         this.user.credit = data.credit
         this.auth.setUserData(this.user)
       })
-    if (localStorage.getItem('darkMode') === 'on') {
-      document.body.setAttribute('data-theme', 'dark');
-      this.darkMode = true
-    } else {
-      document.body.setAttribute('data-theme', 'light');
-      this.darkMode = false
-    }
+
+    if (localStorage.getItem('darkMode') === 'on') this.darkMode = true
+    if (localStorage.getItem('darkMode') === 'off') this.darkMode = false
+    
     if (localStorage.getItem('createElderAccountAlert') !== 'done') this.presentAlert()
 
     this.ws.connect();

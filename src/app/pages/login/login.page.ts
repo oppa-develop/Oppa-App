@@ -21,14 +21,6 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     this.loginForm = this.createLoginForm()
-    
-    if (localStorage.getItem('darkMode') === 'on') {
-      document.body.setAttribute('data-theme', 'dark');
-      this.darkMode = true
-    } else {
-      document.body.setAttribute('data-theme', 'light');
-      this.darkMode = false
-    }
   }
 
   @ViewChild('passwordEyeRegister', { read: ElementRef }) passwordEye: ElementRef;
