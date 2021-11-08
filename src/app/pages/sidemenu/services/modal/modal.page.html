@@ -66,9 +66,9 @@
             <ion-label class="ion-text-wrap" *ngIf="!address.other">{{ address.street + ', ' + address.district + ', región ' + address.region + '.' }}</ion-label>
           </ion-item>
         </ion-radio-group>
-        <ion-item *ngIf="!scheduleServiceForm.value.receptor?.addresses.length && scheduleServiceForm.value.receptor" color="danger">
-          <h6 class="ion-text-center ion-margin-horizontal"><ion-text>Debe agregar una dirección para este usuario antes de solicitar un servicio</ion-text></h6>
-        </ion-item>
+        <div *ngIf="!scheduleServiceForm.value.receptor?.addresses.length && scheduleServiceForm.value.receptor">
+          <ion-button class="ion-padding-horizontal" expand="block" color="secondary" (click)="addAddress()">Agregar Dirección</ion-button>
+        </div>
         <ion-list-header>
           <h3>Método de Pago</h3>
         </ion-list-header>

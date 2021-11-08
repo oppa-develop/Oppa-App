@@ -16,6 +16,7 @@ import { WebSocketService } from 'src/app/providers/web-socket/web-socket.servic
 import { NewCardPage } from 'src/app/pages/new-card/new-card.page';
 import * as faker from 'faker/locale/es_MX'
 import { Router } from '@angular/router';
+import { NewAddressPage } from 'src/app/pages/new-address/new-address.page';
 
 @Component({
   selector: 'app-modal',
@@ -474,6 +475,35 @@ export class ModalPage implements OnInit {
       .catch(err => {
         console.log(err);
       })
+  }
+
+  async addAddress() {
+    const modal = await this.modalController.create({
+      component: NewAddressPage,
+      componentProps: {
+        user: this.scheduleServiceForm.value.receptor
+      }
+    })
+
+    modal.onDidDismiss()
+      .then((res: any) => {
+        if (res.data.reload && this.scheduleServiceForm.value.receptor.user_id === this.user.user_id) {
+          this.user.addresses = res.data.receptorAddresses;
+          this.auth.setUserData(this.user);
+        } else if (res.data.reload && this.scheduleServiceForm.value.receptor.user_id !== this.user.user_id) {
+          const elderIndex = this.user.elders.findIndex(elder => elder.user_id === this.scheduleServiceForm.value.receptor.user_id);
+          console.log({elderIndex});
+          if (elderIndex !== -1) {
+            this.user.elders[elderIndex].addresses = res.data.receptorAddresses;
+            this.auth.setUserData(this.user);
+          }
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      })
+      
+    return await modal.present()
   }
 
 }
