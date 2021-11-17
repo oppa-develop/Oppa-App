@@ -88,7 +88,7 @@ export class ModalPage implements OnInit {
       price: [this.service.price, Validators.required],
     })
   }
-  
+
   createNewAddressForm() {
     return this.formBuilder.group({
       users_user_id: [this.user.user_id, Validators.required],
@@ -397,8 +397,18 @@ export class ModalPage implements OnInit {
     modal.onDidDismiss()
       .then((res: any) => {
         this.api.scheduleService2(scheduleServiceData).toPromise()
-          .then((res2: any) => {
+          .then(async (res2: any) => {
             notifyingProvider.unsubscribe()
+
+            // registramos el pago para que administración sepa a que proveedor deben pagarle
+            await this.api.registerPayment({
+              amount: this.service.price,
+              state: 'por pagar',
+              provider_id: data.provider.provider_id,
+              client_id: this.scheduleServiceForm.value.receptor.client_id,
+              buyOrder: res.data.buyOrder
+            }).toPromise()
+
             if (res.data.transactionOk) {
               this.closeModal(true);
               this.presentAlert('Servicio agendado', 'El pago se ha procesado y el servicio ha sido agendado correctamente.');
@@ -492,7 +502,7 @@ export class ModalPage implements OnInit {
           this.auth.setUserData(this.user);
         } else if (res.data.reload && this.scheduleServiceForm.value.receptor.user_id !== this.user.user_id) {
           const elderIndex = this.user.elders.findIndex(elder => elder.user_id === this.scheduleServiceForm.value.receptor.user_id);
-          console.log({elderIndex});
+          console.log({ elderIndex });
           if (elderIndex !== -1) {
             this.user.elders[elderIndex].addresses = res.data.receptorAddresses;
             this.auth.setUserData(this.user);
@@ -502,7 +512,7 @@ export class ModalPage implements OnInit {
       .catch(err => {
         console.log(err);
       })
-      
+
     return await modal.present()
   }
 

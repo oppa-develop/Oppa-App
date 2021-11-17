@@ -223,4 +223,8 @@ export class ApiService {
     return this.http.patch(`${this.apiUrl}/auth/change-password`, data)
   }
 
+  registerPayment(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/payment/new-payment`, data)
+  }
+
 }
