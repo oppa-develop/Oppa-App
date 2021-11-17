@@ -26,7 +26,7 @@
 @import "~@ionic/angular/css/flex-utils.css";
 
 
-ion-card > ion-img {
+ion-card>ion-img {
   height: 25vh;
   width: 100%;
   object-fit: cover;
@@ -75,4 +75,8 @@ ion-footer {
 
 .select-text {
   white-space: normal;
+}
+
+.alert-radio-label.sc-ion-alert-md {
+  white-space: normal !important;
 }
