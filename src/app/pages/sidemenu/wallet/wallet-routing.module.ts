@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: WalletPage
+  },
+  {
+    path: 'add-credits',
+    loadChildren: () => import('./add-credits/add-credits.module').then( m => m.AddCreditsPageModule)
   }
 ];
 

@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
-import { Service } from 'src/app/models/service';
+import { LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { ApiService } from 'src/app/providers/api/api.service';
 
 @Component({
@@ -12,11 +11,13 @@ import { ApiService } from 'src/app/providers/api/api.service';
 export class NewCardPage implements OnInit {
 
   cardDataForm: FormGroup
-  @Input() public service: Service
+  @Input() public price: number
 
   constructor(
     private formBuilder: FormBuilder,
     private modalController: ModalController,
+    private toastCtrl: ToastController,
+    private loadingController: LoadingController,
     private api: ApiService
   ) { }
 
@@ -26,19 +27,24 @@ export class NewCardPage implements OnInit {
 
   createCardDataForm() {
     return this.formBuilder.group({
-      type: [null, Validators.required],
-      cardNumber: [null, Validators.required],
-      cvv: [null, Validators.required],
-      month: [null, Validators.required],
-      year: [null, Validators.required],
-      amount: [this.service.price, Validators.required]
+      type: ['', Validators.required],
+      cardNumber: ['', Validators.required],
+      cvv: ['', Validators.required],
+      month: ['', Validators.required],
+      year: ['', Validators.required],
+      amount: [this.price, Validators.required]
     })
   }
 
-  pay() {
+  async pay() {
+    const loading = await this.loadingController.create({
+      message: 'Procesando pago...'
+    });
+    await loading.present()
     this.cardDataForm.value.cardNumber = this.cardDataForm.value.cardNumber.toString()
     this.api.payWithWebpay(this.cardDataForm.value).toPromise()
       .then((res: any) => {
+        loading.dismiss()
         console.log(res)
         this.api.confirmPayWithWebpay({ transactionToken: res.transactionData.createResponse.token }).toPromise()
           .then((res: any) => {
@@ -54,7 +60,9 @@ export class NewCardPage implements OnInit {
           })
       })
       .catch(err => {
+        loading.dismiss()
         console.log('error al pagar', err);
+        this.presentToast('Error al procesar el pago', 'danger')
       })
   }
 
@@ -66,6 +74,15 @@ export class NewCardPage implements OnInit {
     } else {
       await this.modalController.dismiss()
     }
+  }
+
+  async presentToast(message: string, color: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2000,
+      color
+    });
+    toast.present();
   }
 
 }

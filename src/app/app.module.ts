@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
 import es from '@angular/common/locales/es'
 registerLocaleData(es)
 
-import { DatePipe, registerLocaleData } from '@angular/common'
+import { DatePipe, DecimalPipe, registerLocaleData } from '@angular/common'
 import { ApiService } from './providers/api/api.service';
 import { HttpClientJsonpModule, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LocationService } from './providers/location/location.service';
@@ -66,7 +66,8 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
     WebSocketService,
     LocalNotifications,
     AndroidPermissions,
-    InAppBrowser
+    InAppBrowser,
+    DecimalPipe
   ],
   bootstrap: [AppComponent]
 })

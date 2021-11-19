@@ -390,7 +390,7 @@ export class ModalPage implements OnInit {
     const modal = await this.modalController.create({
       component: NewCardPage,
       componentProps: {
-        service: this.service
+        price: this.service.price
       }
     })
 

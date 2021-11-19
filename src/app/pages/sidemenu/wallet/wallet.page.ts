@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, ModalController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { User } from 'src/app/models/user';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { AuthService } from 'src/app/providers/auth/auth.service';
+import { AddCreditsPage } from './add-credits/add-credits.page';
 
 @Component({
   selector: 'app-wallet',
@@ -19,6 +20,7 @@ export class WalletPage implements OnInit {
   constructor(
     private auth: AuthService,
     private actionSheetController: ActionSheetController,
+    private modalController: ModalController,
     private api: ApiService
   ) { }
 
@@ -59,6 +61,22 @@ export class WalletPage implements OnInit {
       buttons
     });
     await actionSheet.present();
+  }
+
+  async addCredits() {
+    const modal = await this.modalController.create({
+      component: AddCreditsPage,
+      componentProps: {
+        user: this.userSelected,
+      }
+    });
+
+    modal.onDidDismiss()
+      .then(res => {
+        this.$wallet = this.api.getWalletHistory(this.userSelected.user_id)
+      })
+
+    return await modal.present();
   }
 
 }
