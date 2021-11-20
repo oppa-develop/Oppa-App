@@ -52,35 +52,9 @@ export class CreateAccountPage implements OnInit {
       password: ['', Validators.required],
       checkPassword: ['', Validators.required],
       image_ext: [''],
-      image: [''],
-      checkedTerms: [false, Validators.required],
-      checkedContact: [false, Validators.required],
-      // elders: this.formBuilder.array([])
+      image: ['']
     })
   }
-
-  /* get elders(): FormArray {
-    return this.createAccountForm.get('elders') as FormArray
-  }
-
-  addElder() {
-    const elder = this.formBuilder.group({
-      firstname: ['test 2', Validators.required],
-      lastname: ['client', Validators.required],
-      birthdate: ['1993/03/27', Validators.required],
-      gender: ['hombre', Validators.required],
-      rut: ['18.463.527-k', Validators.required],
-      phone: ['+569499382', Validators.required],
-      email: ['t.client2@example.com', [Validators.email, Validators.required]],
-      img_base64: ['']
-    })
-
-    this.elders.push(elder)
-  }
-
-  removeElder(index: number) {
-    this.elders.removeAt(index)
-  } */
 
   // confirm new password validator
   onPasswordChange() {
