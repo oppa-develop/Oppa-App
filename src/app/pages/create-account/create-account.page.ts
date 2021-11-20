@@ -131,14 +131,7 @@ export class CreateAccountPage implements OnInit {
   }
 
   async createAccount() {
-    if(!this.createAccountForm.value.checkedTerms && this.createAccountForm.value.checkedContact) {
-      this.presentToast('Debe aceptar los "Términos y Condiciones"', 'danger')
-    }else if(!this.createAccountForm.value.checkedContact && this.createAccountForm.value.checkedTerms) {
-      this.presentToast('Debe aceptar las "comunicaciones comerciales"', 'danger')
-    }else if(!this.createAccountForm.value.checkedContact && !this.createAccountForm.value.checkedTerms) {
-      this.presentToast('Debe aceptar los "Términos y Condiciones" y las "comunicaciones comerciales"', 'danger')
-    }
-    if(this.createAccountForm.value.checkedTerms && this.createAccountForm.value.checkedContact){
+    if(this.createAccountForm.valid){
       const loading = await this.loadingController.create({
         message: 'Creando usuario...'
       });
