@@ -187,10 +187,12 @@ export class ModalPage implements OnInit {
       state: 'data sended',
       id: requestId
     })
+    console.log('id enviado al solicitar servicio: ', requestId)
 
     const notifyingProvider = this.ws.listen('notification').subscribe(async (data: any) => {
       this.requestingStatus = 'requesting'
       requestId = data.id
+      console.log('id recibida al responder proveedor: ', data.id)
       console.log(data);
 
       if (data.type === 'service request' && data.state === 'request accepted' && data.id === requestId) {
@@ -297,17 +299,17 @@ export class ModalPage implements OnInit {
           emitter: this.user.user_id,
           destination: potentialServices[0].providers_users_user_id,
           message: this.scheduleServiceForm.value,
-          state: 'Service canceled by timeout',
+          state: 'service canceled by timeout',
           id: faker.random.uuid()
         })
 
-        this.registerCancelService('Service canceled by timeout')// registramos la cancelación del servicio
+        this.registerCancelService('service canceled by timeout')// registramos la cancelación del servicio
 
         potentialServices.shift() // eliminamos el proveedor que no contestó de la lista de proveedores
         if (potentialServices.length) this.sendRequestToProvider(potentialServices) // volvemos a solicitar el servicio si quedan proveedores
         else this.presentToast('No se encontraron proveedores disponibles en estas fechas y/u horarios', 'danger') // si no quedan proveedores, mostramos un mensaje de error
       }
-    }, 1000 * 60 * 5)
+    }, 5000) // 1000 * 60 * 2
   }
 
   paymentWithWallet(data, notifyingProvider) {
