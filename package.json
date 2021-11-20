@@ -6,6 +6,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ionic serve --lab --consolelogs --external --devapp --no-open",
+    "start:live": "ionic cap run android -l --external",
     "build": "ionic capacitor build android",
     "fix:dependencies": "npx jetify",
     "resources": "capacitor-resources -p android -t cover",

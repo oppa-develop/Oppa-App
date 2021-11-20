@@ -1,11 +1,12 @@
 import { Component, QueryList, ViewChildren } from '@angular/core';
 
 import { AlertController, IonRouterOutlet, Platform } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { Autostart } from '@ionic-native/autostart/ngx';
 import { Router } from '@angular/router';
+
+import { Plugins } from '@capacitor/core';
+const { SplashScreen } = Plugins; 
 
 @Component({
   selector: 'app-root',
@@ -17,15 +18,12 @@ export class AppComponent {
   @ViewChildren(IonRouterOutlet) routerOutlets: QueryList<IonRouterOutlet>;
   constructor(
     private platform: Platform,
-    private splashScreen: SplashScreen,
-    private statusBar: StatusBar,
     private screenOrientation: ScreenOrientation,
     public router: Router,
     private alertController: AlertController,
     private autostart: Autostart
   ) {
     this.setPortrait();
-    this.initializeApp();
     this.autostart.enable();
     this.backButtonEvent();
 
@@ -79,11 +77,8 @@ export class AppComponent {
     await alert.present();
   }
 
-  initializeApp() {
-    this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
-    });
+  ionViewDidEnter() {
+    SplashScreen.hide();
   }
 
 }
