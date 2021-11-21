@@ -82,7 +82,7 @@
           <ion-item class="ion-margin-vertical">
             <ion-icon slot="start" name="lock-open-outline"></ion-icon>
             <ion-label position="floating">Verifique Contraseña</ion-label>
-            <ion-input formControlName="checkPassword" type="password" required (keyup)="onPasswordChange()" [ngClass]="{ invalid: passConfirmationWrong, valid: !passConfirmationWrong }"></ion-input>
+            <ion-input formControlName="checkPassword" type="password" required (keyup)="onPasswordChange()" [ngClass]="{ invalid: confirm_password.hasError('mismatch'), valid: confirm_password.hasError('mismatch') }"></ion-input>
           </ion-item>
           <span *ngIf="confirm_password.hasError('mismatch')" class="pass-not-match red-text"><strong>Las contraseñas deben coincidir.</strong></span>
           <ion-item class="ion-margin-vertical">

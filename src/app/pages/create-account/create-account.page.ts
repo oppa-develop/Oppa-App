@@ -14,7 +14,6 @@ import { AuthService } from 'src/app/providers/auth/auth.service';
 export class CreateAccountPage implements OnInit {
 
   public createAccountForm: FormGroup
-  public passConfirmationWrong = null
 
   img_base64 = "";
   user_img: string;
@@ -59,11 +58,9 @@ export class CreateAccountPage implements OnInit {
   // confirm new password validator
   onPasswordChange() {
     if (this.confirm_password.value == this.password.value) {
-      this.confirm_password.setErrors({ mismatch: false });
-      this.passConfirmationWrong = false;
+      this.confirm_password.setErrors(null);
     } else {
       this.confirm_password.setErrors({ mismatch: true });
-      this.passConfirmationWrong = true;
     }
   }
 
