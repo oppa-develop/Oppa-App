@@ -11,6 +11,7 @@ import { ApiService } from 'src/app/providers/api/api.service';
 export class NewCardPage implements OnInit {
 
   cardDataForm: FormGroup
+  buyOrder: string
   @Input() public price: number
 
   constructor(
@@ -48,7 +49,7 @@ export class NewCardPage implements OnInit {
         console.log(res)
         this.api.confirmPayWithWebpay({ transactionToken: res.transactionData.createResponse.token }).toPromise()
           .then((res: any) => {
-            console.log(res.confirmResponse.status)
+            this.buyOrder = res.confirmResponse.buy_order
             if (res.confirmResponse.status == 'AUTHORIZED') {
               this.closeModal(true)
             } else {
@@ -69,7 +70,8 @@ export class NewCardPage implements OnInit {
   async closeModal(pay: boolean) {
     if (pay) {
       await this.modalController.dismiss({
-        transactionOk: pay
+        transactionOk: pay,
+        buyOrder: this.buyOrder
       })
     } else {
       await this.modalController.dismiss()

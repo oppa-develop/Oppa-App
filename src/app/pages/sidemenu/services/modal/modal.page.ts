@@ -321,6 +321,14 @@ export class ModalPage implements OnInit {
       user_id: this.user.user_id
     }).toPromise()
       .then((res: any) => {
+        const registerPaymentData = {
+          amount: this.service.price,
+          state: 'en proceso',
+          providers_provider_id: data.provider.provider_id,
+          clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
+          buyOrder: res.buyOrder,
+          services_service_id: this.service.service_id
+        }
         this.api.scheduleService2({
           clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
           clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
@@ -329,9 +337,10 @@ export class ModalPage implements OnInit {
           provider_has_services_provider_has_services_id: this.provider_has_services_provider_has_services_id,
           addresses_address_id: this.scheduleServiceForm.value.address.address_id,
           addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
-          price: this.scheduleServiceForm.value.price
+          price: this.scheduleServiceForm.value.price,
+          registerPaymentData
         }).toPromise()
-          .then((res2: any) => {
+          .then(async (res2: any) => {
             notifyingProvider.unsubscribe()
             if (res.success) {
               this.user.credit = res.credits.total
@@ -398,18 +407,20 @@ export class ModalPage implements OnInit {
 
     modal.onDidDismiss()
       .then((res: any) => {
+        const registerPaymentData = {
+          amount: this.service.price,
+          state: 'en proceso',
+          providers_provider_id: data.provider.provider_id,
+          clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
+          buyOrder: res.data.buyOrder,
+          services_service_id: this.service.service_id
+        }
+
+        // agregamos la data que registra el pago, para que administración sepa a que proveedor debe pagarle y cuanto
+        scheduleServiceData.registerPaymentData = registerPaymentData
         this.api.scheduleService2(scheduleServiceData).toPromise()
           .then(async (res2: any) => {
             notifyingProvider.unsubscribe()
-
-            // registramos el pago para que administración sepa a que proveedor deben pagarle
-            await this.api.registerPayment({
-              amount: this.service.price,
-              state: 'por pagar',
-              provider_id: data.provider.provider_id,
-              client_id: this.scheduleServiceForm.value.receptor.client_id,
-              buyOrder: res.data.buyOrder
-            }).toPromise()
 
             if (res.data.transactionOk) {
               this.closeModal(true);

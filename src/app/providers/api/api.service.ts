@@ -224,7 +224,7 @@ export class ApiService {
   }
 
   registerPayment(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/payment/new-payment`, data)
+    return this.http.post(`${this.apiUrl}/payments/new-payment`, data)
   }
 
 }

@@ -73,6 +73,14 @@ export class WalletPage implements OnInit {
 
     modal.onDidDismiss()
       .then(res => {
+        this.api.getCredit(this.userSelected.user_id).toPromise()
+          .then((res: any) => {
+            this.userSelected.credit = res.credit
+            this.auth.setUserData(this.userSelected)
+          })
+          .catch(err => {
+            console.log(err);
+          })
         this.$wallet = this.api.getWalletHistory(this.userSelected.user_id)
       })
 
