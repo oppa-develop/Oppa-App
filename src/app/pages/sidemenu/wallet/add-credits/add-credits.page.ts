@@ -2,7 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-import { ModalController, ToastController } from '@ionic/angular';
+import { LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { User } from 'src/app/models/user';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { environment } from 'src/environments/environment';
@@ -26,6 +26,7 @@ export class AddCreditsPage implements OnInit {
     private numberFormat: DecimalPipe,
     private formBuilder: FormBuilder,
     private iab: InAppBrowser,
+    private loadingController: LoadingController,
     private api: ApiService
   ) { }
 
@@ -73,12 +74,17 @@ export class AddCreditsPage implements OnInit {
     this.api.registerPayment({
       "buy_order": "ordenCompra12345678",
       "session_id": "sesion1234557545",
-      "amount": 10000,
+      "amount": price,
       "return_url": `http://${'localhost:3000'}/api/transbank/check`
      }).toPromise()
-      .then(res => {
+      .then(async res => {
+        const loading = await this.loadingController.create({
+          message: 'Procesando pago...'
+        });
+        await loading.present()
+
         this.iab.create(`${res.url}?token_ws=${res.token}`, '_system', 'location=no');
-        this.getVoucher(res.token, price)
+        this.getVoucher(res.token, price, loading)
       })
       .catch(err => {
         console.log(err)
@@ -86,13 +92,14 @@ export class AddCreditsPage implements OnInit {
       })
   }
 
-  getVoucher(token_ws, price) {
+  getVoucher(token_ws, price, loading) {
+    console.log('verificando transacción')
     this.api.getVoucher({ token_ws }).toPromise()
       .then(res => {
         console.log(res)
         if (res.status === 'INITIALIZED') {
           setTimeout(() => {
-            this.getVoucher(token_ws, price)
+            this.getVoucher(token_ws, price, loading)
           }, 5000)
         } else if (res.status === 'AUTHORIZED') {
           // registramos el pago en la api
@@ -102,10 +109,12 @@ export class AddCreditsPage implements OnInit {
             user_id: this.user.user_id
           }).toPromise()
             .then(() => {
+              loading.dismiss()
               this.presentToast('Se ha agregado $' + price + ' a tu monedero', 'success')
               this.closeModal(true)
             })
         } else if (res.status !== 'AUTHORIZED' || res.status !== 'INITIALIZED') {
+          loading.dismiss()
           this.presentToast('Error al pagar', 'danger')
         }
       })

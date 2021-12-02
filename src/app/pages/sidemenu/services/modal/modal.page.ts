@@ -396,22 +396,25 @@ export class ModalPage implements OnInit {
       addresses_address_id: this.scheduleServiceForm.value.address.address_id,
       addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
       price: this.scheduleServiceForm.value.price
-    }, notifyingProvider)
+    }, notifyingProvider, this.scheduleServiceForm.value.price)
   }
 
-  pay(data, scheduleServiceData, notifyingProvider) {
+  pay(data, scheduleServiceData, notifyingProvider, price) {
     this.api.registerPayment({
       "buy_order": "ordenCompra12345678",
       "session_id": "sesion1234557545",
-      "amount": 10000,
+      "amount": price,
       "return_url": `http://${'localhost:3000'}/api/transbank/check`
      }).toPromise()
-      .then(res => {
-        console.log(res)
+      .then(async res => {
+        const loading = await this.loadingController.create({
+          message: 'Procesando pago...'
+        });
+        await loading.present()
         
         this.iab.create(`${res.url}?token_ws=${res.token}`, '_system', 'location=no');
 
-        this.getVoucher(res.token, data, scheduleServiceData, notifyingProvider)
+        this.getVoucher(res.token, data, scheduleServiceData, notifyingProvider, price, loading)
 
       })
       .catch(err => {
@@ -420,13 +423,13 @@ export class ModalPage implements OnInit {
       })
   }
 
-  getVoucher(token_ws, data, scheduleServiceData, notifyingProvider) {
+  getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading) {
     this.api.getVoucher({ token_ws }).toPromise()
       .then(res => {
         console.log(res)
         if (res.status === 'INITIALIZED') {
           setTimeout(() => {
-            this.getVoucher(token_ws, data, scheduleServiceData, notifyingProvider)
+            this.getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading)
           }, 5000)
         } else if (res.status === 'AUTHORIZED') {
           const registerPaymentData = {
@@ -443,6 +446,7 @@ export class ModalPage implements OnInit {
           this.api.scheduleService2(scheduleServiceData).toPromise()
             .then(async (res2: any) => {
               notifyingProvider.unsubscribe()
+              loading.dismiss()
   
               if (res.data.transactionOk) {
                 this.closeModal(true);
@@ -467,6 +471,7 @@ export class ModalPage implements OnInit {
             })
             .catch(err => {
               notifyingProvider.unsubscribe()
+              loading.dismiss()
               console.log('error al registrar servicio agendado', err);
               this.closeModal(false);
               this.presentToast('Error al agendar servicio', 'danger');
@@ -480,6 +485,7 @@ export class ModalPage implements OnInit {
             })
           this.presentToast('Pago aceptado', 'success')
         } else if (res.status !== 'AUTHORIZED' || res.status !== 'INITIALIZED') {
+          loading.dismiss()
           this.presentToast('Error al pagar', 'danger')
         }
       })
