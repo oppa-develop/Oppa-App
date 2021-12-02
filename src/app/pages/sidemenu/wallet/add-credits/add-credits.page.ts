@@ -1,6 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { ModalController, ToastController } from '@ionic/angular';
 import { User } from 'src/app/models/user';
 import { NewCardPage } from 'src/app/pages/new-card/new-card.page';
@@ -25,6 +26,7 @@ export class AddCreditsPage implements OnInit {
     private toastCtrl: ToastController,
     private numberFormat: DecimalPipe,
     private formBuilder: FormBuilder,
+    private iab: InAppBrowser,
     private api: ApiService
   ) { }
 
@@ -56,39 +58,9 @@ export class AddCreditsPage implements OnInit {
   async addCredits() {
     if (this.addCreditsForm.valid) {
       const price = (this.addCreditsForm.controls['amount'].value.includes('$')) ? this.addCreditsForm.controls['amount'].value.split('$')[1].replaceAll('.', '') : this.addCreditsForm.controls['amount'].value
-      const modal = await this.modalController.create({
-        component: NewCardPage,
-        componentProps: {
-          price,
-        }
-      })
-
-      modal.onDidDismiss()
-        .then((res: any) => {
-          if (res.data.transactionOk) {
-            this.addCreditsForm.reset()
-            this.closeModal(true)
-
-            // registramos el pago en la api
-            this.api.payWithWallet({
-              amount: price,
-              type: 'ingreso',
-              user_id: this.user.user_id
-            }).toPromise()
-              .then(() => {
-                this.presentToast('Se ha agregado $' + price + ' a tu monedero', 'success')
-                this.closeModal(true)
-              })
-          }
-        })
-        .catch(err => {
-          console.log(err)
-          this.presentToast('Error al procesar el pago', 'danger')
-        })
-
-      return await modal.present()
+      this.pay(price)
     } else {
-      this.presentToast('Seleccione un monto', 'danger')
+      this.presentToast('Por favor, ingrese un monto válido', 'danger')
     }
   }
 
@@ -96,6 +68,51 @@ export class AddCreditsPage implements OnInit {
     this.modalController.dismiss({
       reload
     })
+  }
+
+  pay(price) {
+    this.api.registerPayment({
+      "buy_order": "ordenCompra12345678",
+      "session_id": "sesion1234557545",
+      "amount": 10000,
+      "return_url": `http://${'localhost:3000'}/api/transbank/check`
+     }).toPromise()
+      .then(res => {
+        this.iab.create(`${res.url}?token_ws=${res.token}`, '_system', 'location=no');
+        this.getVoucher(res.token, price)
+      })
+      .catch(err => {
+        console.log(err)
+        this.presentToast('Error al pagar', 'danger')
+      })
+  }
+
+  getVoucher(token_ws, price) {
+    this.api.getVoucher({ token_ws }).toPromise()
+      .then(res => {
+        console.log(res)
+        if (res.status === 'INITIALIZED') {
+          setTimeout(() => {
+            this.getVoucher(token_ws, price)
+          }, 5000)
+        } else if (res.status === 'AUTHORIZED') {
+          // registramos el pago en la api
+          this.api.payWithWallet({
+            amount: price,
+            type: 'ingreso',
+            user_id: this.user.user_id
+          }).toPromise()
+            .then(() => {
+              this.presentToast('Se ha agregado $' + price + ' a tu monedero', 'success')
+              this.closeModal(true)
+            })
+        } else if (res.status !== 'AUTHORIZED' && res.status !== 'INITIALIZED') {
+          this.presentToast('Error al pagar', 'danger')
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   async presentToast(message: string, color: string) {

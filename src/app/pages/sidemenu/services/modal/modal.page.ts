@@ -13,7 +13,6 @@ import { ApiService } from 'src/app/providers/api/api.service';
 import { DatePipe } from '@angular/common';
 import { environment } from 'src/environments/environment';
 import { WebSocketService } from 'src/app/providers/web-socket/web-socket.service';
-import { NewCardPage } from 'src/app/pages/new-card/new-card.page';
 import * as faker from 'faker/locale/es_MX'
 import { Router } from '@angular/router';
 import { NewAddressPage } from 'src/app/pages/new-address/new-address.page';
@@ -384,33 +383,7 @@ export class ModalPage implements OnInit {
 
   }
 
-  paymentWithWebpay(data, notifyingProvider) {
-    this.requestingStatus = 'paying off'
-    console.log('pagando con Webpay', data);
-    // this.openModalWebpay(data, {
-    //   clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
-    //   clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
-    //   date: this.scheduleServiceForm.value.date,
-    //   start: this.scheduleServiceForm.value.hour,
-    //   provider_has_services_provider_has_services_id: this.provider_has_services_provider_has_services_id,
-    //   addresses_address_id: this.scheduleServiceForm.value.address.address_id,
-    //   addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
-    //   price: this.scheduleServiceForm.value.price
-    // }, notifyingProvider)
-
-    this.pay(data, {
-      clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
-      clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
-      date: this.scheduleServiceForm.value.date,
-      start: this.scheduleServiceForm.value.hour,
-      provider_has_services_provider_has_services_id: this.provider_has_services_provider_has_services_id,
-      addresses_address_id: this.scheduleServiceForm.value.address.address_id,
-      addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
-      price: this.scheduleServiceForm.value.price
-    }, notifyingProvider)
-  }
-
-  pay(data, scheduleServiceData, notifyingProvider) {
+  pay() {
     this.api.registerPayment({
       "buy_order": "ordenCompra12345678",
       "session_id": "sesion1234557545",
@@ -422,7 +395,7 @@ export class ModalPage implements OnInit {
         
         this.iab.create(`${res.url}?token_ws=${res.token}`, '_system', 'location=no');
 
-        this.getVoucher(res.token, data, scheduleServiceData, notifyingProvider)
+        this.getVoucher(res.token)
 
       })
       .catch(err => {
@@ -431,7 +404,7 @@ export class ModalPage implements OnInit {
       })
   }
 
-  getVoucher(token_ws, data, scheduleServiceData, notifyingProvider) {
+  getVoucher(token_ws) {
     this.api.getVoucher({ token_ws }).toPromise()
       .then(res => {
         console.log(res)
