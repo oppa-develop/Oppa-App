@@ -137,6 +137,7 @@ export class CreateAccountPage implements OnInit {
         .then(userData => {
           loading.dismiss()
           this.ngZone.run(() => {
+            this.presentToast('Cuenta creada correctamente', 'success');
             this.router.navigate(['/login']);
             loading.dismiss()
           }, err => {

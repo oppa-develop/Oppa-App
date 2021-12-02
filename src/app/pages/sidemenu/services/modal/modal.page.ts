@@ -151,6 +151,9 @@ export class ModalPage implements OnInit {
           this.isLoading = false
           console.log(res);
 
+          // si existe un proveedor con el mismo user_id lo eliminamos del arreglo
+          res.potentialServices = res.potentialServices.filter(element => element.user_id !== 1)
+
           if (res.potentialServices?.length) {
             // si hay servicios agendables, se envía una solicitud proveedor por proveedor hasta que se encuentre uno que acepte el servicio
             this.sendRequestToProvider(res.potentialServices)
