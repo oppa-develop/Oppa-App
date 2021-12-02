@@ -20,6 +20,7 @@ export class ApiService {
 
   delay: number = 1000
   private apiUrl: string = environment.HOST + '/api'
+  private tbkUrl: string = environment.TBK_HOST
 
   constructor(
     private http: HttpClient
@@ -224,7 +225,13 @@ export class ApiService {
   }
 
   registerPayment(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/payments/new-payment`, data)
+    // return this.http.post(`${this.apiUrl}/`, data)
+    return this.http.post(`${'http://localhost:3000/api'}/transbank/pay`, data)
+  }
+
+  getVoucher(data: any): Observable<any> {
+    // return this.http.post(`${this.apiUrl}/`, data)
+    return this.http.post(`${'http://localhost:3000/api'}/transbank/voucher`, data)
   }
 
 }
