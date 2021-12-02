@@ -9,9 +9,6 @@
 
 <ion-content>
 
-  <ion-button expand="block" (click)="pay()">pay with webpayplus</ion-button>
-  <ion-button expand="block" (click)="getVoucher()">get payment status</ion-button>
-
   <ion-grid class="ion-no-padding" *ngIf="$superCategoriesServices | loading | async as superCategoriesServices">
     
     <!-- skeleton card for loading -->
