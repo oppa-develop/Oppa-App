@@ -383,7 +383,23 @@ export class ModalPage implements OnInit {
 
   }
 
-  pay() {
+  paymentWithWebpay(data, notifyingProvider) {
+    this.requestingStatus = 'paying off'
+    console.log('pagando con Webpay', data);
+
+    this.pay(data, {
+      clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
+      clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
+      date: this.scheduleServiceForm.value.date,
+      start: this.scheduleServiceForm.value.hour,
+      provider_has_services_provider_has_services_id: this.provider_has_services_provider_has_services_id,
+      addresses_address_id: this.scheduleServiceForm.value.address.address_id,
+      addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
+      price: this.scheduleServiceForm.value.price
+    }, notifyingProvider)
+  }
+
+  pay(data, scheduleServiceData, notifyingProvider) {
     this.api.registerPayment({
       "buy_order": "ordenCompra12345678",
       "session_id": "sesion1234557545",
@@ -395,7 +411,7 @@ export class ModalPage implements OnInit {
         
         this.iab.create(`${res.url}?token_ws=${res.token}`, '_system', 'location=no');
 
-        this.getVoucher(res.token)
+        this.getVoucher(res.token, data, scheduleServiceData, notifyingProvider)
 
       })
       .catch(err => {
@@ -404,7 +420,7 @@ export class ModalPage implements OnInit {
       })
   }
 
-  getVoucher(token_ws) {
+  getVoucher(token_ws, data, scheduleServiceData, notifyingProvider) {
     this.api.getVoucher({ token_ws }).toPromise()
       .then(res => {
         console.log(res)
@@ -463,7 +479,7 @@ export class ModalPage implements OnInit {
               });
             })
           this.presentToast('Pago aceptado', 'success')
-        } else if (res.status !== 'AUTHORIZED' && res.status !== 'INITIALIZED') {
+        } else if (res.status !== 'AUTHORIZED' || res.status !== 'INITIALIZED') {
           this.presentToast('Error al pagar', 'danger')
         }
       })

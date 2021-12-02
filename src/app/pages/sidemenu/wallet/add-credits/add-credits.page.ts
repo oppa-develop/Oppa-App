@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { ModalController, ToastController } from '@ionic/angular';
 import { User } from 'src/app/models/user';
-import { NewCardPage } from 'src/app/pages/new-card/new-card.page';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { environment } from 'src/environments/environment';
 
@@ -106,7 +105,7 @@ export class AddCreditsPage implements OnInit {
               this.presentToast('Se ha agregado $' + price + ' a tu monedero', 'success')
               this.closeModal(true)
             })
-        } else if (res.status !== 'AUTHORIZED' && res.status !== 'INITIALIZED') {
+        } else if (res.status !== 'AUTHORIZED' || res.status !== 'INITIALIZED') {
           this.presentToast('Error al pagar', 'danger')
         }
       })
