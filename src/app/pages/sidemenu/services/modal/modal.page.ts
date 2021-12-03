@@ -408,7 +408,7 @@ export class ModalPage implements OnInit {
       "buy_order": "ordenCompra12345678",
       "session_id": "sesion1234557545",
       "amount": price,
-      "return_url": `http://${'localhost:3000'}/api/transbank/check`
+      "return_url": `${this.apiUrl}/api/transbank/check`
      }).toPromise()
       .then(async res => {
         const loading = await this.loadingController.create({
