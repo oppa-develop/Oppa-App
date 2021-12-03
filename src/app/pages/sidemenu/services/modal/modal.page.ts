@@ -322,12 +322,13 @@ export class ModalPage implements OnInit {
       user_id: this.user.user_id
     }).toPromise()
       .then((res: any) => {
+        console.log({res});
         const registerPaymentData = {
           amount: this.service.price,
           state: 'en proceso',
           providers_provider_id: data.provider.provider_id,
           clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
-          buyOrder: res.buyOrder,
+          buyOrder: res.buy_order,
           services_service_id: this.service.service_id
         }
         this.api.scheduleService2({
@@ -437,7 +438,7 @@ export class ModalPage implements OnInit {
             state: 'en proceso',
             providers_provider_id: data.provider.provider_id,
             clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
-            buyOrder: res.data.buyOrder,
+            buyOrder: res.buy_order,
             services_service_id: this.service.service_id
           }
   
@@ -448,7 +449,7 @@ export class ModalPage implements OnInit {
               notifyingProvider.unsubscribe()
               loading.dismiss()
   
-              if (res.data.transactionOk) {
+              if (res.status === 'AUTHORIZED') {
                 this.closeModal(true);
                 this.presentAlert('Servicio agendado', 'El pago se ha procesado y el servicio ha sido agendado correctamente.');
   
