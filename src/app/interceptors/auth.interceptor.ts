@@ -11,11 +11,11 @@ export class AuthInterceptor implements HttpInterceptor {
 
       const user: User = JSON.parse(localStorage.getItem("user"));
       
-      if (user) {
+      if (user && req.url.includes(environment.HOST)) {
       const authJwtToken = user.token;
       const cloned = req.clone({
         headers: req.headers
-          .set('Authorization', `Bearer ${authJwtToken}`)
+        .set('Authorization', `Bearer ${authJwtToken}`)
       });
 
       return next.handle(cloned);

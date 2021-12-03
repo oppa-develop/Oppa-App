@@ -13,10 +13,10 @@ import { ApiService } from 'src/app/providers/api/api.service';
 import { DatePipe } from '@angular/common';
 import { environment } from 'src/environments/environment';
 import { WebSocketService } from 'src/app/providers/web-socket/web-socket.service';
-import { NewCardPage } from 'src/app/pages/new-card/new-card.page';
 import * as faker from 'faker/locale/es_MX'
 import { Router } from '@angular/router';
 import { NewAddressPage } from 'src/app/pages/new-address/new-address.page';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
 @Component({
   selector: 'app-modal',
@@ -60,6 +60,7 @@ export class ModalPage implements OnInit {
     private alertController: AlertController,
     private dateFormat: DatePipe,
     private toastCtrl: ToastController,
+    private iab: InAppBrowser,
     public ngZone: NgZone, // NgZone service to remove outside scope warning
     public router: Router, // para enviar al usuario a otra vista
     private ws: WebSocketService
@@ -324,12 +325,13 @@ export class ModalPage implements OnInit {
       user_id: this.user.user_id
     }).toPromise()
       .then((res: any) => {
+        console.log({res});
         const registerPaymentData = {
           amount: this.service.price,
           state: 'en proceso',
           providers_provider_id: data.provider.provider_id,
           clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
-          buyOrder: res.buyOrder,
+          buyOrder: res.buy_order,
           services_service_id: this.service.service_id
         }
         this.api.scheduleService2({
@@ -388,7 +390,8 @@ export class ModalPage implements OnInit {
   paymentWithWebpay(data, notifyingProvider) {
     this.requestingStatus = 'paying off'
     console.log('pagando con Webpay', data);
-    this.openModalWebpay(data, {
+
+    this.pay(data, {
       clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
       clients_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
       date: this.scheduleServiceForm.value.date,
@@ -397,70 +400,102 @@ export class ModalPage implements OnInit {
       addresses_address_id: this.scheduleServiceForm.value.address.address_id,
       addresses_users_user_id: this.scheduleServiceForm.value.receptor.user_id,
       price: this.scheduleServiceForm.value.price
-    }, notifyingProvider)
+    }, notifyingProvider, this.scheduleServiceForm.value.price)
   }
 
-  async openModalWebpay(data, scheduleServiceData, notifyingProvider) {
-    const modal = await this.modalController.create({
-      component: NewCardPage,
-      componentProps: {
-        price: this.service.price
-      }
-    })
+  pay(data, scheduleServiceData, notifyingProvider, price) {
+    this.api.registerPayment({
+      "buy_order": "ordenCompra12345678",
+      "session_id": "sesion1234557545",
+      "amount": price,
+      "return_url": `http://${'localhost:3000'}/api/transbank/check`
+     }).toPromise()
+      .then(async res => {
+        const loading = await this.loadingController.create({
+          message: 'Procesando pago...'
+        });
+        await loading.present()
+        
+        this.iab.create(`${res.url}?token_ws=${res.token}`, '_system', 'location=no');
 
-    modal.onDidDismiss()
-      .then((res: any) => {
-        const registerPaymentData = {
-          amount: this.service.price,
-          state: 'en proceso',
-          providers_provider_id: data.provider.provider_id,
-          clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
-          buyOrder: res.data.buyOrder,
-          services_service_id: this.service.service_id
-        }
+        this.getVoucher(res.token, data, scheduleServiceData, notifyingProvider, price, loading)
 
-        // agregamos la data que registra el pago, para que administración sepa a que proveedor debe pagarle y cuanto
-        scheduleServiceData.registerPaymentData = registerPaymentData
-        this.api.scheduleService2(scheduleServiceData).toPromise()
-          .then(async (res2: any) => {
-            notifyingProvider.unsubscribe()
+      })
+      .catch(err => {
+        console.log(err)
+        this.presentToast('Error al pagar', 'danger')
+      })
+  }
 
-            if (res.data.transactionOk) {
-              this.closeModal(true);
-              this.presentAlert('Servicio agendado', 'El pago se ha procesado y el servicio ha sido agendado correctamente.');
-
+  getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading) {
+    this.api.getVoucher({ token_ws }).toPromise()
+      .then(res => {
+        console.log(res)
+        if (res.status === 'INITIALIZED') {
+          setTimeout(() => {
+            this.getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading)
+          }, 5000)
+        } else if (res.status === 'AUTHORIZED') {
+          const registerPaymentData = {
+            amount: this.service.price,
+            state: 'en proceso',
+            providers_provider_id: data.provider.provider_id,
+            clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
+            buyOrder: res.buy_order,
+            services_service_id: this.service.service_id
+          }
+  
+          // agregamos la data que registra el pago, para que administración sepa a que proveedor debe pagarle y cuanto
+          scheduleServiceData.registerPaymentData = registerPaymentData
+          this.api.scheduleService2(scheduleServiceData).toPromise()
+            .then(async (res2: any) => {
+              notifyingProvider.unsubscribe()
+              loading.dismiss()
+  
+              if (res.status === 'AUTHORIZED') {
+                this.closeModal(true);
+                this.presentAlert('Servicio agendado', 'El pago se ha procesado y el servicio ha sido agendado correctamente.');
+  
+                this.ws.emit('notification', {
+                  type: 'client payment',
+                  emitter: this.user.user_id,
+                  destination: data.provider.user_id,
+                  message: `Servicio pagado y agendado`,
+                  state: 'payment accepted'
+                });
+  
+                // ahora solicitamos la creacion de la sala de chat
+                this.createChat(data, res2)
+  
+                // enviamos al usuario a la vista de historial de servicios
+                this.ngZone.run(() => {
+                  this.router.navigate([`/sidemenu/history/${scheduleServiceData.clients_client_id}`]);
+                });
+              }
+            })
+            .catch(err => {
+              notifyingProvider.unsubscribe()
+              loading.dismiss()
+              console.log('error al registrar servicio agendado', err);
+              this.closeModal(false);
+              this.presentToast('Error al agendar servicio', 'danger');
               this.ws.emit('notification', {
-                type: 'client payment',
+                type: 'service request',
                 emitter: this.user.user_id,
                 destination: data.provider.user_id,
-                message: `Servicio pagado y agendado`,
-                state: 'payment accepted'
+                message: `Error al registrar servicio agendado`,
+                state: 'payment rejected'
               });
-
-              // ahora solicitamos la creacion de la sala de chat
-              this.createChat(data, res2)
-
-              // enviamos al usuario a la vista de historial de servicios
-              this.ngZone.run(() => {
-                this.router.navigate([`/sidemenu/history/${scheduleServiceData.clients_client_id}`]);
-              });
-            }
-          })
-          .catch(err => {
-            notifyingProvider.unsubscribe()
-            console.log('error al registrar servicio agendado', err);
-            this.closeModal(false);
-            this.presentToast('Error al agendar servicio', 'danger');
-            this.ws.emit('notification', {
-              type: 'service request',
-              emitter: this.user.user_id,
-              destination: data.provider.user_id,
-              message: `Error al registrar servicio agendado`,
-              state: 'payment rejected'
-            });
-          })
+            })
+          this.presentToast('Pago aceptado', 'success')
+        } else if (res.status !== 'AUTHORIZED' || res.status !== 'INITIALIZED') {
+          loading.dismiss()
+          this.presentToast('Error al pagar', 'danger')
+        }
       })
-    return await modal.present()
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   createChat(data, newServiceData) {

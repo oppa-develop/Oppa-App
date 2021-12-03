@@ -224,7 +224,13 @@ export class ApiService {
   }
 
   registerPayment(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/payments/new-payment`, data)
+    // return this.http.post(`${this.apiUrl}/`, data)
+    return this.http.post(`${this.apiUrl}/transbank/pay`, data)
+  }
+
+  getVoucher(data: any): Observable<any> {
+    // return this.http.post(`${this.apiUrl}/`, data)
+    return this.http.post(`${this.apiUrl}/transbank/voucher`, data)
   }
 
 }

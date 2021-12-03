@@ -4,9 +4,8 @@ import { Service } from 'src/app/models/service';
 import { User } from 'src/app/models/user';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { AuthService } from 'src/app/providers/auth/auth.service';
-import { ActionSheetController, ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { ModalPage } from './modal/modal.page';
-import { SeeAllPage } from './see-all/see-all.page';
 import { environment } from 'src/environments/environment';
 
 @Component({
