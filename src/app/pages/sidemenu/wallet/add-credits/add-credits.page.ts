@@ -83,7 +83,7 @@ export class AddCreditsPage implements OnInit {
         });
         await loading.present()
 
-        this.iab.create(`${res.url}?token_ws=${res.token}`, '_system', 'location=no');
+        this.iab.create(`${res.url}?token_ws=${res.token}`, '_blank', 'location=no');
         this.getVoucher(res.token, price, loading)
       })
       .catch(err => {
