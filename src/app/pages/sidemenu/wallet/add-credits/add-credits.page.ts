@@ -83,8 +83,8 @@ export class AddCreditsPage implements OnInit {
         });
         await loading.present()
 
-        this.iab.create(`${res.url}?token_ws=${res.token}`, '_blank', 'location=no');
-        this.getVoucher(res.token, price, loading)
+        const browser = this.iab.create(`${res.url}?token_ws=${res.token}`, '_blank', 'location=no');
+        this.getVoucher(res.token, price, loading, browser)
       })
       .catch(err => {
         console.log(err)
@@ -92,16 +92,17 @@ export class AddCreditsPage implements OnInit {
       })
   }
 
-  getVoucher(token_ws, price, loading) {
+  getVoucher(token_ws, price, loading, browser) {
     console.log('verificando transacción')
     this.api.getVoucher({ token_ws }).toPromise()
       .then(res => {
         console.log(res)
         if (res.status === 'INITIALIZED') {
           setTimeout(() => {
-            this.getVoucher(token_ws, price, loading)
-          }, 5000)
+            this.getVoucher(token_ws, price, loading, browser)
+          }, 1000)
         } else if (res.status === 'AUTHORIZED') {
+          browser.close()
           // registramos el pago en la api
           this.api.payWithWallet({
             amount: price,
@@ -114,6 +115,7 @@ export class AddCreditsPage implements OnInit {
               this.closeModal(true)
             })
         } else if (res.status !== 'AUTHORIZED' || res.status !== 'INITIALIZED') {
+          browser.close()
           loading.dismiss()
           this.presentToast('Error al pagar', 'danger')
         }

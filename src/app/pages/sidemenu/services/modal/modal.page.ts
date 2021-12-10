@@ -260,7 +260,7 @@ export class ModalPage implements OnInit {
             this.isLoading = false
             notifyingProvider.unsubscribe()
             this.sendRequestToProvider(potentialServices)
-          }, 5000)
+          }, 1000)
         }
       } else if (data.type === 'service request' && data.state === 'request rejected' && data.id === requestId) {
         loading.dismiss();
@@ -416,9 +416,9 @@ export class ModalPage implements OnInit {
         });
         await loading.present()
         
-        this.iab.create(`${res.url}?token_ws=${res.token}`, '_blank', 'location=no');
+        const browser = this.iab.create(`${res.url}?token_ws=${res.token}`, '_blank', 'location=no');
 
-        this.getVoucher(res.token, data, scheduleServiceData, notifyingProvider, price, loading)
+        this.getVoucher(res.token, data, scheduleServiceData, notifyingProvider, price, loading, browser)
 
       })
       .catch(err => {
@@ -427,15 +427,16 @@ export class ModalPage implements OnInit {
       })
   }
 
-  getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading) {
+  getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading, browser) {
     this.api.getVoucher({ token_ws }).toPromise()
       .then(res => {
         console.log(res)
         if (res.status === 'INITIALIZED') {
           setTimeout(() => {
-            this.getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading)
-          }, 5000)
+            this.getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading, browser)
+          }, 1000)
         } else if (res.status === 'AUTHORIZED') {
+          browser.close()
           const registerPaymentData = {
             amount: this.service.price,
             state: 'en proceso',
@@ -489,6 +490,7 @@ export class ModalPage implements OnInit {
             })
           this.presentToast('Pago aceptado', 'success')
         } else if (res.status !== 'AUTHORIZED' || res.status !== 'INITIALIZED') {
+          browser.close()
           loading.dismiss()
           this.presentToast('Error al pagar', 'danger')
         }
