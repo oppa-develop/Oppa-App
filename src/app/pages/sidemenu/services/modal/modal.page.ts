@@ -183,6 +183,14 @@ export class ModalPage implements OnInit {
     let requestId = faker.random.uuid()
     sessionStorage.setItem('requestId', requestId)
 
+    console.log('notification WS:', {
+      type: 'service request',
+      emitter: this.user.user_id,
+      destination: potentialServices[0].providers_users_user_id,
+      message: this.scheduleServiceForm.value,
+      state: 'data sended',
+      id: requestId
+    })
     this.ws.emit('notification', {
       type: 'service request',
       emitter: this.user.user_id,
@@ -331,7 +339,7 @@ export class ModalPage implements OnInit {
           state: 'en proceso',
           providers_provider_id: data.provider.provider_id,
           clients_client_id: this.scheduleServiceForm.value.receptor.client_id,
-          buyOrder: res.buy_order,
+          buyOrder: res.buyOrder,
           services_service_id: this.service.service_id
         }
         this.api.scheduleService2({
