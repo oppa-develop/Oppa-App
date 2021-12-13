@@ -321,7 +321,7 @@ export class ModalPage implements OnInit {
         if (potentialServices.length) this.sendRequestToProvider(potentialServices) // volvemos a solicitar el servicio si quedan proveedores
         else this.presentToast('No se encontraron proveedores disponibles en estas fechas y/u horarios', 'danger') // si no quedan proveedores, mostramos un mensaje de error
       }
-    }, 1000 * 60 * 2) // 1000 * 60 * 2
+    }, 1000 * 60 * 1) // 1000 * 60 * 2
   }
 
   paymentWithWallet(data, notifyingProvider) {
