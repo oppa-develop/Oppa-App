@@ -437,13 +437,15 @@ export class ModalPage implements OnInit {
 
   getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading, browser) {
     this.api.getVoucher({ token_ws }).toPromise()
-      .then(res => {
+      .then(async res => {
         console.log(res)
         if (res.status === 'INITIALIZED') {
           setTimeout(() => {
             this.getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading, browser)
           }, 1000)
         } else if (res.status === 'AUTHORIZED') {
+          // si el pago esta autorizado, hacemos commit a Transbank
+          await this.api.confirmPayWithWebpay(token_ws)
           browser.close()
           const registerPaymentData = {
             amount: this.service.price,

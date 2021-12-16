@@ -95,13 +95,15 @@ export class AddCreditsPage implements OnInit {
   getVoucher(token_ws, price, loading, browser) {
     console.log('verificando transacción')
     this.api.getVoucher({ token_ws }).toPromise()
-      .then(res => {
+      .then(async res => {
         console.log(res)
         if (res.status === 'INITIALIZED') {
           setTimeout(() => {
             this.getVoucher(token_ws, price, loading, browser)
           }, 1000)
         } else if (res.status === 'AUTHORIZED') {
+          // si el pago esta autorizado, hacemos commit a Transbank
+          await this.api.confirmPayWithWebpay(token_ws)
           browser.close()
           // registramos el pago en la api
           this.api.payWithWallet({

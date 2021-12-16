@@ -187,10 +187,6 @@ export class ApiService {
     return this.http.post<any>(`${this.apiUrl}/transbank/create`, movement)
   }
 
-  confirmPayWithWebpay(data: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/transbank/confirm`, data)
-  }
-
   editUser(userData): Observable<any> {
     return this.http.patch(`${this.apiUrl}/users/edit`, userData)
   }
@@ -231,6 +227,10 @@ export class ApiService {
   getVoucher(data: any): Observable<any> {
     // return this.http.post(`${this.apiUrl}/`, data)
     return this.http.post(`${this.apiUrl}/transbank/voucher`, data)
+  }
+
+  confirmPayWithWebpay(token_ws: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/transbank/check`, token_ws)
   }
 
 }
