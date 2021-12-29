@@ -411,18 +411,19 @@ export class ModalPage implements OnInit {
     }, notifyingProvider, this.scheduleServiceForm.value.price)
   }
 
-  pay(data, scheduleServiceData, notifyingProvider, price) {
+  async pay(data, scheduleServiceData, notifyingProvider, price) {
+    const loading = await this.loadingController.create({
+      message: 'Procesando pago...'
+    });
+    await loading.present()
+    
     this.api.registerPayment({
       "buy_order": "ordenCompra12345678",
       "session_id": "sesion1234557545",
       "amount": price,
       "return_url": `${this.apiUrl}api/transbank/check`
      }).toPromise()
-      .then(async res => {
-        const loading = await this.loadingController.create({
-          message: 'Procesando pago...'
-        });
-        await loading.present()
+      .then(res => {
         
         const browser = this.iab.create(`${res.url}?token_ws=${res.token}`, '_blank', 'location=no');
 
@@ -438,14 +439,12 @@ export class ModalPage implements OnInit {
   getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading, browser) {
     this.api.getVoucher({ token_ws }).toPromise()
       .then(async res => {
-        console.log(res)
+        console.log({res})
         if (res.status === 'INITIALIZED') {
           setTimeout(() => {
             this.getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading, browser)
           }, 1000)
         } else if (res.status === 'AUTHORIZED') {
-          // si el pago esta autorizado, hacemos commit a Transbank
-          await this.api.confirmPayWithWebpay(token_ws)
           browser.close()
           const registerPaymentData = {
             amount: this.service.price,
@@ -463,26 +462,27 @@ export class ModalPage implements OnInit {
               notifyingProvider.unsubscribe()
               loading.dismiss()
   
-              if (res.status === 'AUTHORIZED') {
-                this.closeModal(true);
-                this.presentAlert('Servicio agendado', 'El pago se ha procesado y el servicio ha sido agendado correctamente.');
-  
-                this.ws.emit('notification', {
-                  type: 'client payment',
-                  emitter: this.user.user_id,
-                  destination: data.provider.user_id,
-                  message: `Servicio pagado y agendado`,
-                  state: 'payment accepted'
-                });
-  
-                // ahora solicitamos la creacion de la sala de chat
-                this.createChat(data, res2)
-  
-                // enviamos al usuario a la vista de historial de servicios
-                this.ngZone.run(() => {
-                  this.router.navigate([`/sidemenu/history/${scheduleServiceData.clients_client_id}`]);
-                });
-              }
+              // si el pago esta autorizado, hacemos commit a Transbank
+              await this.api.confirmPayWithWebpay(token_ws)
+
+              this.closeModal(true);
+              this.presentAlert('Servicio agendado', 'El pago se ha procesado y el servicio ha sido agendado correctamente.');
+
+              this.ws.emit('notification', {
+                type: 'client payment',
+                emitter: this.user.user_id,
+                destination: data.provider.user_id,
+                message: `Servicio pagado y agendado`,
+                state: 'payment accepted'
+              });
+
+              // ahora solicitamos la creacion de la sala de chat
+              this.createChat(data, res2)
+
+              // enviamos al usuario a la vista de historial de servicios
+              this.ngZone.run(() => {
+                this.router.navigate([`/sidemenu/history/${scheduleServiceData.clients_client_id}`]);
+              });
             })
             .catch(err => {
               notifyingProvider.unsubscribe()

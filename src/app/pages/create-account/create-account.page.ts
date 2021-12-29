@@ -152,7 +152,12 @@ export class CreateAccountPage implements OnInit {
         })
         .catch(err => {
           loading.dismiss()
-          console.log(err);
+          if (err.error.message === 'Duplicate entry') {
+            this.presentToast('El RUT y/o EMAIL ya está registrado', 'danger');
+          } else {
+            this.presentToast('No se ha podido crear la cuenta', 'danger');
+          }
+          console.log(err.error.message);
         });
     }
   }
