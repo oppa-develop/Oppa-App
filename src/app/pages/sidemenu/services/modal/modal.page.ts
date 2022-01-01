@@ -114,7 +114,7 @@ export class ModalPage implements OnInit {
   async presentToast(message: string, color: string) {
     const toast = await this.toastCtrl.create({
       message,
-      duration: 2000,
+      duration: 4000,
       color
     });
     toast.present();
@@ -432,6 +432,14 @@ export class ModalPage implements OnInit {
       })
       .catch(err => {
         console.log(err)
+        loading.dismiss()
+        this.ws.emit('notification', {
+          type: 'service request',
+          emitter: this.user.user_id,
+          destination: data.provider.user_id,
+          message: `Cancelado por error del cliente al realizar pago`,
+          state: 'payment rejected'
+        });
         this.presentToast('Error al pagar', 'danger')
       })
   }

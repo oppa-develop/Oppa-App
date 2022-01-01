@@ -130,7 +130,7 @@ export class AddCreditsPage implements OnInit {
   async presentToast(message: string, color: string) {
     const toast = await this.toastCtrl.create({
       message,
-      duration: 2000,
+      duration: 4000,
       color
     });
     toast.present();
