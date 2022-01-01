@@ -27,6 +27,7 @@ export class ModalPage implements OnInit {
 
   user: User
   minDate: string = dayjs().format('YYYY-MM-DD')
+  maxDate: string = dayjs().add(2, 'month').format('YYYY-MM-DD')
   minHour: string = dayjs().format('HH:mm')
   $regions: Observable<Location>
   $districts: Observable<Location>
@@ -102,7 +103,8 @@ export class ModalPage implements OnInit {
   }
 
   setMinHour() {
-    this.minHour = (dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD') == dayjs().format('YYYY-MM-DD')) ? dayjs().add(2, 'h').format('HH:mm') : dayjs('2020-01-01').format('HH:mm')
+    this.scheduleServiceForm.controls.hour.reset()
+    this.minHour = (dayjs(this.scheduleServiceForm.value.date).format('YYYY-MM-DD') == dayjs().format('YYYY-MM-DD')) ? dayjs().add(2, 'h').format('HH:mm') : dayjs('2022-01-01').format('HH:mm')
   }
 
   closeModal(reload: boolean) {
