@@ -16,7 +16,7 @@ import { WebSocketService } from 'src/app/providers/web-socket/web-socket.servic
 import * as faker from 'faker/locale/es_MX'
 import { Router } from '@angular/router';
 import { NewAddressPage } from 'src/app/pages/new-address/new-address.page';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { InAppBrowser, InAppBrowserEvent } from '@ionic-native/in-app-browser/ngx';
 
 @Component({
   selector: 'app-modal',
@@ -335,7 +335,7 @@ export class ModalPage implements OnInit {
       user_id: this.user.user_id
     }).toPromise()
       .then((res: any) => {
-        console.log({res});
+        console.log({ res });
         const registerPaymentData = {
           amount: this.service.price,
           state: 'en proceso',
@@ -418,18 +418,24 @@ export class ModalPage implements OnInit {
       message: 'Procesando pago...'
     });
     await loading.present()
-    
+
     this.api.registerPayment({
-      "buy_order": "ordenCompra12345678",
-      "session_id": "sesion1234557545",
+      "buy_order": "CLTBK" + dayjs().format('YYYYMMDDHHmmss'),
+      "session_id": `user_${this.user.user_id}`,
       "amount": price,
       "return_url": `${this.apiUrl}api/transbank/check`
-     }).toPromise()
+    }).toPromise()
       .then(res => {
-        
+
         const browser = this.iab.create(`${res.url}?token_ws=${res.token}`, '_blank', 'location=no');
 
-        this.getVoucher(res.token, data, scheduleServiceData, notifyingProvider, price, loading, browser)
+        browser.on('loadstop').subscribe((event: InAppBrowserEvent) => {
+          this.getVoucher(res.token, data, scheduleServiceData, notifyingProvider, price, loading, browser)
+        });
+
+        browser.on('exit').subscribe((event: InAppBrowserEvent) => {
+          browser.close()
+        });
 
       })
       .catch(err => {
@@ -449,7 +455,7 @@ export class ModalPage implements OnInit {
   getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading, browser) {
     this.api.getVoucher({ token_ws }).toPromise()
       .then(async res => {
-        console.log({res})
+        console.log({ res })
         if (res.status === 'INITIALIZED') {
           setTimeout(() => {
             this.getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading, browser)
@@ -464,14 +470,14 @@ export class ModalPage implements OnInit {
             buyOrder: res.buy_order,
             services_service_id: this.service.service_id
           }
-  
+
           // agregamos la data que registra el pago, para que administración sepa a que proveedor debe pagarle y cuanto
           scheduleServiceData.registerPaymentData = registerPaymentData
           this.api.scheduleService2(scheduleServiceData).toPromise()
             .then(async (res2: any) => {
               notifyingProvider.unsubscribe()
               loading.dismiss()
-  
+
               // si el pago esta autorizado, hacemos commit a Transbank
               await this.api.confirmPayWithWebpay(token_ws)
 

@@ -1,11 +1,12 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { InAppBrowser, InAppBrowserEvent } from '@ionic-native/in-app-browser/ngx';
 import { LoadingController, ModalController, ToastController } from '@ionic/angular';
 import { User } from 'src/app/models/user';
 import { ApiService } from 'src/app/providers/api/api.service';
 import { environment } from 'src/environments/environment';
+import * as dayjs from 'dayjs';
 
 @Component({
   selector: 'app-add-credits',
@@ -72,11 +73,11 @@ export class AddCreditsPage implements OnInit {
 
   pay(price) {
     this.api.registerPayment({
-      "buy_order": "ordenCompra12345678",
-      "session_id": "sesion1234557545",
+      "buy_order": "CLTBK" + dayjs().format('YYYYMMDDHHmmss'),
+      "session_id": `user_${this.user.user_id}`,
       "amount": price,
       "return_url": `${this.apiUrl}api/transbank/check`
-     }).toPromise()
+    }).toPromise()
       .then(async res => {
         const loading = await this.loadingController.create({
           message: 'Procesando pago...'
@@ -84,7 +85,15 @@ export class AddCreditsPage implements OnInit {
         await loading.present()
 
         const browser = this.iab.create(`${res.url}?token_ws=${res.token}`, '_blank', 'location=no');
-        this.getVoucher(res.token, price, loading, browser)
+
+        browser.on('loadstop').subscribe((event: InAppBrowserEvent) => {
+          this.getVoucher(res.token, price, loading, browser)
+        });
+
+        browser.on('exit').subscribe((event: InAppBrowserEvent) => {
+          browser.close()
+        });
+
       })
       .catch(err => {
         console.log(err)
@@ -120,6 +129,8 @@ export class AddCreditsPage implements OnInit {
           browser.close()
           loading.dismiss()
           this.presentToast('Error al pagar', 'danger')
+        } else {
+          console.log(res)
         }
       })
       .catch(err => {
