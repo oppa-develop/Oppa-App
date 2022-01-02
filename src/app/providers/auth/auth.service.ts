@@ -77,7 +77,7 @@ export class AuthService {
             errMessage = 'Usuario no registrado.'
             break
           default:
-            errMessage = 'Email y/o contraseña incorrectas.'
+            errMessage = 'Rut y/o contraseña incorrectas.'
             break
         }
         this.presentToast(errMessage, 'danger');
