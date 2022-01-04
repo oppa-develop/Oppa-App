@@ -111,7 +111,7 @@ export class AddCreditsPage implements OnInit {
           setTimeout(() => {
             this.getVoucher(token_ws, price, loading, browser)
           }, 1000)
-        } else if (res.status === 'AUTHORIZED' || !this.isPaymentAccepted) {
+        } else if (res.status === 'AUTHORIZED' && !this.isPaymentAccepted) {
           // si el pago esta autorizado, hacemos commit a Transbank
           await this.api.confirmPayWithWebpay(token_ws)
           this.isPaymentAccepted = true
@@ -127,7 +127,7 @@ export class AddCreditsPage implements OnInit {
               this.presentToast('Se ha agregado $' + price + ' a tu monedero', 'success')
               this.closeModal(true)
             })
-        } else if (res.status !== 'AUTHORIZED' || res.status !== 'INITIALIZED') {
+        } else if (res.status !== 'AUTHORIZED' && res.status !== 'INITIALIZED') {
           browser.close()
           loading.dismiss()
           this.presentToast('Error al pagar', 'danger')

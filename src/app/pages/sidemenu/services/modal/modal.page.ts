@@ -458,12 +458,11 @@ export class ModalPage implements OnInit {
   getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading, browser) {
     this.api.getVoucher({ token_ws }).toPromise()
       .then(async res => {
-        console.log({ res })
+        console.log({ status: res.status, isPaymentAccepted: this.isPaymentAccepted });
+
         if (res.status === 'INITIALIZED') {
-          setTimeout(() => {
-            this.getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading, browser)
-          }, 1000)
-        } else if (res.status === 'AUTHORIZED' || !this.isPaymentAccepted) {
+          this.getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading, browser)
+        } else if (res.status === 'AUTHORIZED' && !this.isPaymentAccepted) {
           this.isPaymentAccepted = true
           browser.close()
           const registerPaymentData = {
@@ -519,7 +518,7 @@ export class ModalPage implements OnInit {
               });
             })
           this.presentToast('Pago aceptado', 'success')
-        } else if (res.status !== 'AUTHORIZED' || res.status !== 'INITIALIZED') {
+        } else if (res.status !== 'AUTHORIZED' && res.status !== 'INITIALIZED') {
           browser.close()
           loading.dismiss()
           this.presentToast('Error al pagar', 'danger')
