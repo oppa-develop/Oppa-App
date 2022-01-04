@@ -38,6 +38,7 @@ export class ModalPage implements OnInit {
   requestingStatus: string = 'requesting'
   provider_has_services_provider_has_services_id: number
   isLoading: boolean = false
+  isPaymentAccepted: boolean = false
 
   ActionSheetOptionsRegions = {
     header: 'Regiones',
@@ -429,12 +430,14 @@ export class ModalPage implements OnInit {
 
         const browser = this.iab.create(`${res.url}?token_ws=${res.token}`, '_blank', 'location=no');
 
-        browser.on('loadstop').subscribe((event: InAppBrowserEvent) => {
+        const loadstopSubscription = browser.on('loadstop').subscribe((event: InAppBrowserEvent) => {
           this.getVoucher(res.token, data, scheduleServiceData, notifyingProvider, price, loading, browser)
         });
-
-        browser.on('exit').subscribe((event: InAppBrowserEvent) => {
+        
+        const exitSubscription = browser.on('exit').subscribe((event: InAppBrowserEvent) => {
           browser.close()
+          loadstopSubscription.unsubscribe()
+          exitSubscription.unsubscribe()
         });
 
       })
@@ -460,7 +463,8 @@ export class ModalPage implements OnInit {
           setTimeout(() => {
             this.getVoucher(token_ws, data, scheduleServiceData, notifyingProvider, price, loading, browser)
           }, 1000)
-        } else if (res.status === 'AUTHORIZED') {
+        } else if (res.status === 'AUTHORIZED' || !this.isPaymentAccepted) {
+          this.isPaymentAccepted = true
           browser.close()
           const registerPaymentData = {
             amount: this.service.price,
