@@ -19,6 +19,7 @@ export class AddCreditsPage implements OnInit {
   addCreditsForm: FormGroup
   otherAmount: boolean = false
   optSelected: number = 0
+  isPaymentAccepted = false
   @Input() user: User
 
   constructor(
@@ -110,9 +111,10 @@ export class AddCreditsPage implements OnInit {
           setTimeout(() => {
             this.getVoucher(token_ws, price, loading, browser)
           }, 1000)
-        } else if (res.status === 'AUTHORIZED') {
+        } else if (res.status === 'AUTHORIZED' || !this.isPaymentAccepted) {
           // si el pago esta autorizado, hacemos commit a Transbank
           await this.api.confirmPayWithWebpay(token_ws)
+          this.isPaymentAccepted = true
           browser.close()
           // registramos el pago en la api
           this.api.payWithWallet({
