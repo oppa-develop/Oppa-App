@@ -74,8 +74,13 @@
     </ng-template>
 
     <!-- no services -->
-    <ng-template [ngIf]="superCategoriesServices.value?.length == 0">
-      <h1>no services</h1>
+    <ng-template [ngIf]="superCategoriesServices.value?.length === 0">
+      <ion-grid>
+        <ion-col size="12">
+          <ion-img class="not-services" src="../../../../../assets/images/clear_history.svg"></ion-img>
+          <h1 class="ion-text-center">Aún no hay servicios</h1>
+        </ion-col>
+      </ion-grid>
     </ng-template>
 
     <!-- error on get services -->

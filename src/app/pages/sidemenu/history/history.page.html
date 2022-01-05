@@ -115,7 +115,7 @@
   </ng-template>
 
   <!-- empty state -->
-  <ng-template [ngIf]="!services.value?.services.length">
+  <ng-template [ngIf]="!services.value?.services.length === 0">
     <ion-grid>
       <ion-col size="12">
         <ion-img class="not-services" src="../../../../../assets/images/clear_history.svg"></ion-img>
