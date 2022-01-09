@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Service } from 'src/app/models/service';
 import { User } from 'src/app/models/user';
@@ -20,7 +20,7 @@ export class ServicesPage implements OnInit {
   user: User
   apiUrl: string = environment.HOST + '/'
   slideOpts = {
-    slidesPerView: 1.5,
+    slidesPerView: this.numberOfCards(),
     centeredSlides: true,
     centeredSlidesBounds: true,
     coverflowEffect: {
@@ -56,6 +56,7 @@ export class ServicesPage implements OnInit {
   }
 
   ngOnInit() {
+    console.log('window.innerWidth', window.innerWidth)
     this.user = this.auth.userData()
     // this.$services = this.api.getServices()
     this.$superCategoriesServices = this.api.getSuperCategoriesServices()
@@ -64,5 +65,17 @@ export class ServicesPage implements OnInit {
   ionViewWillEnter() {
     this.user = this.auth.userData()
   }
+
+  numberOfCards(): number {
+    // calculamos el número de tarjetas que se mostrarán en la página segun el ancho de la pantalla
+    return window.innerWidth / 250
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.slideOpts.slidesPerView = this.numberOfCards()
+    console.log('window.innerWidth', window.innerWidth, 'slidesPerView', this.slideOpts.slidesPerView)
+  }
+
 
 }

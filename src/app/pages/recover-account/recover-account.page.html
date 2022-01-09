@@ -21,6 +21,7 @@
               <ion-input formControlName="rut" maxlength="12" [value]="recoverAccountForm.get('rut').value | rutParse" type="text" required></ion-input>
             </ion-item>
           </ion-list>
+          <ion-button fill="outline" class="bottom-btn-2" expand="block" color="secondary" (click)="step = 2">Ya tengo un código</ion-button>
           <ion-button type="submit" class="bottom-btn" expand="block" color="primary">Enviar</ion-button>
         </form>
       </ion-col>

@@ -9,6 +9,7 @@ import { WebSocketService } from 'src/app/providers/web-socket/web-socket.servic
 import { MessageList } from 'src/app/models/message-list';
 import { environment } from 'src/environments/environment';
 import { ApiService } from 'src/app/providers/api/api.service';
+import * as dayjs from 'dayjs';
 
 @Component({
   selector: 'app-chat',
@@ -24,6 +25,7 @@ export class ChatPage implements OnInit {
   wsConnectionState: string;
   apiUrl: string = environment.HOST + '/'
   @ViewChild('content') private content: any;
+  @ViewChild('textarea') textarea
   @Input() public chat: MessageList
 
   constructor(
@@ -46,7 +48,7 @@ export class ChatPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    
+
     console.log('ionViewDidEnter');
 
     // We connect to the server
@@ -68,26 +70,29 @@ export class ChatPage implements OnInit {
 
   createMesageForm() {
     return this.formBuilder.group({
-      message: ['', Validators.required]
+      message: [null]
     });
   }
 
   sendMessage() {
-    const message = {
-      text: this.messageForm.value.message,
-      url: null,
-      type: 'text',
-      created_at: new Date(),
-      chats_chat_id: this.chat.chat_id,
-      users_user_id: this.user.user_id,
-      firstname: this.user.firstname,
-      lastname: this.user.lastname
+    this.textarea.setFocus();
+    if (this.messageForm.value.message !== null) {
+      const message = {
+        text: this.messageForm.value.message,
+        url: null,
+        type: 'text',
+        created_at: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        chats_chat_id: this.chat.chat_id,
+        users_user_id: this.user.user_id,
+        firstname: this.user.firstname,
+        lastname: this.user.lastname
+      }
+      console.log('sending message', message);
+      this.serverMessages.push(message)
+      this.ws.emit('message', message)
+      this.messageForm.reset();
+      this.scrollToBottom();
     }
-    console.log('sending message', message);
-    this.serverMessages.push(message)
-    this.ws.emit('message', message)
-    this.messageForm.reset();
-    this.scrollToBottom();
   }
 
   async closeModal() {

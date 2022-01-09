@@ -212,7 +212,7 @@ export class ApiService {
   }
 
   getCode(rut: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/recover-account`, rut)
+    return this.http.post(`${this.apiUrl}/auth/recover-account`, {rut})
   }
 
   changePass(data: any): Observable<any> {

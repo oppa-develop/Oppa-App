@@ -48,21 +48,23 @@
   </ion-grid>
 
   <ion-footer [ngClass]="{dark: darkMode, light: !darkMode}">
-    <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
-      <ion-grid>
-        <ion-row>
-          <ion-col>
-            <ion-item>
-              <ion-textarea formControlName="message" rows="1" placeholder="Escribe un mensaje"></ion-textarea>
-            </ion-item>
-          </ion-col>
-          <ion-col size="2">
-            <ion-button type="submit" class="ion-float-end" color="primary">
-              <ion-icon name="send-outline"></ion-icon>
-            </ion-button>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </form>
+    <ion-toolbar>
+      <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-item>
+                <ion-textarea #textarea formControlName="message" rows="1" placeholder="Escribe un mensaje"></ion-textarea>
+              </ion-item>
+            </ion-col>
+            <ion-col size="2">
+              <ion-button type="submit" class="ion-float-end" color="primary">
+                <ion-icon name="send-outline"></ion-icon>
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </form>
+    </ion-toolbar>
   </ion-footer>
 </ion-content>

@@ -4,7 +4,7 @@ export interface Message {
   text: string,
   url: string,
   type: string,
-  created_at: Date,
+  created_at: string,
   chats_chat_id: number,
   users_user_id: number
   

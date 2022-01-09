@@ -5,3 +5,13 @@ ion-slide img {
 ion-chip {
   margin-top: 10px;
 }
+
+ion-card>ion-img {
+  height: 25vh;
+  width: 250px;
+  object-fit: cover;
+}
+
+ion-card {
+  width: 250px;
+}
