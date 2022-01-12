@@ -4,7 +4,6 @@ ion-card {
 }
 
 ion-button.close-btn {
-  --background: transparent;
   --ion-color-base: transparent !important;
   --box-shadow: none;
   position: absolute;
@@ -16,10 +15,6 @@ ion-button.close-btn {
   height: 37.5vh;
   object-fit: cover;
   position: fixed;
-}
-
-ion-input {
-  text-align: end;
 }
 
 ion-item ion-label {

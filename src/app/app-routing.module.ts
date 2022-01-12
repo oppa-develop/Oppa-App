@@ -18,7 +18,23 @@ const routes: Routes = [
     path: '',
     redirectTo: '/sidemenu',
     pathMatch: 'full'
+  },
+  {
+    path: 'new-card',
+    loadChildren: () => import('./pages/new-card/new-card.module').then( m => m.NewCardPageModule)
+  },  {
+    path: 'recover-account',
+    loadChildren: () => import('./pages/recover-account/recover-account.module').then( m => m.RecoverAccountPageModule)
+  },
+  {
+    path: 'welcome',
+    loadChildren: () => import('./pages/welcome/welcome.module').then( m => m.WelcomePageModule)
+  },
+  {
+    path: 'new-address',
+    loadChildren: () => import('./pages/new-address/new-address.module').then( m => m.NewAddressPageModule)
   }
+
 
 ];
 

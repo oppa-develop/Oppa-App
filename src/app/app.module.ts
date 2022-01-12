@@ -15,12 +15,19 @@ import { FormsModule } from '@angular/forms';
 import es from '@angular/common/locales/es'
 registerLocaleData(es)
 
-import { DatePipe, registerLocaleData } from '@angular/common'
+import { DatePipe, DecimalPipe, registerLocaleData } from '@angular/common'
 import { ApiService } from './providers/api/api.service';
 import { HttpClientJsonpModule, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { LocationService } from './providers/location/location.service';
+import { WebSocketService } from './providers/web-socket/web-socket.service';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+// import { File } from '@ionic-native/file/ngx';
+import { Camera } from '@ionic-native/Camera/ngx';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { Autostart } from '@ionic-native/autostart/ngx';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -34,10 +41,13 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     FormsModule
   ],
   providers: [
+    Autostart,
     ScreenOrientation,
     StatusBar,
     SplashScreen,
     DatePipe,
+    Camera,
+    // File,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
@@ -52,7 +62,12 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
       useValue: "es-ES"
     },
     ApiService,
-    LocationService
+    LocationService,
+    WebSocketService,
+    LocalNotifications,
+    AndroidPermissions,
+    InAppBrowser,
+    DecimalPipe
   ],
   bootstrap: [AppComponent]
 })

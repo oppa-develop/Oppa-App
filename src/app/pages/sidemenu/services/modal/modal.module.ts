@@ -14,7 +14,7 @@ import { ModalPage } from './modal.page';
     IonicModule,
     ModalPageRoutingModule,
     FormsModule,
-    ReactiveFormsModule,
+    ReactiveFormsModule
   ],
   declarations: [ModalPage]
 })

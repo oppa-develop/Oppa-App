@@ -1,16 +1,28 @@
 export interface User {
 
+  admin_id?: number
+  client_id?: number
+  provider_id?: number
+  user_id?: number
   firstname: string
   lastname: string
+  gender?: string
+  rut?: string
   email?: string
-  birthdate: Date
+  phone?: string
+  birthdate: any // type: Date
   password?: string
-  role: string
-  avatar: string
-  credit: number
-  accountType: string
-  elders: any[],
-  location?: any,
   token?: string
+  img_url?: string
+  state?: string
+  email_verified?: string
   
+  location?: any,
+  elders?: any[],
+  credit?: number
+  avatar?: string
+  accountType?: string
+  role?: string
+  addresses?: string[]
+
 }

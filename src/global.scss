@@ -26,8 +26,8 @@
 @import "~@ionic/angular/css/flex-utils.css";
 
 
-ion-card > ion-img {
-  height: 20vh;
+ion-card>ion-img {
+  height: 25vh;
   width: 100%;
   object-fit: cover;
 }
@@ -35,4 +35,48 @@ ion-card > ion-img {
 ion-avatar {
   height: 88px;
   width: 88px;
+}
+
+/* ion-card {
+  border-radius: 20px;
+} */
+
+ion-footer {
+  z-index: 99;
+}
+
+.action-sheet-modal .modal-wrapper {
+  height: 62%;
+  bottom: 0;
+  position: absolute;
+  display: block;
+  border-radius: 20px 20px 0 0;
+}
+
+.action-sheet-modal-medium .modal-wrapper {
+  height: 45vh !important;
+  bottom: 0;
+  position: absolute;
+  display: block;
+  border-radius: 20px 20px 0 0;
+}
+
+.action-sheet-modal-small .modal-wrapper {
+  height: 29% !important;
+  bottom: 0;
+  position: absolute;
+  display: block;
+  border-radius: 20px 20px 0 0;
+}
+
+.text-shadow {
+  text-shadow: 2px 2px 4px #000;
+}
+
+.select-text {
+  white-space: normal;
+}
+
+.alert-radio-label.sc-ion-alert-md {
+  white-space: normal !important;
 }

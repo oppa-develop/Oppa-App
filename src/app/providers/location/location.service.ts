@@ -7,17 +7,21 @@ import { Observable } from 'rxjs';
 })
 export class LocationService {
 
-  baseUrl: string = 'http://apis.modernizacion.cl/dpa'
+  baseUrl: string = 'https://apis.digital.gob.cl/dpa'
 
   constructor(
     private http: HttpClient
   ) { }
 
-  getDistrictsByRegion(region: string): Observable<any> {
-    return this.http.jsonp<any>(`${this.baseUrl}/regiones/${region}/comunas`, 'callback')
+  getDistricts(): Observable<any> {
+    return this.http.jsonp<any>(`${this.baseUrl}/comunas`, 'callback')
   }
 
   getRegions(): Observable<any> {
     return this.http.jsonp<any>(`${this.baseUrl}/regiones`, 'callback')
+  }
+
+  getDistrictsByRegion(region: string): Observable<any> {
+    return this.http.jsonp<any>(`${this.baseUrl}/regiones/${region}/comunas`, 'callback')
   }
 }
