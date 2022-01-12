@@ -68,7 +68,7 @@ export class ServicesPage implements OnInit {
 
   numberOfCards(): number {
     // calculamos el número de tarjetas que se mostrarán en la página segun el ancho de la pantalla
-    return window.innerWidth / 250
+    return window.innerWidth / 300
   }
 
   @HostListener('window:resize', ['$event'])
