@@ -83,7 +83,7 @@ export class AccountPage implements OnInit {
       phone: [this.user.phone, Validators.required],
       //valor de imagen aun sin elegir por el usuario al cambiar imagen de usuario
       image_ext: [null],
-      image: [this.user.img_url]
+      image: [null]
     })
   }
 

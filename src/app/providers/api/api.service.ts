@@ -237,4 +237,8 @@ export class ApiService {
     return this.http.post<any>(`${this.apiUrl}/transbank/check`, token_ws)
   }
 
+  changeStateToInactiveChat(chat_id: number): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/chats/update-to-inactive-chat/${chat_id}`, chat_id)
+  }
+
 }

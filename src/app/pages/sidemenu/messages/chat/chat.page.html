@@ -48,7 +48,7 @@
   </ion-grid>
 
   <ion-footer [ngClass]="{dark: darkMode, light: !darkMode}">
-    <ion-toolbar>
+    <ion-toolbar *ngIf=" chat.state == 'active' ">
       <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
         <ion-grid>
           <ion-row>

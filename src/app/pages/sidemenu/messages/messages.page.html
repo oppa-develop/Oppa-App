@@ -41,7 +41,7 @@
             <p>{{ chat.last_msg?.text }}</p>
             <!-- aquí hacer algo para mostrar solo la hora (o un hace xx tiempo) en caso de q el último mensaje sea durante el día -->
             <p class="timeago">{{ chat.last_msg?.created_at | date: 'dd/MM/yyyy' }}</p>
-            
+            <b *ngIf="chat.state == 'inactive' " style = 'color :rgb(245, 55, 55)'> Servicio Terminado</b>
           </ion-label>
         </ion-item>
       </ng-template>
