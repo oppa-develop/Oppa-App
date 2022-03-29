@@ -59,7 +59,7 @@ export class NewElderPage implements OnInit {
         this.closeModal(true);
       })
       .catch(err => {
-        this.presentToast('Error al crear usuario', 'danger')
+        this.presentToast('Correo y/o RUT ya existe', 'danger')
       })
   }
 

@@ -18,8 +18,9 @@
             </ion-fab-button>
           </ion-fab>
           <ion-avatar>
-            <ion-img *ngIf="elder.img_url" [src]="apiUrl + elder.img_url"></ion-img>
-            <ion-img *ngIf="!elder.img_url" src="../../../../assets/images/default_avatar.png"></ion-img>
+            <ion-img *ngIf="!user.img_url" src="../../../../assets/images/default_avatar.png"></ion-img>
+            <ion-img *ngIf="user.img_url && !user_img" [src]="apiUrl + user.img_url"></ion-img>
+            <ion-img *ngIf="user_img" [src]="'data:image/jpeg;base64,' + user_img"></ion-img>
           </ion-avatar>
         </ion-col>
       </ion-row>
