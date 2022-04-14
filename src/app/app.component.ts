@@ -6,7 +6,7 @@ import { Autostart } from '@ionic-native/autostart/ngx';
 import { Router } from '@angular/router';
 
 import { Plugins } from '@capacitor/core';
-const { SplashScreen } = Plugins; 
+const { SplashScreen, BackgroundTask, App } = Plugins; 
 
 @Component({
   selector: 'app-root',
