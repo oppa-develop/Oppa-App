@@ -158,7 +158,7 @@ export class AccountPage implements OnInit {
         this.auth.setUserData(this.user);
         this.presentToast('Datos actualizados.', 'success')
       })
-      location.reload()
+    location.reload()
   }
 
   addAddress() {
