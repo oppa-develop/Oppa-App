@@ -79,7 +79,7 @@ export class AccountPage implements OnInit {
       firstname: [this.user.firstname, Validators.required],
       lastname: [this.user.lastname, Validators.required],
       gender: [this.user.gender, Validators.required],
-      birthdate: [this.dateFormat.transform(this.user.birthdate, 'dd-MM-yyyy'), Validators.required],
+      birthdate: [this.dateFormat.transform(this.user.birthdate, 'dd-MM-yyyy' , 'UTC' , 'es-CL'), Validators.required],
       phone: [this.user.phone, Validators.required],
       //valor de imagen aun sin elegir por el usuario al cambiar imagen de usuario
       image_ext: [null],
@@ -158,6 +158,7 @@ export class AccountPage implements OnInit {
         this.auth.setUserData(this.user);
         this.presentToast('Datos actualizados.', 'success')
       })
+      location.reload()
   }
 
   addAddress() {
