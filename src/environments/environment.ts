@@ -4,11 +4,11 @@
 
 export const environment = {
   production: false,
-  serverSocket: 'https://api.somosoppa.cl',
-  HOST: 'https://api.somosoppa.cl',
+  //serverSocket: 'https://api.somosoppa.cl',
+  //HOST: 'https://api.somosoppa.cl',
 
-  //serverSocket: 'http://localhost:3000',
-  //HOST: 'http://localhost:3000',
+  serverSocket: 'http://localhost:3000',
+  HOST: 'http://localhost:3000',
   // serverSocket: 'http://192.168.1.125:3000',
   // HOST: 'http://192.168.1.125:3000',
   secret: 'S0yuNt3xt0S3cR3t0'

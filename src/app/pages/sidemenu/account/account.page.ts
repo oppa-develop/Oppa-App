@@ -27,7 +27,7 @@ export class AccountPage implements OnInit {
   isAddingAnAddress: boolean = false
   regions: any[] = []
   districts: string[] = []
-
+  
 
   constructor(
     private api: ApiService,
@@ -158,7 +158,7 @@ export class AccountPage implements OnInit {
         this.auth.setUserData(this.user);
         this.presentToast('Datos actualizados.', 'success')
       })
-      location.reload()
+      //location.reload()
   }
 
   addAddress() {
