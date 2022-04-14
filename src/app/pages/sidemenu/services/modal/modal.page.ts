@@ -171,14 +171,22 @@ export class ModalPage implements OnInit {
           loading.dismiss();
           this.presentToast('Hubo un error al intentar obtener los proveedores', 'danger')
         })
+    } else if(!this.scheduleServiceForm.value.date) {
+      this.presentToast('Por favor, ingrese la fecha', 'danger')
+    } else if(!this.scheduleServiceForm.value.hour) {
+      this.presentToast('Por favor, ingrese la hora', 'danger')
+    } else if(!this.scheduleServiceForm.value.receptor) {
+      this.presentToast('Por favor, ingrese el cliente', 'danger')
+    } else if(!this.scheduleServiceForm.value.address) {
+      this.presentToast('Por favor, ingrese la direccion', 'danger')
     } else {
-      this.presentToast('Faltan campos por rellenar', 'danger')
+      this.presentToast('Por favor, ingrese un metodo de pago', 'danger')
     }
   }
 
   async sendRequestToProvider(potentialServices: any[]) {
     const loading = await this.loadingController.create({
-      message: 'Solicitando servicio a proveedor... Por favor espere'
+      message: 'Solicitando servicio a proveedor... Por favor espere y no se salga de la aplicacion'
     });
     await loading.present();
     this.isLoading = true

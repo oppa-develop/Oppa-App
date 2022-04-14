@@ -192,6 +192,7 @@ export class ApiService {
       userData.image = this.base64toBlob(userData.image, 'image/' + userData.image_ext);
     }
     let formData = serialize(userData);
+    
     return this.http.patch(`${this.apiUrl}/users/edit`, formData)
   }
 
