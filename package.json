@@ -36,6 +36,7 @@
     "@ionic-native/status-bar": "^5.0.0",
     "@ionic/angular": "^5.0.0",
     "@types/faker": "^5.1.3",
+    "capacitor-resources": "^2.0.5",
     "cordova-plugin-android-permissions": "^1.1.2",
     "cordova-plugin-autostart": "^2.3.0",
     "cordova-plugin-badge": "^0.8.8",
